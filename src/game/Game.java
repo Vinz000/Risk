@@ -18,12 +18,7 @@ public class Game extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        MapComponent mapComponent = new MapComponent();
-        Scene scene = new Scene(mapComponent, Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
-        scene.getStylesheets().add("util/style.css");
-        primaryStage.setTitle("Risk");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
 
     }
 }

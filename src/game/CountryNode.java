@@ -18,6 +18,8 @@ public class CountryNode extends StackPane {
 
         //hard coded circle size
         int radius = 10;
+
+        //
         Circle circle = new Circle();
         circle.setRadius(radius);
         circle.setId(continent);
