@@ -1,5 +1,7 @@
 package common;
 
+import java.util.ArrayList;
+
 public class Constants {
     public static final int NUM_PLAYERS = 2;
     public static final int NUM_NEUTRALS = 4;
@@ -110,4 +112,10 @@ public class Constants {
             {547, 432},        // 40
             {586, 545}
     };
+
+    public static class Prompts {
+        public static final String NAME = "Please enter your name?";
+        public static final String MOVE = "it is your turn.";
+        public static final String OPTION = "What move would you like to make?";
+    }
 }
