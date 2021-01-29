@@ -1,7 +1,5 @@
 package common;
 
-import com.sun.nio.zipfs.ZipFileAttributeView;
-
 public class Constants {
     public static final int NUM_PLAYERS = 2;
     public static final int NUM_NEUTRALS = 4;

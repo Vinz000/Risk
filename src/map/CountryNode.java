@@ -1,4 +1,4 @@
-package game;
+package map;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -19,7 +19,6 @@ public class CountryNode extends StackPane {
         //hard coded circle size
         int radius = 10;
 
-        //
         Circle circle = new Circle();
         circle.setRadius(radius);
         circle.setId(continent);
@@ -27,7 +26,7 @@ public class CountryNode extends StackPane {
         setTranslateX(coord[0] - radius);
         setTranslateY(coord[1] - radius);
 
-        getChildren().addAll(circle,text);
+        getChildren().addAll(circle, text);
         setText();
     }
 

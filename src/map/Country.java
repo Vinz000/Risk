@@ -1,9 +1,8 @@
-package game;
+package map;
 
 /**
  * TODO:
- *  add player variable
- *
+ * add player variable
  */
 
 public class Country {

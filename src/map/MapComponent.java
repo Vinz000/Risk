@@ -1,4 +1,4 @@
-package game;
+package map;
 
 import static common.Constants.COUNTRY_COORD;
 import static common.Constants.ADJACENT;
@@ -13,25 +13,20 @@ public class MapComponent extends Pane {
     private MapModel mapModel = new MapModel();
     private Group mapGroup = new Group();
 
-    public MapComponent () {
-        setPrefSize(1000,600);
+    public MapComponent() {
         drawLinks();
         drawBoard();
     }
 
+    //called once
     private void drawBoard() {
-
-        for(CountryNode c : mapModel.getCountryNodes()) {
-            mapGroup.getChildren().add(c);
-        }
-
-        getChildren().add(mapGroup);
+        getChildren().addAll(mapModel.getCountryNodes());
     }
 
     //called once
     private void drawLinks() {
-        for(int i = 0; i < NUM_COUNTRIES; i++) {
-            for(int adj: ADJACENT[i]){
+        for (int i = 0; i < NUM_COUNTRIES; i++) {
+            for (int adj : ADJACENT[i]) {
                 Line line = new Line();
                 line.setStartX(COUNTRY_COORD[i][0]);
                 line.setStartY(COUNTRY_COORD[i][1]);
