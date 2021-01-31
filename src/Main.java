@@ -1,8 +1,9 @@
 import common.Constants;
-import game.GameRoot;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import shell.ShellComponent;
+import shell.ShellModel;
 
 public class Main extends Application {
 
@@ -16,11 +17,18 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        Scene scene = new Scene(new GameRoot(), Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
-        scene.getStylesheets().add("util/style.css");
-        stage.setTitle("Risk");
-        stage.setScene(scene);
-        stage.show();
+    public void start(Stage primaryStage) throws Exception {
+        /**
+         * Model Creation
+         */
+
+        final ShellModel shellModel = new ShellModel();
+        ShellComponent border = new ShellComponent(shellModel);
+
+        Scene combined = new Scene(border, Constants.MAP_FRAME_WIDTH + 200, Constants.MAP_FRAME_HEIGHT);
+        combined.getStylesheets().add("util/style.css");
+        primaryStage.setTitle("Risk");
+        primaryStage.setScene(combined);
+        primaryStage.show();
     }
 }
