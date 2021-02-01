@@ -7,8 +7,8 @@ public class ShellModel extends Observable {
     public ShellModel() {
     }
 
-    private String player1 = null;
-    private String player2 = null;
+    public String player1 = null;
+    public String player2 = null;
 
     public void setPlayer1(String player1) {
         this.player1 = player1;

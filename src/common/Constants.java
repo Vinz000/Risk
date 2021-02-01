@@ -116,5 +116,6 @@ public class Constants {
         public static final String NAME = "Please enter your name.";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
+        public static final String COUNTRY_SELECT = "Please type a country to claim.";
     }
 }
