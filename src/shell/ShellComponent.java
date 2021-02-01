@@ -24,41 +24,39 @@ public class ShellComponent extends BorderPane implements Observer {
 
     private void build(ShellModel shellModel) {
 
-        TextField input = new TextField();
+        TextField inputLine = new TextField();
         Label prompts = new Label("Player 1. " + Constants.Prompts.NAME);
-        prompts.setPrefSize(200, 20);
+        prompts.setPrefSize(Constants.SHELL_WIDTH, 20);
         Label log = new Label();
 
         EventHandler<ActionEvent> event = event1 -> {
 
             if (shellModel.getPlayer1() == null) {
-                shellModel.setPlayer1(input.getText());
+                shellModel.setPlayer1(inputLine.getText());
                 prompts.setText("Player 2. " + Constants.Prompts.NAME);
             } else if (shellModel.getPlayer2() == null) {
-                shellModel.setPlayer2(input.getText());
+                shellModel.setPlayer2(inputLine.getText());
                 prompts.setText(Constants.Prompts.OPTION);
             } else {
-                log.setText(log.getText() + "\n" + input.getText());
+                log.setText(log.getText() + "\n" + inputLine.getText());
                 prompts.setText(Constants.Prompts.OPTION);
             }
-            input.clear();
-            System.out.print(log.getText());
-
+            inputLine.clear();
         };
 
-        input.setOnAction(event);
+        inputLine.setOnAction(event);
 
         VBox shell = new VBox();
         shell.getChildren().add(log);
         shell.getChildren().add(prompts);
-        shell.getChildren().add(input);
+        shell.getChildren().add(inputLine);
         VBox.setVgrow(log, Priority.ALWAYS);
         log.setAlignment(Pos.BOTTOM_LEFT);
         shell.setAlignment(Pos.BOTTOM_LEFT);
         setCenter(new GameRoot());
         setLeft(shell);
         setMargin(shell, new Insets(5));
-        shell.prefWidth(200);
+        shell.prefWidth(Constants.SHELL_WIDTH);
     }
 
     @Override

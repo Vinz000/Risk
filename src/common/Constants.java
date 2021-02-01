@@ -67,6 +67,7 @@ public class Constants {
     public static final int[] CONTINENT_VALUES = {5, 5, 7, 2, 2, 3};
     public static final int MAP_FRAME_WIDTH = 1000;    // must be even
     public static final int MAP_FRAME_HEIGHT = 600;
+    public static final int SHELL_WIDTH = 200;
     public static final int[][] COUNTRY_COORD = {
             {191, 150},     // 0
             {255, 161},

@@ -23,12 +23,12 @@ public class Main extends Application {
          */
 
         final ShellModel shellModel = new ShellModel();
-        ShellComponent border = new ShellComponent(shellModel);
+        ShellComponent boardLayout = new ShellComponent(shellModel);
 
-        Scene combined = new Scene(border, Constants.MAP_FRAME_WIDTH + 200, Constants.MAP_FRAME_HEIGHT);
-        combined.getStylesheets().add("util/style.css");
+        Scene gameScene = new Scene(boardLayout, Constants.MAP_FRAME_WIDTH + Constants.SHELL_WIDTH, Constants.MAP_FRAME_HEIGHT);
+        gameScene.getStylesheets().add("util/style.css");
         primaryStage.setTitle("Risk");
-        primaryStage.setScene(combined);
+        primaryStage.setScene(gameScene);
         primaryStage.show();
     }
 }
