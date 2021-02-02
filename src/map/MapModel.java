@@ -9,8 +9,9 @@ import static common.Constants.NUM_COUNTRIES;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
-public class MapModel {
+public class MapModel extends Observable {
     private List<CountryNode> countryNodes = new ArrayList<>();
 
     public MapModel() {

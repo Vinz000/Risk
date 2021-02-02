@@ -4,22 +4,22 @@ import static common.Constants.COUNTRY_COORD;
 import static common.Constants.ADJACENT;
 import static common.Constants.NUM_COUNTRIES;
 
-import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
-public class MapComponent extends Pane {
-    private MapModel mapModel = new MapModel();
-    private Group mapGroup = new Group();
+import java.util.Observable;
+import java.util.Observer;
 
-    public MapComponent() {
+public class MapComponent extends Pane implements Observer {
+
+    public MapComponent(MapModel mapModel) {
         drawLinks();
-        drawBoard();
+        drawBoard(mapModel);
     }
 
     //called once
-    private void drawBoard() {
+    private void drawBoard(MapModel mapModel) {
         getChildren().addAll(mapModel.getCountryNodes());
     }
 
@@ -39,4 +39,8 @@ public class MapComponent extends Pane {
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println("Map model changed!");
+    }
 }
