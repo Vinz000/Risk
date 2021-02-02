@@ -1,5 +1,6 @@
 package common;
 
+
 public class Constants {
     public static final int NUM_PLAYERS = 2;
     public static final int NUM_NEUTRALS = 4;
@@ -64,8 +65,9 @@ public class Constants {
     public static final String[] CONTINENT_NAMES = {"N_America", "Europe", "Asia", "Australia", "S_America", "Africa"};  // for reference
     public static final int[] CONTINENT_IDS = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5};
     public static final int[] CONTINENT_VALUES = {5, 5, 7, 2, 2, 3};
-    public static final int FRAME_WIDTH = 1000;    // must be even
-    public static final int FRAME_HEIGHT = 600;
+    public static final int MAP_FRAME_WIDTH = 1000;    // must be even
+    public static final int MAP_FRAME_HEIGHT = 600;
+    public static final int SHELL_WIDTH = 200;
     public static final int[][] COUNTRY_COORD = {
             {191, 150},     // 0
             {255, 161},
@@ -110,4 +112,11 @@ public class Constants {
             {547, 432},        // 40
             {586, 545}
     };
+
+    public static class Prompts {
+        public static final String NAME = "Please enter your name.";
+        public static final String MOVE = "it is your turn.";
+        public static final String OPTION = "What move would you like to make?";
+        public static final String COUNTRY_SELECT = "Please type a country to claim.";
+    }
 }
