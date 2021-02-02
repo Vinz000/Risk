@@ -1,0 +1,23 @@
+#N_America{
+    -fx-fill : hotpink;
+}
+
+#S_America{
+    -fx-fill : sandybrown;
+}
+
+#Europe {
+    -fx-fill : lightskyblue;
+}
+
+#Asia {
+    -fx-fill : seagreen;
+}
+
+#Africa {
+    -fx-fill : indianred;
+}
+
+#Australia {
+    -fx-fill : greenyellow;
+}
