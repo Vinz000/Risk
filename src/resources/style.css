@@ -1,18 +1,16 @@
 .root {
     /*name the variables*/
-    player1-color : #EC407A;
-    player2-color : teal;
     neutral-player-color : #DCDCDC;
     background-color: #5A6868;
 }
 
 /* Styling for Continent Pane*/
 #continent-pane {
-    -fx-font-size: 20;
+    -fx-font-size: 16;
     -fx-padding: 10;
-    -fx-background-color: #06577D;
-    -fx-border-radius: 10 10 10 10;
-    -fx-background-radius: 10 10 10 10;
+    -fx-background-color: #035e8a;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
     /*-fx-effect: dropshadow(gaussian, black, 5, 0, 0, 3);*/
 }
 
@@ -47,11 +45,9 @@
 }
 
 #player-1 {
-    -fx-fill : player1-color;
 }
 
 #player-2 {
-    -fx-fill: player2-color;
 }
 
 #neutral-player {
@@ -62,9 +58,9 @@
     -fx-background-size: 1000 660;
     -fx-background-image: url("newMap.png");
     -fx-background-position: top -70 left -5;
-    -fx-border-radius: 10 10 10 10;
+    -fx-border-radius: 10;
     -fx-background-color: #126D98;
-    -fx-background-radius: 10 10 10 10;
+    -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, black, 10, 0, 0, 3);
 }
 
@@ -74,20 +70,18 @@
 }
 
 #input-line {
-    -fx-background-color: #93A9A9;
-    -fx-padding: 5 0 5 0;
+    -fx-background-color: #697777;
+    -fx-padding: 5;
     -fx-text-fill: white;
     -fx-border-style: hidden hidden hidden hidden ;
     -fx-border-color: white;
-    -fx-border-radius: 5 5 5 5;
-    -fx-background-radius: 5 5 5 5;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
 }
 
 #shell-component {
     -fx-text-fill: white;
     -fx-background-color: transparent;
-    -fx-border-radius: 10 10 10 10;
-    -fx-background-radius: 10 10 10 10;
     /*-fx-effect: dropshadow(gaussian, black, 10, 0, 0, 3);*/
 }
 

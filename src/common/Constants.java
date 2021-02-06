@@ -67,11 +67,15 @@ public class Constants {
     public static final String[] CONTINENT_NAMES = {"N_America", "Europe", "Asia", "Australia", "S_America", "Africa"};  // for reference
     public static final int[] CONTINENT_IDS = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5};
     public static final int[] CONTINENT_VALUES = {5, 5, 7, 2, 2, 3};
+
     public static final int MAP_WIDTH = 1000;    // must be even
     public static final int MAP_HEIGHT = 600;
     public static final int SHELL_WIDTH = 200;
     public static final int COUNTRY_NODE_RADIUS = 10;
-    public static final int[][] COUNTRY_COORD = {
+    public static final int CONTINENT_PANE_WIDTH = 140;
+    public static final int CONTINENT_PANE_HEIGHT = 180;
+
+    public static final int[][] COUNTRY_COORDS = {
             {180, 115},     // 0
             {248, 123}, //
             {146, 81}, //
@@ -119,8 +123,18 @@ public class Constants {
     // Working progress
     public static class Prompts {
         public static final String WELCOME = "Welcome to Risk -\nBy Team7\nPress enter to get started.\n";
-        public static final String NAME = "Please enter your name.";
+        public static final String NAME = "Please enter your name. ";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
+    }
+
+    public static class ComponentIds {
+        public static final String MAP = "map-component";
+        public static final String CONTINENT_PANE = "continent-pane";
+        public static final String NEUTRAL_PLAYER = "neutral-player";
+        public static final String SHELL = "shell-component";
+        public static final String SHELL_INPUT = "input-line";
+        public static final String SHELL_LOG = "log";
+        public static final String GAME_ROOT = "game-root";
     }
 }

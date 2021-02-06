@@ -2,30 +2,27 @@ package map;
 
 import java.util.Observable;
 
+import javafx.geometry.Point2D;
 import shell.Player;
 
-/**
- * TODO:
- * add player variable
- */
 
 public class CountryNode extends Observable {
     private final String countryName;
     private final int[] adjCountries;
     private final int continentID;
-    private final int[] coord;
+    private final Point2D coords;
     private int army = 0;
     private Player currentPlayer;
 
-    public CountryNode(String countryName, int[] adjCountries, int continentID, int[] coord) {
+    public CountryNode(String countryName, int[] adjCountries, int continentID, int[] coords) {
         this.countryName = countryName;
         this.adjCountries = adjCountries;
         this.continentID = continentID;
-        this.coord = coord;
+        this.coords = new Point2D(coords[0], coords[1]);
     }
 
-    public int[] getCoord() {
-        return coord;
+    public Point2D getCoords() {
+        return coords;
     }
 
     public String getCountryName() {
@@ -42,7 +39,6 @@ public class CountryNode extends Observable {
 
     public int getArmy() {
         return army;
-
     }
 
     public void setArmy(int army) {

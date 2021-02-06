@@ -3,6 +3,7 @@ package map;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import common.Constants;
@@ -17,38 +18,48 @@ import java.util.Observer;
 
 public class CountryComponent extends StackPane implements Observer {
     private final CountryNode countryNode;
-    private final Text text = new Text();
-    private Circle circle = new Circle();
-    private Tooltip tooltip = new Tooltip();
+    private final Text armyCount = new Text();
+    private final Circle countryCircle = new Circle();
 
     public CountryComponent(CountryNode countryNode) {
         this.countryNode = countryNode;
         this.countryNode.addObserver(this);
+        build();
+    }
 
-        circle.setRadius(Constants.COUNTRY_NODE_RADIUS);
-        circle.setId("neutral-player");
+    private void build() {
+        countryCircle.setRadius(Constants.COUNTRY_NODE_RADIUS);
+        countryCircle.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
+
+        Pane tooltipPane = installTooltip();
+
+        setTranslateX(countryNode.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
+        setTranslateY(countryNode.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
+
+        getChildren().addAll(countryCircle, armyCount, tooltipPane);
+        setText();
+    }
+
+    private Pane installTooltip() {
+        Tooltip tooltip = new Tooltip();
         tooltip.setText(countryNode.getCountryName());
         Pane pane = new Pane();
         Tooltip.install(pane, tooltip);
 
-
-        setTranslateX(countryNode.getCoord()[0] - Constants.COUNTRY_NODE_RADIUS);
-        setTranslateY(countryNode.getCoord()[1] - Constants.COUNTRY_NODE_RADIUS);
-
-        getChildren().addAll(circle, text, pane);
-        setText();
+        return pane;
     }
 
     public void setText() {
-        text.setText(Integer.toString(countryNode.getArmy()));
+        armyCount.setText(Integer.toString(countryNode.getArmy()));
     }
 
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof Player) {
-            circle.setId(((Player) arg).getPlayerID());
+            Color playerColor = ((Player) arg).getColor();
+            countryCircle.setFill(playerColor);
         } else {
-            text.setText(arg.toString());
+            armyCount.setText(arg.toString());
         }
     }
 }

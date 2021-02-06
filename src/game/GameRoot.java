@@ -19,7 +19,8 @@ public class GameRoot extends BorderPane {
     private final MapModel mapModel = new MapModel();
 
     public GameRoot() {
-        setId("game-root");
+        setId(Constants.ComponentIds.GAME_ROOT);
+
         // Create top-level components
         MapComponent mapComponent = new MapComponent(mapModel);
         ShellComponent shellComponent = new ShellComponent(shellModel, mapModel);
@@ -28,10 +29,9 @@ public class GameRoot extends BorderPane {
         shellModel.addObserver(mapComponent);
 
         // BorderPane configuration
-        final Insets componentInsets = new Insets(5);
         setRight(shellComponent);
         setCenter(mapComponent);
-        setMargin(shellComponent, new Insets(10, 10, 10, 10));
+        setMargin(shellComponent, new Insets(10));
         setMargin(mapComponent, new Insets(10, 0, 10, 10));
     }
 }

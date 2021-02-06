@@ -1,19 +1,19 @@
 package game;
 
-import common.Validator;
+import common.Validators;
 
 import java.util.function.Function;
 
 public enum GameState {
     NEW(input -> true),
-    PLAYER_ONE_NAME(Validator.nonEmpty),
-    PLAYER_TWO_NAME(Validator.nonEmpty),
+    PLAYER_ONE_NAME(Validators.nonEmpty),
+    PLAYER_TWO_NAME(Validators.nonEmpty),
     QUIT(input -> true);
 
 
     private final Function<String, Boolean> validator;
 
-    private GameState(Function<String, Boolean> validator) {
+    GameState(Function<String, Boolean> validator) {
         this.validator = validator;
     }
 

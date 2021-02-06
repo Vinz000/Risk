@@ -1,19 +1,30 @@
 package shell;
 
+import javafx.scene.paint.Color;
+
+import java.util.UUID;
+
 public class Player {
-    private static int numPlayer = 1;
+
+    private final String id;
     private final String name;
-    private final String playerID;
+    private final Color color;
 
-    public Player(String name) {
+    public Player(String name, Color color) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
-        playerID = "player-" + numPlayer;
-        numPlayer++;
+        this.color = color;
     }
 
-    public String getPlayerID() {
-        return playerID;
+    public String getId() {
+        return id;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public Color getColor() {
+        return color;
+    }
 }
