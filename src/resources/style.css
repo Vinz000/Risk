@@ -1,44 +1,43 @@
 .root {
-    /*name the variables*/
-    neutral-player-color : #DCDCDC;
+    /* Theme colours */
+    neutral-player-color: #DCDCDC;
     background-color: #5A6868;
 }
 
-/* Styling for Continent Pane*/
+/* Styling for Continent Pane */
 #continent-pane {
     -fx-font-size: 16;
     -fx-padding: 10;
     -fx-background-color: #035e8a;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-    /*-fx-effect: dropshadow(gaussian, black, 5, 0, 0, 3);*/
 }
 
-#N_America{
-    -fx-fill : #FFABAB;
+#N_America {
+    -fx-fill: #FFABAB;
 }
 
-#S_America{
-    -fx-fill : #FFFFD1;
+#S_America {
+    -fx-fill: #FFFFD1;
 }
 
 #Europe {
-    -fx-fill : #6EB5FE;
+    -fx-fill: #6EB5FE;
 }
 
 #Asia {
-    -fx-fill : #BAD577;
+    -fx-fill: #BAD577;
 }
 
 #Africa {
-    -fx-fill : #FFB347;
+    -fx-fill: #FFB347;
 }
 
 #Australia {
-    -fx-fill : #B5B9FE;
+    -fx-fill: #B5B9FE;
 }
 
-/* End of styling for continent pane*/
+/* End of styling for continent pane */
 
 #game-root {
     -fx-background-color: #5A6868;
@@ -73,7 +72,7 @@
     -fx-background-color: #697777;
     -fx-padding: 5;
     -fx-text-fill: white;
-    -fx-border-style: hidden hidden hidden hidden ;
+    -fx-border-style: hidden hidden hidden hidden;
     -fx-border-color: white;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
@@ -82,11 +81,4 @@
 #shell-component {
     -fx-text-fill: white;
     -fx-background-color: transparent;
-    /*-fx-effect: dropshadow(gaussian, black, 10, 0, 0, 3);*/
 }
-
-/*#scroll-bar {*/
-/*    -fx-background-color: #42445A;*/
-/*    -fx-text-fill: #42445A;*/
-/*}*/
-

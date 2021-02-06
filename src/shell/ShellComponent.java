@@ -31,11 +31,6 @@ public class ShellComponent extends VBox implements Observer {
         log.setText(log.getText() + "\n" + message);
     }
 
-    // TODO: have a set of colours that may be used, randomly pick from that set.
-    private Color randomColor() {
-        return Color.color(Math.random(), Math.random(), Math.random());
-    }
-
     private void build(ShellModel shellModel, MapModel mapModel) {
 
         setId(Constants.ComponentIds.SHELL);
@@ -57,14 +52,14 @@ public class ShellComponent extends VBox implements Observer {
                         appendLogText("Nice to meet you, " + inputLine.getText());
                         appendLogText(Constants.Prompts.NAME + "(Player two)");
 
-                        Player playerOne = new Player(inputLine.getText(), randomColor());
+                        Player playerOne = new Player(inputLine.getText(), Color.valueOf("#710193"));
                         mapModel.addPlayer(playerOne);
                         break;
                     case PLAYER_TWO_NAME:
                         appendLogText("And you, " + inputLine.getText());
                         appendLogText("Lets get started!");
 
-                        Player playerTwo = new Player(inputLine.getText(), randomColor());
+                        Player playerTwo = new Player(inputLine.getText(), Color.valueOf("#fee227"));
                         mapModel.addPlayer(playerTwo);
 
                         mapModel.initializeGame();

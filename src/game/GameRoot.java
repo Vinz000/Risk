@@ -8,9 +8,6 @@ import map.MapModel;
 import shell.ShellComponent;
 import shell.ShellModel;
 
-/**
- * Change to however you want this to look like
- */
 
 public class GameRoot extends BorderPane {
 

@@ -17,8 +17,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        primaryStage.getIcons().add(new Image("resources/icon.jpeg"));
-
         GameRoot gameRoot = new GameRoot();
 
         Scene gameScene = new Scene(
@@ -27,7 +25,6 @@ public class Main extends Application {
                 Constants.MAP_HEIGHT
         );
         gameScene.getStylesheets().add("resources/style.css");
-//        this.setMinSize(Constants.MAP_WIDTH + Constants.SHELL_WIDTH, Constants.MAP_HEIGHT);
         primaryStage.setMinWidth(Constants.MAP_WIDTH + Constants.SHELL_WIDTH);
         primaryStage.setMinHeight(Constants.MAP_HEIGHT);
         primaryStage.setResizable(false);

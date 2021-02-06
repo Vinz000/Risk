@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Team7.jnlp">
+  <information>
+    <title>Team7-Sprint-1</title>
+    <vendor>Unknown</vendor>
+    <description>Team7-Sprint-1</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Team7.jar" size="1245109" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="600" height="400" main-class="Main"  name="Team7-Sprint-1" />
+  <update check="background"/>
+</jnlp>

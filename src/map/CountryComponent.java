@@ -8,6 +8,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import common.Constants;
 import shell.Player;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -19,7 +20,8 @@ import java.util.Observer;
 public class CountryComponent extends StackPane implements Observer {
     private final CountryNode countryNode;
     private final Text armyCount = new Text();
-    private final Circle countryCircle = new Circle();
+    private final Circle countryMarker = new Circle();
+    private final Tooltip tooltip = new Tooltip();
 
     public CountryComponent(CountryNode countryNode) {
         this.countryNode = countryNode;
@@ -28,21 +30,21 @@ public class CountryComponent extends StackPane implements Observer {
     }
 
     private void build() {
-        countryCircle.setRadius(Constants.COUNTRY_NODE_RADIUS);
-        countryCircle.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
+        countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
+        countryMarker.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
 
         Pane tooltipPane = installTooltip();
 
         setTranslateX(countryNode.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
         setTranslateY(countryNode.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
 
-        getChildren().addAll(countryCircle, armyCount, tooltipPane);
+        getChildren().addAll(countryMarker, armyCount, tooltipPane);
         setText();
     }
 
     private Pane installTooltip() {
-        Tooltip tooltip = new Tooltip();
         tooltip.setText(countryNode.getCountryName());
+
         Pane pane = new Pane();
         Tooltip.install(pane, tooltip);
 
@@ -57,7 +59,13 @@ public class CountryComponent extends StackPane implements Observer {
     public void update(Observable o, Object arg) {
         if (arg instanceof Player) {
             Color playerColor = ((Player) arg).getColor();
-            countryCircle.setFill(playerColor);
+            countryMarker.setFill(playerColor);
+
+            String toolTipText = String.format("%s\nOwner: %s",
+                    countryNode.getCountryName(),
+                    ((Player) arg).getName()
+            );
+            tooltip.setText(toolTipText);
         } else {
             armyCount.setText(arg.toString());
         }
