@@ -1,67 +1,94 @@
 package shell;
 
 import common.Constants;
-import game.GameRoot;
+import game.GameState;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import map.MapModel;
 
 import java.util.Observable;
 import java.util.Observer;
 
-public class ShellComponent extends BorderPane implements Observer {
-    public ShellComponent(ShellModel shellModel) {
+
+public class ShellComponent extends VBox implements Observer {
+
+    private final Label log = new Label(Constants.Prompts.WELCOME);
+    private final TextField inputLine = new TextField();
+    private GameState gameState = GameState.NEW;
+
+    public ShellComponent(ShellModel shellModel, MapModel mapModel) {
         super();
-        build(shellModel);
+        build(shellModel, mapModel);
     }
 
-    private void build(ShellModel shellModel) {
+    public void appendLogText(String message) {
+        log.setText(log.getText() + "\n" + message);
+    }
 
-        TextField inputLine = new TextField();
-        Label prompts = new Label("Player 1. " + Constants.Prompts.NAME);
-        prompts.setPrefSize(Constants.SHELL_WIDTH, 20);
-        Label log = new Label();
+    private void build(ShellModel shellModel, MapModel mapModel) {
 
-        EventHandler<ActionEvent> event = event1 -> {
+        setId(Constants.ComponentIds.SHELL);
 
-            if (shellModel.getPlayer1() == null) {
-                shellModel.setPlayer1(inputLine.getText());
-                prompts.setText("Player 2. " + Constants.Prompts.NAME);
-            } else if (shellModel.getPlayer2() == null) {
-                shellModel.setPlayer2(inputLine.getText());
-                prompts.setText(Constants.Prompts.OPTION);
+        log.setId(Constants.ComponentIds.SHELL_LOG);
+
+        log.setWrapText(true);
+        log.setMinWidth(Constants.SHELL_WIDTH);
+        log.setMaxWidth(Constants.SHELL_WIDTH);
+        setVgrow(log, Priority.ALWAYS);
+
+        EventHandler<ActionEvent> eventHandler = event -> {
+            if (gameState.validate(inputLine.getText())) {
+                switch (gameState) {
+                    case NEW:
+                        appendLogText(Constants.Prompts.NAME + "(Player one)");
+                        break;
+                    case PLAYER_ONE_NAME:
+                        appendLogText("Nice to meet you, " + inputLine.getText());
+                        appendLogText(Constants.Prompts.NAME + "(Player two)");
+
+                        Player playerOne = new Player(inputLine.getText(), Color.valueOf("#710193"));
+                        mapModel.addPlayer(playerOne);
+                        break;
+                    case PLAYER_TWO_NAME:
+                        appendLogText("And you, " + inputLine.getText());
+                        appendLogText("Lets get started!");
+
+                        Player playerTwo = new Player(inputLine.getText(), Color.valueOf("#fee227"));
+                        mapModel.addPlayer(playerTwo);
+
+                        mapModel.initializeGame();
+                        break;
+                    case QUIT:
+                        appendLogText("Thanks for playing!");
+                        inputLine.setDisable(true);
+                    default:
+                        System.out.println("Should never be reached");
+                }
+
+                // Move to next game state
+                gameState = gameState.next();
             } else {
-                log.setText(log.getText() + "\n" + inputLine.getText());
-                prompts.setText(Constants.Prompts.OPTION);
+                appendLogText("Enter Valid Input!");
             }
             inputLine.clear();
         };
+        inputLine.setOnAction(eventHandler);
+        inputLine.setId(Constants.ComponentIds.SHELL_INPUT);
 
-        inputLine.setOnAction(event);
-
-        VBox shell = new VBox();
-        shell.getChildren().add(log);
-        shell.getChildren().add(prompts);
-        shell.getChildren().add(inputLine);
-        VBox.setVgrow(log, Priority.ALWAYS);
-        log.setAlignment(Pos.BOTTOM_LEFT);
-        shell.setAlignment(Pos.BOTTOM_LEFT);
-        setCenter(new GameRoot());
-        setLeft(shell);
-        setMargin(shell, new Insets(5));
-        shell.prefWidth(Constants.SHELL_WIDTH);
+        getChildren().addAll(log, inputLine);
+        setAlignment(Pos.BOTTOM_RIGHT);
     }
 
     @Override
     public void update(Observable o, Object arg) {
         ShellModel shellModel = ((ShellModel) o);
 
+        appendLogText("ShellComponent update");
     }
 }

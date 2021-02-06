@@ -1,37 +1,61 @@
 package map;
 
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
+import java.util.Observable;
 
-/**
- * So we keep Country as just a data structure
- * Change color of node
- */
+import javafx.geometry.Point2D;
+import shell.Player;
 
-public class CountryNode extends StackPane {
-    private final Country country;
-    private final Text text = new Text();
 
-    public CountryNode(String countryName, int[] adjCountries, int continent_id, int[] coord, String continent) {
-        country = new Country(countryName, adjCountries, continent_id);
+public class CountryNode extends Observable {
+    private final String countryName;
+    private final int[] adjCountries;
+    private final int continentID;
+    private final Point2D coords;
+    private int army = 0;
+    private Player currentPlayer;
 
-        //hard coded circle size
-        int radius = 10;
-
-        Circle circle = new Circle();
-        circle.setRadius(radius);
-        circle.setId(continent);
-
-        setTranslateX(coord[0] - radius);
-        setTranslateY(coord[1] - radius);
-
-        getChildren().addAll(circle, text);
-        setText();
+    public CountryNode(String countryName, int[] adjCountries, int continentID, int[] coords) {
+        this.countryName = countryName;
+        this.adjCountries = adjCountries;
+        this.continentID = continentID;
+        this.coords = new Point2D(coords[0], coords[1]);
     }
 
-    public void setText() {
-        text.setText(Integer.toString(country.getArmy()));
+    public Point2D getCoords() {
+        return coords;
     }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public int[] getAdjCountries() {
+        return adjCountries;
+    }
+
+    public int getContinentID() {
+        return continentID;
+    }
+
+    public int getArmy() {
+        return army;
+    }
+
+    public void setArmy(int army) {
+        this.army = army;
+        setChanged();
+        notifyObservers(army);
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player player) {
+        this.currentPlayer = player;
+        setChanged();
+        notifyObservers(player);
+    }
+
 
 }
