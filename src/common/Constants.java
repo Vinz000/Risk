@@ -10,6 +10,7 @@ public class Constants {
     public static final int INIT_COUNTRIES_NEUTRAL = 6;
     public static final int INIT_UNITS_PLAYER = 36;
     public static final int INIT_UNITS_NEUTRAL = 24;
+
     public static final String[] COUNTRY_NAMES = {
             "Ontario", "Quebec", "NW Territory", "Alberta", "Greenland", "E United States", "W United States", "Central America", "Alaska",
             "Great Britain", "W Europe", "S Europe", "Ukraine", "N Europe", "Iceland", "Scandinavia",
@@ -17,6 +18,7 @@ public class Constants {
             "E Australia", "New Guinea", "W Australia", "Indonesia",
             "Venezuela", "Peru", "Brazil", "Argentina",
             "Congo", "N Africa", "S Africa", "Egypt", "E Africa", "Madagascar"};  // for reference
+
     public static final int[][] ADJACENT = {
             {4, 1, 5, 6, 3, 2},    // 0
             {4, 5, 0},
@@ -68,56 +70,57 @@ public class Constants {
     public static final int MAP_WIDTH = 1000;    // must be even
     public static final int MAP_HEIGHT = 600;
     public static final int SHELL_WIDTH = 200;
+    public static final int COUNTRY_NODE_RADIUS = 10;
     public static final int[][] COUNTRY_COORD = {
-            {191, 150},     // 0
-            {255, 161},
-            {146, 86},
-            {123, 144},
-            {314, 61},
-            {205, 235},
-            {135, 219},
-            {140, 299},
-            {45, 89},
-            {370, 199},
-            {398, 280},      // 10
-            {465, 270},
-            {547, 180},
-            {460, 200},
-            {393, 127},
-            {463, 122},
-            {628, 227},
-            {679, 332},
-            {572, 338},
-            {861, 213},
-            {645, 152},      // 20
-            {763, 70},
-            {827, 94},
-            {751, 360},
-            {750, 140},
-            {695, 108},
-            {760, 216},
-            {735, 277},
-            {889, 537},
-            {850, 429},
-            {813, 526},       // 30
-            {771, 454},
-            {213, 352},
-            {221, 426},
-            {289, 415},
-            {233, 523},
-            {496, 462},
-            {440, 393},
-            {510, 532},
-            {499, 354},
-            {547, 432},        // 40
-            {586, 545}
+            {180, 115},     // 0
+            {248, 123}, //
+            {146, 81}, //
+            {116, 112}, //
+            {350, 52}, //
+            {188, 173}, //
+            {116, 173}, //
+            {143, 263}, //
+            {65, 84}, //
+            {422, 120},//
+            {422, 170},  //    // 10
+            {497, 153}, //
+            {547, 115}, //
+            {475, 129}, //
+            {395, 89},//
+            {470, 94}, //
+            {628, 163}, //
+            {678, 235}, //
+            {562, 205}, //
+            {845, 192}, //
+            {618, 105},  //    // 20
+            {760, 90}, //
+            {857, 85}, //
+            {751, 257}, //
+            {750, 120}, //
+            {673, 100}, //
+            {760, 153}, //
+            {733, 200}, //
+            {878, 428}, //
+            {884, 348}, //
+            {825, 424}, //      // 30
+            {795, 328}, //
+            {208, 301}, //
+            {207, 372}, //
+            {276, 370}, //
+            {231, 470}, //
+            {500, 340},
+            {440, 253}, //
+            {508, 418}, //
+            {516, 227}, //
+            {550, 306},        // 40
+            {578, 401} //
     };
 
+    // Working progress
     public static class Prompts {
         public static final String WELCOME = "Welcome to Risk -\nBy Team7\nPress enter to get started.\n";
         public static final String NAME = "Please enter your name.";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
-        public static final String COUNTRY_SELECT = "Please type a country to claim.";
     }
 }

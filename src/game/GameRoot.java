@@ -1,5 +1,6 @@
 package game;
 
+import common.Constants;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import map.MapComponent;
@@ -18,18 +19,19 @@ public class GameRoot extends BorderPane {
     private final MapModel mapModel = new MapModel();
 
     public GameRoot() {
-
+        setId("game-root");
         // Create top-level components
         MapComponent mapComponent = new MapComponent(mapModel);
-        ShellComponent shellComponent = new ShellComponent(shellModel);
+        ShellComponent shellComponent = new ShellComponent(shellModel, mapModel);
         mapModel.addObserver(mapComponent);
         shellModel.addObserver(shellComponent);
+        shellModel.addObserver(mapComponent);
 
         // BorderPane configuration
         final Insets componentInsets = new Insets(5);
-        setLeft(shellComponent);
+        setRight(shellComponent);
         setCenter(mapComponent);
-        setMargin(mapComponent, componentInsets);
-        setMargin(shellComponent, componentInsets);
+        setMargin(shellComponent, new Insets(10, 10, 10, 10));
+        setMargin(mapComponent, new Insets(10, 0, 10, 10));
     }
 }
