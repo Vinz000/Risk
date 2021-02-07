@@ -31,5 +31,8 @@ public class Main extends Application {
         primaryStage.setTitle("Risk");
         primaryStage.setScene(gameScene);
         primaryStage.show();
+
+        // Start the game!
+        gameRoot.start();
     }
 }
