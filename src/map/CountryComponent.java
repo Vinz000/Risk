@@ -32,12 +32,15 @@ public class CountryComponent extends StackPane implements Observer {
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
         countryMarker.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
 
-        setOnMouseMoved(mouseEvent -> {
-            if (!tooltip.isShowing()) tooltip.show(getParent(), mouseEvent.getScreenX() + 5, mouseEvent.getScreenY() + 5);
+        setOnMouseEntered(mouseEvent -> {
+            if (!tooltip.isShowing()) tooltip.show(getParent(), mouseEvent.getScreenX() + 10,
+                    mouseEvent.getScreenY() + 10);
         });
+
         setOnMouseExited(mouseEvent -> {
             if (tooltip.isShowing()) tooltip.hide();
         });
+
         tooltip.setText(countryNode.getCountryName());
 
         setTranslateX(countryNode.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
