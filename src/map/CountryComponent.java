@@ -1,7 +1,6 @@
 package map;
 
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -33,22 +32,19 @@ public class CountryComponent extends StackPane implements Observer {
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
         countryMarker.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
 
-        Pane tooltipPane = installTooltip();
+        setOnMouseMoved(mouseEvent -> {
+            if (!tooltip.isShowing()) tooltip.show(getParent(), mouseEvent.getScreenX() + 5, mouseEvent.getScreenY() + 5);
+        });
+        setOnMouseExited(mouseEvent -> {
+            if (tooltip.isShowing()) tooltip.hide();
+        });
+        tooltip.setText(countryNode.getCountryName());
 
         setTranslateX(countryNode.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
         setTranslateY(countryNode.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
 
-        getChildren().addAll(countryMarker, armyCount, tooltipPane);
+        getChildren().addAll(countryMarker, armyCount);
         setText();
-    }
-
-    private Pane installTooltip() {
-        tooltip.setText(countryNode.getCountryName());
-
-        Pane pane = new Pane();
-        Tooltip.install(pane, tooltip);
-
-        return pane;
     }
 
     public void setText() {
