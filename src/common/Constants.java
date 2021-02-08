@@ -121,11 +121,12 @@ public class Constants {
     };
 
     // Working progress
-    public static class Prompts {
-        public static final String WELCOME = "Welcome to Risk -\nBy Team7\nPress enter to get started.\n";
-        public static final String NAME = "Please enter your name. ";
+    public static class Notifications {
+        public static final String WELCOME = "Welcome to Risk -\nBy Team7\n";
+        public static final String NAME = "What is your name? ";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
+        public static final String GG = "Good game!";
     }
 
     public static class ComponentIds {

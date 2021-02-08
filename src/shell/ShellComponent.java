@@ -1,7 +1,6 @@
 package shell;
 
 import common.Constants;
-import game.GameState;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -9,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import map.MapModel;
 
 import java.util.Observable;
@@ -18,9 +16,8 @@ import java.util.Observer;
 
 public class ShellComponent extends VBox implements Observer {
 
-    private final Label log = new Label(Constants.Prompts.WELCOME);
+    private final Label log = new Label();
     private final TextField inputLine = new TextField();
-    private GameState gameState = GameState.NEW;
 
     public ShellComponent(ShellModel shellModel, MapModel mapModel) {
         super();
@@ -42,43 +39,27 @@ public class ShellComponent extends VBox implements Observer {
         log.setMaxWidth(Constants.SHELL_WIDTH);
         setVgrow(log, Priority.ALWAYS);
 
-        EventHandler<ActionEvent> eventHandler = event -> {
-            if (gameState.validate(inputLine.getText())) {
-                switch (gameState) {
-                    case NEW:
-                        appendLogText(Constants.Prompts.NAME + "(Player one)");
-                        break;
-                    case PLAYER_ONE_NAME:
-                        appendLogText("Nice to meet you, " + inputLine.getText());
-                        appendLogText(Constants.Prompts.NAME + "(Player two)");
+        EventHandler<ActionEvent> onEnterPressed = event -> {
 
-                        Player playerOne = new Player(inputLine.getText(), Color.valueOf("#710193"));
-                        mapModel.addPlayer(playerOne);
-                        break;
-                    case PLAYER_TWO_NAME:
-                        appendLogText("And you, " + inputLine.getText());
-                        appendLogText("Lets get started!");
+            String userInput = inputLine.getText();
+            ShellPrompt nextPrompt = shellModel.nextPrompt();
 
-                        Player playerTwo = new Player(inputLine.getText(), Color.valueOf("#fee227"));
-                        mapModel.addPlayer(playerTwo);
-
-                        mapModel.initializeGame();
-                        break;
-                    case QUIT:
-                        appendLogText("Thanks for playing!");
-                        inputLine.setDisable(true);
-                    default:
-                        System.out.println("Should never be reached");
+            // If there is a value in the queue...
+            if (nextPrompt != null) {
+                if (nextPrompt.validator.apply(userInput)) {
+                    nextPrompt.handler.accept(userInput);
+                } else {
+                    appendLogText("Invalid input, please try again.");
+                    shellModel.retryPrompt(nextPrompt);
                 }
-
-                // Move to next game state
-                gameState = gameState.next();
             } else {
-                appendLogText("Enter Valid Input!");
+                appendLogText(Constants.Notifications.GG);
+                inputLine.setDisable(true);
             }
+
             inputLine.clear();
         };
-        inputLine.setOnAction(eventHandler);
+        inputLine.setOnAction(onEnterPressed);
         inputLine.setId(Constants.ComponentIds.SHELL_INPUT);
 
         getChildren().addAll(log, inputLine);
@@ -89,6 +70,10 @@ public class ShellComponent extends VBox implements Observer {
     public void update(Observable o, Object arg) {
         ShellModel shellModel = ((ShellModel) o);
 
-        appendLogText("ShellComponent update");
+        // [arg] is a notification.
+        if (arg instanceof String) {
+            appendLogText((String) arg);
+        }
+
     }
 }
