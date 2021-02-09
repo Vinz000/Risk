@@ -1,10 +1,7 @@
 package map;
 
-import javafx.scene.Group;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 
 import java.util.List;
 import java.util.Observable;
@@ -29,11 +26,13 @@ public class MapComponent extends Pane implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof List) {
-            if (getChildren().containsAll((List) arg)) {
-                getChildren().removeAll((List) arg);
+            List<Line> lineLinks = (List) arg;
+
+            if (getChildren().containsAll(lineLinks)){
+                getChildren().removeAll(lineLinks);
             } else {
-                getChildren().addAll((List) arg);
-                ((List<Line>) arg).forEach(i -> i.toBack());
+                getChildren().addAll(lineLinks);
+                lineLinks.forEach(i -> i.toBack());
             }
         }
     }
