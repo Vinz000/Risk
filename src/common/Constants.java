@@ -137,5 +137,6 @@ public class Constants {
         public static final String SHELL_INPUT = "input-line";
         public static final String SHELL_LOG = "log";
         public static final String GAME_ROOT = "game-root";
+        public static final String TEXT = "text";
     }
 }

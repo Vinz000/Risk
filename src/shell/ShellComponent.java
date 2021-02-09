@@ -19,16 +19,16 @@ public class ShellComponent extends VBox implements Observer {
     private final Label log = new Label();
     private final TextField inputLine = new TextField();
 
-    public ShellComponent(ShellModel shellModel, MapModel mapModel) {
+    public ShellComponent(ShellModel shellModel) {
         super();
-        build(shellModel, mapModel);
+        build(shellModel);
     }
 
     public void appendLogText(String message) {
         log.setText(log.getText() + "\n" + message);
     }
 
-    private void build(ShellModel shellModel, MapModel mapModel) {
+    private void build(ShellModel shellModel) {
 
         setId(Constants.ComponentIds.SHELL);
 

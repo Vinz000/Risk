@@ -1,5 +1,7 @@
 package map;
 
+import javafx.scene.Group;
+import javafx.scene.shape.Line;
 import shell.Player;
 
 import java.util.ArrayList;
@@ -21,6 +23,11 @@ public class MapModel extends Observable {
         for (int i = 0; i < NUM_COUNTRIES; i++) {
             countries.add(new CountryNode(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], COUNTRY_COORDS[i]));
         }
+    }
+
+    public void updateLinks(List links) {
+        setChanged();
+        notifyObservers(links);
     }
 
     public List<CountryNode> getCountries() {

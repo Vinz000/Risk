@@ -1,7 +1,6 @@
 .root {
     /* Theme colours */
-    neutral-player-color: #DCDCDC;
-    background-color: #5A6868;
+    neutral-player-color: #869090;
 }
 
 /* Styling for Continent Pane */
@@ -13,28 +12,9 @@
     -fx-background-radius: 10;
 }
 
-#N_America {
-    -fx-fill: #FFABAB;
-}
-
-#S_America {
-    -fx-fill: #FFFFD1;
-}
-
-#Europe {
-    -fx-fill: #6EB5FE;
-}
-
-#Asia {
-    -fx-fill: #BAD577;
-}
-
-#Africa {
-    -fx-fill: #FFB347;
-}
-
-#Australia {
-    -fx-fill: #B5B9FE;
+#text {
+    -fx-text-fill: white;
+    -fx-fill: white;
 }
 
 /* End of styling for continent pane */
@@ -43,28 +23,22 @@
     -fx-background-color: #5A6868;
 }
 
-#player-1 {
-}
-
-#player-2 {
-}
-
 #neutral-player {
     -fx-fill: neutral-player-color;
 }
 
 #map-component {
     -fx-background-size: 1000 660;
-    -fx-background-image: url("newMap.png");
+    -fx-background-image: url("MAP3.png");
     -fx-background-position: top -70 left -5;
     -fx-border-radius: 10;
     -fx-background-color: #126D98;
     -fx-background-radius: 10;
-    -fx-effect: dropshadow(gaussian, black, 10, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, #3B4040, 10, 0, 0, 3);
 }
 
 #log {
-    -fx-fill: white;
+    -fx-padding: 0 0 0 5;
     -fx-text-fill: white;
 }
 
@@ -79,6 +53,5 @@
 }
 
 #shell-component {
-    -fx-text-fill: white;
     -fx-background-color: transparent;
 }

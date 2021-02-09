@@ -2,6 +2,7 @@ import common.Constants;
 import game.GameRoot;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -18,7 +19,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GameRoot gameRoot = new GameRoot();
-
+        primaryStage.getIcons().add(new Image("/resources/swords.png"));
         Scene gameScene = new Scene(
                 gameRoot,
                 Constants.MAP_WIDTH + Constants.SHELL_WIDTH,
