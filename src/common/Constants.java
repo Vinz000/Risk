@@ -131,12 +131,16 @@ public class Constants {
 
     public static class ComponentIds {
         public static final String MAP = "map-component";
-        public static final String CONTINENT_PANE = "continent-pane";
         public static final String NEUTRAL_PLAYER = "neutral-player";
         public static final String SHELL = "shell-component";
         public static final String SHELL_INPUT = "input-line";
         public static final String SHELL_LOG = "log";
         public static final String GAME_ROOT = "game-root";
         public static final String TEXT = "text";
+    }
+
+    public static class Paths {
+        public static final String STYLE_SHEET = "resources/style.css";
+        public static final String ICON = "resources/swords.png";
     }
 }

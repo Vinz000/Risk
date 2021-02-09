@@ -18,22 +18,16 @@ public class MapComponent extends Pane implements Observer {
 
     private void drawBoard(MapModel mapModel) {
         for (CountryNode countryNode : mapModel.getCountries()) {
-            CountryComponent countryComponent = new CountryComponent(countryNode, mapModel);
+            CountryComponent countryComponent = new CountryComponent(countryNode);
             getChildren().add(countryComponent);
+
+            List<Line> countryLinks = countryComponent.getCountryLinks();
+            getChildren().addAll(countryLinks);
+            countryLinks.forEach(link -> link.toBack());
         }
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof List) {
-            List<Line> lineLinks = (List) arg;
-
-            if (getChildren().containsAll(lineLinks)){
-                getChildren().removeAll(lineLinks);
-            } else {
-                getChildren().addAll(lineLinks);
-                lineLinks.forEach(i -> i.toBack());
-            }
-        }
     }
 }

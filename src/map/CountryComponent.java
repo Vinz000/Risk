@@ -3,6 +3,7 @@ package map;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -16,8 +17,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import static common.Constants.COUNTRY_COORDS;
-import static common.Constants.MAP_WIDTH;
+import static common.Constants.*;
 
 /**
  * So we keep Country as just a data structure
@@ -31,32 +31,20 @@ public class CountryComponent extends StackPane implements Observer {
     private final Tooltip tooltip = new Tooltip();
     private final List<Line> countryLinks = new ArrayList<>();
 
-    public CountryComponent(CountryNode countryNode, MapModel mapModel) {
+    public CountryComponent(CountryNode countryNode) {
         this.countryNode = countryNode;
         armyCount.setId(Constants.ComponentIds.TEXT);
         this.countryNode.addObserver(this);
         createLinks();
-        build(mapModel);
+        build();
     }
 
-    private void build(MapModel mapModel) {
+    private void build() {
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
         countryMarker.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
 
-        setOnMouseEntered(mouseEvent -> {
-            if (!tooltip.isShowing()) tooltip.show(getParent(), countryNode.getCoords().getX() + 150,
-                    countryNode.getCoords().getY() + 150);
-            setEffect(new DropShadow());
-            setCursor(Cursor.HAND);
-            mapModel.updateLinks(countryLinks);
-        });
-
-        setOnMouseExited(mouseEvent -> {
-            if (tooltip.isShowing()) tooltip.hide();
-            setEffect(null);
-            setCursor(Cursor.MOVE);
-            mapModel.updateLinks(countryLinks);
-        });
+        setOnMouseMoved(this::onMouseMoved);
+        setOnMouseExited(this::onMouseExited);
 
         tooltip.setText(countryNode.getCountryName());
 
@@ -64,10 +52,34 @@ public class CountryComponent extends StackPane implements Observer {
         setTranslateY(countryNode.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
 
         getChildren().addAll(countryMarker, armyCount);
-        setText();
+        updateArmyCount(String.valueOf(countryNode.getArmy()));
     }
 
-    public void createLinks() {
+    private void onMouseMoved(MouseEvent mouseEvent) {
+        double tooltipX = mouseEvent.getScreenX() + 15;
+        double tooltipY = mouseEvent.getScreenY() + 15;
+
+        if (!tooltip.isShowing()) tooltip.show(getParent(), tooltipX, tooltipY);
+
+        tooltip.setAnchorX(tooltipX);
+        tooltip.setAnchorY(tooltipY);
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setOffsetY(4);
+        setEffect(dropShadow);
+        setCursor(Cursor.HAND);
+
+        countryLinks.forEach(link -> link.setVisible(true));
+    }
+
+    private void onMouseExited(MouseEvent mouseEvent) {
+        tooltip.hide();
+        setEffect(null);
+        setCursor(Cursor.MOVE);
+        countryLinks.forEach(link -> link.setVisible(false));
+    }
+
+    private void createLinks() {
         for (int adj : countryNode.getAdjCountries()) {
             Line line = new Line();
             line.setStartX(countryNode.getCoords().getX());
@@ -80,40 +92,42 @@ public class CountryComponent extends StackPane implements Observer {
                 line.setEndX(0);
                 line.setEndY(countryNode.getCoords().getY());
 
-                countryLinks.add(getExtraLine(adj));
+                countryLinks.add(getHelperLine(adj));
             } else if (isKamchatkaRight) {
                 line.setEndX(MAP_WIDTH - 30);
                 line.setEndY(countryNode.getCoords().getY());
 
-                countryLinks.add(getExtraLine(adj));
+                countryLinks.add(getHelperLine(adj));
             } else {
                 line.setEndX(COUNTRY_COORDS[adj][0]);
                 line.setEndY(COUNTRY_COORDS[adj][1]);
             }
-            line.setStrokeWidth(1.5);
             countryLinks.add(line);
         }
 
+        countryLinks.forEach(link -> {
+            link.setStrokeWidth(2.5);
+            link.setVisible(false);
+        });
     }
 
-    private Line getExtraLine(int countryId) {
+    private Line getHelperLine(int countryId) {
         Line line = new Line();
         line.setStartX(COUNTRY_COORDS[countryId][0]);
         line.setStartY(COUNTRY_COORDS[countryId][1]);
 
-        if (countryId == 22) {
-            line.setEndX(MAP_WIDTH - 30);
-        } else {
-            line.setEndX(0);
-        }
+        line.setEndX((countryId == 22) ? MAP_WIDTH - 30 : 0);
 
         line.setEndY(COUNTRY_COORDS[countryId][1]);
-        line.setStrokeWidth(1.5);
         return line;
     }
 
-    public void setText() {
-        armyCount.setText(Integer.toString(countryNode.getArmy()));
+    public List<Line> getCountryLinks() {
+        return countryLinks;
+    }
+
+    private void updateArmyCount(String text) {
+        armyCount.setText(text);
     }
 
     @Override
@@ -128,7 +142,7 @@ public class CountryComponent extends StackPane implements Observer {
             );
             tooltip.setText(toolTipText);
         } else {
-            armyCount.setText(arg.toString());
+            updateArmyCount(arg.toString());
         }
     }
 }

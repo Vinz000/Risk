@@ -1,5 +1,4 @@
 .root {
-    /* Theme colours */
     neutral-player-color: #869090;
 }
 
@@ -17,8 +16,6 @@
     -fx-fill: white;
 }
 
-/* End of styling for continent pane */
-
 #game-root {
     -fx-background-color: #5A6868;
 }
@@ -29,7 +26,7 @@
 
 #map-component {
     -fx-background-size: 1000 660;
-    -fx-background-image: url("MAP3.png");
+    -fx-background-image: url("MAP.png");
     -fx-background-position: top -70 left -5;
     -fx-border-radius: 10;
     -fx-background-color: #126D98;
@@ -38,7 +35,6 @@
 }
 
 #log {
-    -fx-padding: 0 0 0 5;
     -fx-text-fill: white;
 }
 
@@ -46,7 +42,7 @@
     -fx-background-color: #697777;
     -fx-padding: 5;
     -fx-text-fill: white;
-    -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-style: hidden;
     -fx-border-color: white;
     -fx-border-radius: 5;
     -fx-background-radius: 5;

@@ -67,12 +67,10 @@ public class ShellComponent extends VBox implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        ShellModel shellModel = ((ShellModel) o);
 
         // [arg] is a notification.
         if (arg instanceof String) {
             appendLogText((String) arg);
         }
-
     }
 }

@@ -4,10 +4,7 @@ import javafx.scene.Group;
 import javafx.scene.shape.Line;
 import shell.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 import static common.Constants.*;
 
@@ -23,11 +20,6 @@ public class MapModel extends Observable {
         for (int i = 0; i < NUM_COUNTRIES; i++) {
             countries.add(new CountryNode(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], COUNTRY_COORDS[i]));
         }
-    }
-
-    public void updateLinks(List links) {
-        setChanged();
-        notifyObservers(links);
     }
 
     public List<CountryNode> getCountries() {
@@ -50,6 +42,7 @@ public class MapModel extends Observable {
             countries.get(i).setArmy(1);
         }
     }
+
 
 }
 

@@ -1,9 +1,10 @@
-import common.Constants;
 import game.GameRoot;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import static common.Constants.*;
 
 public class Main extends Application {
 
@@ -18,16 +19,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         GameRoot gameRoot = new GameRoot();
-        primaryStage.getIcons().add(new Image("/resources/swords.png"));
+        primaryStage.getIcons().add(new Image(Paths.ICON));
+
         Scene gameScene = new Scene(
                 gameRoot,
-                Constants.MAP_WIDTH + Constants.SHELL_WIDTH,
-                Constants.MAP_HEIGHT
+                MAP_WIDTH + SHELL_WIDTH,
+                MAP_HEIGHT
         );
-        gameScene.getStylesheets().add("resources/style.css");
-        primaryStage.setMinWidth(Constants.MAP_WIDTH + Constants.SHELL_WIDTH);
-        primaryStage.setMinHeight(Constants.MAP_HEIGHT);
+
+        gameScene.getStylesheets().add(Paths.STYLE_SHEET);
+        primaryStage.setMinWidth(MAP_WIDTH + SHELL_WIDTH);
+        primaryStage.setMinHeight(MAP_HEIGHT);
         primaryStage.setResizable(false);
         primaryStage.setTitle("Risk");
         primaryStage.setScene(gameScene);
