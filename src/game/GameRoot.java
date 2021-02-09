@@ -21,7 +21,7 @@ public class GameRoot extends BorderPane {
 
         // Create top-level components
         MapComponent mapComponent = new MapComponent(mapModel);
-        ShellComponent shellComponent = new ShellComponent(shellModel, mapModel);
+        ShellComponent shellComponent = new ShellComponent(shellModel);
         mapModel.addObserver(mapComponent);
         shellModel.addObserver(shellComponent);
         shellModel.addObserver(mapComponent);
@@ -42,7 +42,7 @@ public class GameRoot extends BorderPane {
 
         shellModel.notify(Constants.Notifications.NAME + "(P1)");
         ShellPrompt playerOnePrompt = new ShellPrompt(input -> {
-            Player playerOne = new Player(input, Color.valueOf("#710193"));
+            Player playerOne = new Player(input, Color.valueOf("#0b7540"));
             mapModel.addPlayer(playerOne);
 
             // Send message for next prompt
@@ -52,7 +52,7 @@ public class GameRoot extends BorderPane {
         shellModel.prompt(playerOnePrompt);
 
         ShellPrompt playerTwoPrompt = new ShellPrompt(input -> {
-            Player playerTwo = new Player(input, Color.valueOf("#fee227"));
+            Player playerTwo = new Player(input, Color.valueOf("#ba131d"));
             mapModel.addPlayer(playerTwo);
 
             // We have player info now, so

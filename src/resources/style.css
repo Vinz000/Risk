@@ -1,7 +1,5 @@
 .root {
-    /* Theme colours */
-    neutral-player-color: #DCDCDC;
-    background-color: #5A6868;
+    neutral-player-color: #869090;
 }
 
 /* Styling for Continent Pane */
@@ -13,40 +11,13 @@
     -fx-background-radius: 10;
 }
 
-#N_America {
-    -fx-fill: #FFABAB;
+#text {
+    -fx-text-fill: white;
+    -fx-fill: white;
 }
-
-#S_America {
-    -fx-fill: #FFFFD1;
-}
-
-#Europe {
-    -fx-fill: #6EB5FE;
-}
-
-#Asia {
-    -fx-fill: #BAD577;
-}
-
-#Africa {
-    -fx-fill: #FFB347;
-}
-
-#Australia {
-    -fx-fill: #B5B9FE;
-}
-
-/* End of styling for continent pane */
 
 #game-root {
     -fx-background-color: #5A6868;
-}
-
-#player-1 {
-}
-
-#player-2 {
 }
 
 #neutral-player {
@@ -55,16 +26,15 @@
 
 #map-component {
     -fx-background-size: 1000 660;
-    -fx-background-image: url("newMap.png");
+    -fx-background-image: url("MAP.png");
     -fx-background-position: top -70 left -5;
     -fx-border-radius: 10;
     -fx-background-color: #126D98;
     -fx-background-radius: 10;
-    -fx-effect: dropshadow(gaussian, black, 10, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, #3B4040, 10, 0, 0, 3);
 }
 
 #log {
-    -fx-fill: white;
     -fx-text-fill: white;
 }
 
@@ -72,13 +42,12 @@
     -fx-background-color: #697777;
     -fx-padding: 5;
     -fx-text-fill: white;
-    -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-style: hidden;
     -fx-border-color: white;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
 }
 
 #shell-component {
-    -fx-text-fill: white;
     -fx-background-color: transparent;
 }
