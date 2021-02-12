@@ -2,9 +2,8 @@ package map;
 
 import java.util.Observable;
 
+import Player.Player;
 import javafx.geometry.Point2D;
-import shell.Player;
-
 
 public class CountryNode extends Observable {
     private final String countryName;
@@ -47,14 +46,18 @@ public class CountryNode extends Observable {
         notifyObservers(army);
     }
 
+    public void incrementArmy(int army) {
+        setArmy(this.army + army);
+    }
+
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(Player player) {
-        this.currentPlayer = player;
+    public void setCurrentPlayer(Player humanPlayer) {
+        this.currentPlayer = humanPlayer;
         setChanged();
-        notifyObservers(player);
+        notifyObservers(currentPlayer);
     }
 
 

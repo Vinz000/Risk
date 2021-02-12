@@ -1,5 +1,6 @@
 package map;
 
+import Player.Player;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
@@ -10,7 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import common.Constants;
-import shell.Player;
+import Player.HumanPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
