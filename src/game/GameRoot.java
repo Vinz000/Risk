@@ -3,26 +3,30 @@ package game;
 import cards.Card;
 import cards.Deck;
 import common.Constants;
+import player.HumanPlayer;
 import common.Validators;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
+import map.CountryNode;
 import map.MapComponent;
 import map.MapModel;
-import shell.Player;
 import shell.ShellComponent;
 import shell.ShellModel;
 import shell.ShellPrompt;
 
+import java.util.Collections;
+import java.util.Optional;
+
+import static common.Constants.*;
 
 public class GameRoot extends BorderPane {
 
     // Create models
     private final ShellModel shellModel = new ShellModel();
-    private final MapModel mapModel = new MapModel();
+    private final MapModel mapModel = MapModel.getMapModel();
 
     public GameRoot() {
-        setId(Constants.ComponentIds.GAME_ROOT);
+        setId(ComponentIds.GAME_ROOT);
 
         // Create top-level components
         MapComponent mapComponent = new MapComponent(mapModel);
@@ -39,31 +43,89 @@ public class GameRoot extends BorderPane {
     }
 
     public void start() {
-        shellModel.notify(Constants.Notifications.WELCOME);
+        shellModel.notify(Notifications.WELCOME);
 
         /*
          * Getting player names
          */
 
-        shellModel.notify(Constants.Notifications.NAME + "(P1)");
+        shellModel.notify(Notifications.NAME + "(P1)");
+
         ShellPrompt playerOnePrompt = new ShellPrompt(input -> {
-            Player playerOne = new Player(input, Color.valueOf("#0b7540"));
-            mapModel.addPlayer(playerOne);
+            HumanPlayer humanPlayerOne = new HumanPlayer(input, Colors.PLAYER_1_COLOR);
+            mapModel.addPlayer(humanPlayerOne);
 
             // Send message for next prompt
-            shellModel.notify(Constants.Notifications.NAME + "(P2)");
+            shellModel.notify(Notifications.NAME + "(P2)\n");
 
         }, Validators.nonEmpty);
-        shellModel.prompt(playerOnePrompt);
 
         ShellPrompt playerTwoPrompt = new ShellPrompt(input -> {
-            Player playerTwo = new Player(input, Color.valueOf("#ba131d"));
-            mapModel.addPlayer(playerTwo);
+
+            HumanPlayer humanPlayerTwo = new HumanPlayer(input, Colors.PLAYER_2_COLOR);
+            mapModel.addPlayer(humanPlayerTwo);
+
+            shellModel.notify(Notifications.DICE_ROLL);
 
             shellModel.notify(Constants.Notifications.TERRITORY);
             shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
         }, Validators.nonEmpty);
-        shellModel.prompt(playerTwoPrompt);
+
+        ShellPrompt selectFirstPlayer = new ShellPrompt(input -> {
+            Dice dice = new Dice();
+            int playerOneDiceSum;
+            int playerTwoDiceSum;
+
+            do {
+                playerOneDiceSum = dice.getNextDice(2).getRollSum();
+                String playerOneDiceNotification = mapModel.getPlayer(0).getName() + " "
+                        + Notifications.ROLLED + dice.printRoll();
+
+                shellModel.notify(playerOneDiceNotification);
+
+                playerTwoDiceSum = dice.getNextDice(2).getRollSum();
+                String playerTwoDiceNotification = mapModel.getPlayer(1).getName() + " "
+                        + Notifications.ROLLED + dice.printRoll();
+
+                shellModel.notify(playerTwoDiceNotification);
+
+                if (playerOneDiceSum == playerTwoDiceSum) {
+                    shellModel.notify("\nRolled the same number\nRolling again!");
+                } else if (playerOneDiceSum < playerTwoDiceSum) {
+                    // player One goes first by default but if player One rolls a lower sum,
+                    // then we change the turn so that the current player is now player Two.
+
+                    mapModel.changeTurn();
+                }
+
+            } while (playerOneDiceSum == playerTwoDiceSum);
+
+            shellModel.notify(String.format("%s rolled higher, so is going first\n", mapModel.getCurrentPlayer().getName()));
+            shellModel.notify("Your turn " + mapModel.getCurrentPlayer().getName());
+            shellModel.notify("Please choose country to reinforce.");
+        }, Validators.alwaysValid);
+
+        ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
+            // Place down 3 armies in corresponding countryNode
+            Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
+            countryNode.ifPresent(node -> node.incrementArmy(3));
+
+            shellModel.notify("Successfully placed armies down");
+            shellModel.notify("Please press Enter to continue");
+        }, Validators.currentPlayerOwns);
+
+        ShellPrompt chooseNeutral = new ShellPrompt(input -> {
+            Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
+            countryNode.ifPresent(node -> node.incrementArmy(1));
+
+            shellModel.notify("Successfully placed army.");
+
+            Collections.rotate(mapModel.getNeutralPlayers(), -1);
+        }, Validators.neutralPlayerOwns);
+
+        ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> shellModel.notify(
+                String.format("Place one army owned by %s", mapModel.getNeutralPlayers().get(0).getName())
+        ), Validators.alwaysValid);
 
         /*
          * Whatever comes after we get player names
@@ -104,8 +166,20 @@ public class GameRoot extends BorderPane {
             deck.addWildcards();
             deck.shuffle();
         }, Validators.yesNo);
+
+        shellModel.prompt(playerOnePrompt);
+        shellModel.prompt(playerTwoPrompt);
         shellModel.prompt(drawingTerritories);
+        shellModel.prompt(selectFirstPlayer);
 
-
+        // Each player takes 12 turns
+        for (int i = 0; i < 24; i++) {
+            shellModel.prompt(chooseOwnCountry);
+            
+            for (int j = 0; j < NUM_NEUTRAL_PLAYERS; j++) {
+                shellModel.prompt(beforeChoosingNeutrals);
+                shellModel.prompt(chooseNeutral);
+            }
+        }
     }
 }

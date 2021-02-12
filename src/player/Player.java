@@ -1,27 +1,22 @@
-package shell;
+package player;
 
 import cards.Card;
 import javafx.scene.paint.Color;
+import map.CountryNode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class Player {
-
-    private final String id;
+public abstract class Player {
     private final String name;
     private final Color color;
+    private final List<CountryNode> ownedCountries = new ArrayList<>();
     private final List<Card> hand = new ArrayList<>();
+    private int reinforcement;
 
     public Player(String name, Color color) {
-        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.color = color;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getName() {
@@ -30,6 +25,22 @@ public class Player {
 
     public Color getColor() {
         return color;
+    }
+
+    public void addCountry(CountryNode countryNode) {
+        ownedCountries.add(countryNode);
+    }
+
+    public List<CountryNode> getOwnedCountries() {
+        return ownedCountries;
+    }
+
+    public void updateReinforcement(int armyOffset) {
+        reinforcement += armyOffset;
+    }
+
+    public int getReinforcement() {
+        return reinforcement;
     }
 
     public List<Card> getHand() {
@@ -42,4 +53,5 @@ public class Player {
 
         return drawCard;
     }
+
 }

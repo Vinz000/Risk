@@ -1,6 +1,5 @@
 package shell;
 
-import common.Constants;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -12,6 +11,7 @@ import javafx.scene.layout.VBox;
 import java.util.Observable;
 import java.util.Observer;
 
+import static common.Constants.*;
 
 public class ShellComponent extends VBox implements Observer {
 
@@ -29,13 +29,13 @@ public class ShellComponent extends VBox implements Observer {
 
     private void build(ShellModel shellModel) {
 
-        setId(Constants.ComponentIds.SHELL);
+        setId(ComponentIds.SHELL);
 
-        log.setId(Constants.ComponentIds.SHELL_LOG);
+        log.setId(ComponentIds.SHELL_LOG);
 
         log.setWrapText(true);
-        log.setMinWidth(Constants.SHELL_WIDTH);
-        log.setMaxWidth(Constants.SHELL_WIDTH);
+        log.setMinWidth(SHELL_WIDTH);
+        log.setMaxWidth(SHELL_WIDTH);
         setVgrow(log, Priority.ALWAYS);
 
         EventHandler<ActionEvent> onEnterPressed = event -> {
@@ -52,14 +52,14 @@ public class ShellComponent extends VBox implements Observer {
                     shellModel.retryPrompt(nextPrompt);
                 }
             } else {
-                appendLogText(Constants.Notifications.GG);
+                appendLogText(Notifications.GG);
                 inputLine.setDisable(true);
             }
 
             inputLine.clear();
         };
         inputLine.setOnAction(onEnterPressed);
-        inputLine.setId(Constants.ComponentIds.SHELL_INPUT);
+        inputLine.setId(ComponentIds.SHELL_INPUT);
 
         getChildren().addAll(log, inputLine);
         setAlignment(Pos.BOTTOM_RIGHT);
@@ -73,4 +73,6 @@ public class ShellComponent extends VBox implements Observer {
             appendLogText((String) arg);
         }
     }
+
+
 }
