@@ -1,10 +1,10 @@
 package map;
 
-import javafx.scene.Group;
-import javafx.scene.shape.Line;
 import shell.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 
 import static common.Constants.*;
 
@@ -31,16 +31,28 @@ public class MapModel extends Observable {
     }
 
     public void initializeGame() {
-        Collections.shuffle(countries);
+
         int currentPlayerIndex = 0;
-        for (int i = 0; i < NUM_COUNTRIES; i++) {
-            if (i < INIT_COUNTRIES_PLAYER * 2) {
-                countries.get(i).setCurrentPlayer(players.get(currentPlayerIndex));
-                currentPlayerIndex++;
-                currentPlayerIndex %= 2;
+        String temp;
+
+        int counter = 0;
+        while (counter < INIT_COUNTRIES_PLAYER * 2) {
+            for (int i = 0; i < players.get(currentPlayerIndex).getHand().size(); i++) {
+                for (int j = 0; j < NUM_COUNTRIES; j++) {
+                    temp = players.get(currentPlayerIndex).getHand().get(i).getCountryName();
+                    if (temp.equals(countries.get(j).getCountryName())) {
+                        countries.get(j).setCurrentPlayer(players.get(currentPlayerIndex));
+                        countries.get(j).setArmy(1);
+                        counter++;
+                    }
+                }
             }
-            countries.get(i).setArmy(1);
+            currentPlayerIndex++;
         }
+    }
+
+    public Player getPlayer(int i) {
+        return players.get(i);
     }
 
 
