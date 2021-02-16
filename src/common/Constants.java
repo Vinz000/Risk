@@ -10,6 +10,10 @@ public class Constants {
     public static final int INIT_COUNTRIES_NEUTRAL = 6;
     public static final int INIT_UNITS_PLAYER = 36;
     public static final int INIT_UNITS_NEUTRAL = 24;
+    public static final int NUM_MAIN_CARDS = 42;
+    public static final int NUM_MAIN_CARDS_PLUS_WILDCARDS = 44;
+    public static final int NUM_INDIVIDUAL_CARDS = 14;
+    public static final int NUM_WILDCARDS = 2;
 
     public static final String[] COUNTRY_NAMES = {
             "Ontario", "Quebec", "NW Territory", "Alberta", "Greenland", "E United States", "W United States", "Central America", "Alaska",
@@ -127,6 +131,9 @@ public class Constants {
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
         public static final String GG = "Good game!";
+        public static final String DRAWN = " drew the card ";
+        public static final String TERRITORY = "The cards for the territories will now be drawn.";
+        public static final String TERRITORY_OPTION = "Would you like to see the card draw outcome before initialization?";
     }
 
     public static class ComponentIds {
@@ -143,4 +150,5 @@ public class Constants {
         public static final String STYLE_SHEET = "resources/style.css";
         public static final String ICON = "resources/swords.png";
     }
+
 }
