@@ -1,5 +1,6 @@
 package common;
 
+import javafx.scene.paint.Color;
 
 public class Constants {
     public static final int NUM_PLAYERS = 2;
@@ -124,10 +125,19 @@ public class Constants {
             {578, 401} //
     };
 
+    public static class Colors {
+        public static final Color PLAYER_1_COLOR = Color.valueOf("#6a0dad");
+        public static final Color PLAYER_2_COLOR = Color.valueOf("#ba131d");
+
+        public static final Color NEUTRAL_PLAYER = Color.valueOf("#787878");
+    }
+
     // Working progress
     public static class Notifications {
         public static final String WELCOME = "Welcome to Risk -\nBy Team7\n";
         public static final String NAME = "What is your name? ";
+        public static final String DICE_ROLL = "Rolling the dice";
+        public static final String ROLLED = "has rolled: ";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
         public static final String GG = "Good game!";

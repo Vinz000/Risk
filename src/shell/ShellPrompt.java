@@ -8,7 +8,10 @@ public class ShellPrompt {
     public final Function<String, Boolean> validator;
 
     public ShellPrompt(Consumer<String> handler, Function<String, Boolean> validator) {
+
         this.handler = handler;
         this.validator = validator;
+
     }
+
 }

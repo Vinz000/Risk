@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ShellModel extends Observable {
     private final Deque<ShellPrompt> promptQueue = new LinkedList<>();
+    private ShellPrompt shellPrompt;
 
     public ShellModel() {
     }
