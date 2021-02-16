@@ -11,13 +11,12 @@ public class Player {
     private final String id;
     private final String name;
     private final Color color;
-    private ArrayList<Card> hand;
+    private final ArrayList<Card> hand = new ArrayList<>();
 
-    public Player(String name, Color color, ArrayList<Card> hand) {
+    public Player(String name, Color color) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.color = color;
-        this.hand = hand;
     }
 
     public String getId() {
@@ -32,6 +31,14 @@ public class Player {
         return color;
     }
 
-    public ArrayList<Card> getHand(){ return hand;}
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
 
+    public Card removeCard() {
+        Card drawCard = hand.get(0);
+        hand.remove(0);
+
+        return drawCard;
+    }
 }

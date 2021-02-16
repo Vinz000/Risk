@@ -14,8 +14,6 @@ import shell.ShellComponent;
 import shell.ShellModel;
 import shell.ShellPrompt;
 
-import java.util.ArrayList;
-
 
 public class GameRoot extends BorderPane {
 
@@ -49,8 +47,7 @@ public class GameRoot extends BorderPane {
 
         shellModel.notify(Constants.Notifications.NAME + "(P1)");
         ShellPrompt playerOnePrompt = new ShellPrompt(input -> {
-            ArrayList<Card> pOneHand = new ArrayList<>();
-            Player playerOne = new Player(input, Color.valueOf("#0b7540"), pOneHand);
+            Player playerOne = new Player(input, Color.valueOf("#0b7540"));
             mapModel.addPlayer(playerOne);
 
             // Send message for next prompt
@@ -60,8 +57,7 @@ public class GameRoot extends BorderPane {
         shellModel.prompt(playerOnePrompt);
 
         ShellPrompt playerTwoPrompt = new ShellPrompt(input -> {
-            ArrayList<Card> pTwoHand = new ArrayList<>();
-            Player playerTwo = new Player(input, Color.valueOf("#ba131d"), pTwoHand);
+            Player playerTwo = new Player(input, Color.valueOf("#ba131d"));
             mapModel.addPlayer(playerTwo);
 
             shellModel.notify(Constants.Notifications.TERRITORY);
@@ -76,28 +72,42 @@ public class GameRoot extends BorderPane {
         ShellPrompt drawingTerritories = new ShellPrompt(input -> {
             Deck deck = new Deck();
 
-            if (input.equalsIgnoreCase("yes")) {
+            if (input.equalsIgnoreCase("yes") || input.contains("y") ||
+                    input.contains("e") || input.contains("s")) {
                 for (int i = 0; i < 9; i++) {
-                    mapModel.getPlayer(0).getHand().add(deck.drawCard());
-                    shellModel.notify(Constants.Notifications.DRAWN +
-                            mapModel.getPlayer(0).getHand().get(i).getCountryName() + "(P1)");
-
-                    mapModel.getPlayer(1).getHand().add(deck.drawCard());
-                    shellModel.notify(Constants.Notifications.DRAWN +
-                            mapModel.getPlayer(1).getHand().get(i).getCountryName() + "(P2)");
+                    mapModel.forEachPlayer(2, player -> {
+                        Card drawnCard = deck.drawCard();
+                        player.getHand().add(drawnCard);
+                        String drawnCountryName = drawnCard.getCountryName();
+                        String playersSignature = player.getName();
+                        shellModel.notify(Constants.Notifications.DRAWN +
+                                drawnCountryName + " - " +playersSignature);
+                    });
                 }
-            }
-            else {
+            } else {
                 for (int i = 0; i < 9; i++) {
-                    mapModel.getPlayer(0).getHand().add(deck.drawCard());
-                    mapModel.getPlayer(1).getHand().add(deck.drawCard());
+                    mapModel.forEachPlayer(2, player -> {
+                        Card drawnCard = deck.drawCard();
+                        player.getHand().add(drawnCard);
+                    });
                 }
             }
 
             mapModel.initializeGame();
+
+
+            for(int i = 0; i < 9; i++) {
+                mapModel.forEachPlayer(2, player -> {
+                    Card refillDeck = player.removeCard();
+                    deck.add(refillDeck);
+                });
+            }
+
             deck.addWildcards();
             deck.shuffle();
         }, Validators.nonEmpty);
         shellModel.prompt(drawingTerritories);
+
+
     }
 }
