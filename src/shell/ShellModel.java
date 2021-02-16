@@ -4,9 +4,17 @@ import java.util.*;
 
 public class ShellModel extends Observable {
     private final Deque<ShellPrompt> promptQueue = new LinkedList<>();
-    private ShellPrompt shellPrompt;
+    private static ShellModel instance;
 
-    public ShellModel() {
+    private ShellModel() {
+    }
+
+    public static ShellModel getInstance() {
+        if (instance == null) {
+            return instance = new ShellModel();
+        }
+
+        return instance;
     }
 
     public void retryPrompt(ShellPrompt shellPrompt) {
@@ -25,7 +33,14 @@ public class ShellModel extends Observable {
     }
 
     public void notify(String notification) {
+        ShellModelArg shellModelArg = new ShellModelArg(notification, ShellModelUpdateType.NOTIFICATION);
         setChanged();
-        notifyObservers(notification);
+        notifyObservers(shellModelArg);
+    }
+
+    public void setInputLineText(String text) {
+        ShellModelArg shellModelArg = new ShellModelArg(text, ShellModelUpdateType.SET_INPUT_LINE);
+        setChanged();
+        notifyObservers(shellModelArg);
     }
 }

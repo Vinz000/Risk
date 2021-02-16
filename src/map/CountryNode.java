@@ -1,11 +1,9 @@
 package map;
 
-import java.util.Observable;
-
 import player.Player;
 import javafx.geometry.Point2D;
 
-public class CountryNode extends Observable {
+public class CountryNode {
     private final String countryName;
     private final int[] adjCountries;
     private final int continentID;
@@ -42,23 +40,20 @@ public class CountryNode extends Observable {
 
     public void setArmy(int army) {
         this.army = army;
-        setChanged();
-        notifyObservers(army);
-    }
-
-    public void incrementArmy(int army) {
-        setArmy(this.army + army);
     }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(Player humanPlayer) {
-        this.currentPlayer = humanPlayer;
-        setChanged();
-        notifyObservers(currentPlayer);
+    public void setCurrentPlayer(Player player) {
+        this.currentPlayer = player;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CountryNode &&
+                ((CountryNode) obj).getCountryName().equals(countryName) &&
+                ((CountryNode) obj).getContinentID() == continentID;
+    }
 }

@@ -17,15 +17,17 @@ public class Validators {
                     input.toLowerCase().equals("n") ||
                     input.equalsIgnoreCase("no") ||
                     input.toLowerCase().equals("y");
-    private static final MapModel mapModel = MapModel.getMapModel();
+
 
     public static final Function<String, Boolean> currentPlayerOwns = input -> {
+        MapModel mapModel = MapModel.getInstance();
         Player player = mapModel.getCurrentPlayer();
 
         return ownsCountryNode(player, input);
     };
 
     public static final Function<String, Boolean> neutralPlayerOwns = input -> {
+        MapModel mapModel = MapModel.getInstance();
         Player player = mapModel.getNeutralPlayers().get(0);
 
         return ownsCountryNode(player, input);
@@ -33,6 +35,7 @@ public class Validators {
 
     // Helper functions
     private static boolean validCountry(String input) {
+        MapModel mapModel = MapModel.getInstance();
         int numMatches = (int) mapModel
                 .getCountries()
                 .stream()
@@ -45,6 +48,7 @@ public class Validators {
     private static boolean ownsCountryNode(Player player, String input) {
         if (validCountry(input)) {
 
+            MapModel mapModel = MapModel.getInstance();
             Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
             return countryNode.map(node -> node.getCurrentPlayer().equals(player)).orElse(false);
 

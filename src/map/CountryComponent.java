@@ -6,11 +6,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import common.Constants;
+import shell.ShellModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,26 +33,36 @@ public class CountryComponent extends StackPane implements Observer {
 
     public CountryComponent(CountryNode countryNode) {
         this.countryNode = countryNode;
-        armyCount.setId(Constants.ComponentIds.TEXT);
-        this.countryNode.addObserver(this);
-        createLinks();
+
+        MapModel mapModel = MapModel.getInstance();
+        mapModel.addObserver(this);
+
         build();
     }
 
     private void build() {
+        createLinks();
+
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
         countryMarker.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
 
         setOnMouseMoved(this::onMouseMoved);
         setOnMouseExited(this::onMouseExited);
+        setOnMouseClicked(this::onMouseClicked);
 
         tooltip.setText(countryNode.getCountryName());
 
         setTranslateX(countryNode.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
         setTranslateY(countryNode.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
 
+        armyCount.setId(Constants.ComponentIds.TEXT);
         getChildren().addAll(countryMarker, armyCount);
         updateArmyCount(String.valueOf(countryNode.getArmy()));
+    }
+
+    private void onMouseClicked(MouseEvent mouseEvent) {
+        ShellModel shellModel = ShellModel.getInstance();
+        shellModel.setInputLineText(countryNode.getCountryName());
     }
 
     private void onMouseMoved(MouseEvent mouseEvent) {
@@ -115,10 +125,9 @@ public class CountryComponent extends StackPane implements Observer {
         Line line = new Line();
         line.setStartX(COUNTRY_COORDS[countryId][0]);
         line.setStartY(COUNTRY_COORDS[countryId][1]);
-
-        line.setEndX((countryId == 22) ? MAP_WIDTH - 30 : 0);
-
+        line.setEndX(countryId == 22 ? MAP_WIDTH - 30 : 0);
         line.setEndY(COUNTRY_COORDS[countryId][1]);
+
         return line;
     }
 
@@ -132,17 +141,29 @@ public class CountryComponent extends StackPane implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof Player) {
-            Color playerColor = ((Player) arg).getColor();
-            countryMarker.setFill(playerColor);
 
-            String toolTipText = String.format("%s\nOwner: %s",
-                    countryNode.getCountryName(),
-                    ((Player) arg).getName()
-            );
-            tooltip.setText(toolTipText);
-        } else {
-            updateArmyCount(arg.toString());
+        MapModelArg updateArg = (MapModelArg) arg;
+        boolean isThisCountry = updateArg.arg.equals(countryNode);
+
+        if (isThisCountry) {
+
+            switch (updateArg.updateType) {
+
+                case ARMY_COUNT:
+                    String armyCount = String.valueOf(((CountryNode) updateArg.arg).getArmy());
+                    updateArmyCount(armyCount);
+                    break;
+                case CURRENT_PLAYER:
+                    Player currentPlayer = ((CountryNode) updateArg.arg).getCurrentPlayer();
+                    countryMarker.setFill(currentPlayer.getColor());
+
+                    String toolTipText = String.format("%s\nOwner: %s",
+                            countryNode.getCountryName(),
+                            currentPlayer.getName()
+                    );
+                    tooltip.setText(toolTipText);
+                    break;
+            }
         }
     }
 }

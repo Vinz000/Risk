@@ -22,18 +22,15 @@ import static common.Constants.*;
 public class GameRoot extends BorderPane {
 
     // Create models
-    private final ShellModel shellModel = new ShellModel();
-    private final MapModel mapModel = MapModel.getMapModel();
+    private final ShellModel shellModel = ShellModel.getInstance();
+    private final MapModel mapModel = MapModel.getInstance();
 
     public GameRoot() {
         setId(ComponentIds.GAME_ROOT);
 
         // Create top-level components
-        MapComponent mapComponent = new MapComponent(mapModel);
-        ShellComponent shellComponent = new ShellComponent(shellModel);
-        mapModel.addObserver(mapComponent);
-        shellModel.addObserver(shellComponent);
-        shellModel.addObserver(mapComponent);
+        MapComponent mapComponent = new MapComponent();
+        ShellComponent shellComponent = new ShellComponent();
 
         // BorderPane configuration
         setRight(shellComponent);
@@ -64,8 +61,6 @@ public class GameRoot extends BorderPane {
 
             HumanPlayer humanPlayerTwo = new HumanPlayer(input, Colors.PLAYER_2_COLOR);
             mapModel.addPlayer(humanPlayerTwo);
-
-            shellModel.notify(Notifications.DICE_ROLL);
 
             shellModel.notify(Constants.Notifications.TERRITORY);
             shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
@@ -108,7 +103,10 @@ public class GameRoot extends BorderPane {
         ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
             // Place down 3 armies in corresponding countryNode
             Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
-            countryNode.ifPresent(node -> node.incrementArmy(3));
+            countryNode.ifPresent(node -> {
+                int currentArmyCount = node.getArmy();
+                mapModel.setCountryArmyCount(node, currentArmyCount + 3);
+            });
 
             shellModel.notify("Successfully placed armies down");
             shellModel.notify("Please press Enter to continue");
@@ -116,7 +114,10 @@ public class GameRoot extends BorderPane {
 
         ShellPrompt chooseNeutral = new ShellPrompt(input -> {
             Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
-            countryNode.ifPresent(node -> node.incrementArmy(1));
+            countryNode.ifPresent(node -> {
+                int currentArmyCount = node.getArmy();
+                mapModel.setCountryArmyCount(node, currentArmyCount + 1);
+            });
 
             shellModel.notify("Successfully placed army.");
 
@@ -126,10 +127,6 @@ public class GameRoot extends BorderPane {
         ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> shellModel.notify(
                 String.format("Place one army owned by %s", mapModel.getNeutralPlayers().get(0).getName())
         ), Validators.alwaysValid);
-
-        /*
-         * Whatever comes after we get player names
-         */
 
         ShellPrompt drawingTerritories = new ShellPrompt(input -> {
             Deck deck = new Deck();
@@ -165,6 +162,8 @@ public class GameRoot extends BorderPane {
 
             deck.addWildcards();
             deck.shuffle();
+
+            shellModel.notify(Notifications.DICE_ROLL);
         }, Validators.yesNo);
 
         shellModel.prompt(playerOnePrompt);
@@ -175,7 +174,7 @@ public class GameRoot extends BorderPane {
         // Each player takes 12 turns
         for (int i = 0; i < 24; i++) {
             shellModel.prompt(chooseOwnCountry);
-            
+
             for (int j = 0; j < NUM_NEUTRAL_PLAYERS; j++) {
                 shellModel.prompt(beforeChoosingNeutrals);
                 shellModel.prompt(chooseNeutral);

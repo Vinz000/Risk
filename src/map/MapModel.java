@@ -6,29 +6,30 @@ import player.Player;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 
 import static common.Constants.*;
 
 public class MapModel extends Observable {
-    private final static MapModel mapModel = new MapModel();
-
     private final List<CountryNode> countries = new ArrayList<>();
 
     private final List<Player> humanPlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
     private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
-
+    private static MapModel instance;
     private int currentPlayerIndex = 0;
 
     private MapModel() {
         initializeCountries();
     }
 
-    public static MapModel getMapModel() {
-        return mapModel;
-    }
+    public static MapModel getInstance() {
+        if (instance == null) {
+            return instance = new MapModel();
+        }
 
-    public List<Player> getHumanPlayers() {
-        return humanPlayers;
+        return instance;
     }
 
     private void initializeCountries() {
@@ -39,6 +40,39 @@ public class MapModel extends Observable {
 
     public List<CountryNode> getCountries() {
         return countries;
+    }
+
+    public List<Player> getHumanPlayers() {
+        return humanPlayers;
+    }
+
+    public void setCountryArmyCount(CountryNode country, int army) {
+        for (CountryNode countryNode : countries) {
+            if (countryNode.equals(country)) {
+                countryNode.setArmy(army);
+
+                MapModelArg mapModelArg = new MapModelArg(countryNode, MapModelUpdateType.ARMY_COUNT);
+
+                setChanged();
+                notifyObservers(mapModelArg);
+
+                break;
+            }
+        }
+    }
+
+    public void setCurrentPlayer(CountryNode country, Player player) {
+        for (CountryNode countryNode : countries) {
+            if (countryNode.equals(country)) {
+                countryNode.setCurrentPlayer(player);
+
+                MapModelArg mapModelArg = new MapModelArg(countryNode, MapModelUpdateType.CURRENT_PLAYER);
+                setChanged();
+                notifyObservers(mapModelArg);
+
+                break;
+            }
+        }
     }
 
     public void addPlayer(HumanPlayer humanPlayer) {
@@ -62,16 +96,18 @@ public class MapModel extends Observable {
 
             // Iterates through the players hand positions and gets the country name on the card.
             for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
-                String playerCountryName = humanPlayers.get(currentPlayerIndex).getHand().get(i).getCountryName();
+                Player currentPlayer = humanPlayers.get(currentPlayerIndex);
+                String playerCountryName = currentPlayer.getHand().get(i).getCountryName();
 
                 // Iterates through the country list to find a matching country name.
                 for (CountryNode country : countries) {
                     if (playerCountryName.equals(country.getCountryName())) {
-                        //Sets that country as a players if a match is found.
-                        country.setCurrentPlayer(humanPlayers.get(currentPlayerIndex));
+
+                        // Sets that country as a players if a match is found.
+                        setCurrentPlayer(country, currentPlayer);
                         playerControlledCountries++;
                     }
-                    country.setArmy(1);
+                    setCountryArmyCount(country, 1);
                 }
             }
             currentPlayerIndex++;
@@ -104,8 +140,7 @@ public class MapModel extends Observable {
 
     // Helper function to change string to CountryNode.
     public Optional<CountryNode> fetchCountry(String input) {
-        return mapModel
-                .getCountries()
+        return countries
                 .stream()
                 .filter(countryNode -> countryNode.getCountryName().toLowerCase().contains(input))
                 .findFirst();
