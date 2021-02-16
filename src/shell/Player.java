@@ -4,6 +4,7 @@ import cards.Card;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Player {
@@ -11,7 +12,7 @@ public class Player {
     private final String id;
     private final String name;
     private final Color color;
-    private final ArrayList<Card> hand = new ArrayList<>();
+    private final List<Card> hand = new ArrayList<>();
 
     public Player(String name, Color color) {
         this.id = UUID.randomUUID().toString();
@@ -31,7 +32,7 @@ public class Player {
         return color;
     }
 
-    public ArrayList<Card> getHand() {
+    public List<Card> getHand() {
         return hand;
     }
 

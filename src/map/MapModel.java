@@ -34,24 +34,23 @@ public class MapModel extends Observable {
     public void initializeGame() {
 
         int currentPlayerIndex = 0;
-        String playerCountryName;
         int playerControlledCountries = 0;
 
-        //While playerControlledCountries is less than the initial starting requirement continue to iterate.
+        // While playerControlledCountries is less than the initial starting requirement continue to iterate.
         while (playerControlledCountries < INIT_COUNTRIES_PLAYER * 2) {
-
-            //Iterates through the players hand positions and gets the country name on the card.
+            
+            // Iterates through the players hand positions and gets the country name on the card.
             for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
-                playerCountryName = players.get(currentPlayerIndex).getHand().get(i).getCountryName();
-
-                //Iterates through the country list to find a matching country name.
-                for (int j = 0; j < NUM_COUNTRIES; j++) {
-                    if (playerCountryName.equals(countries.get(j).getCountryName())) {
+                String playerCountryName= players.get(currentPlayerIndex).getHand().get(i).getCountryName();
+                
+                // Iterates through the country list to find a matching country name.
+                for (CountryNode country : countries) {
+                    if (playerCountryName.equals(country.getCountryName())) {
                         //Sets that country as a players if a match is found.
-                        countries.get(j).setCurrentPlayer(players.get(currentPlayerIndex));
+                        country.setCurrentPlayer(players.get(currentPlayerIndex));
                         playerControlledCountries++;
                     }
-                    countries.get(j).setArmy(1);
+                    country.setArmy(1);
                 }
             }
             currentPlayerIndex++;

@@ -72,16 +72,14 @@ public class GameRoot extends BorderPane {
         ShellPrompt drawingTerritories = new ShellPrompt(input -> {
             Deck deck = new Deck();
 
-            if (input.equalsIgnoreCase("yes") || input.contains("y") ||
-                    input.contains("e") || input.contains("s")) {
+            if (input.toLowerCase().contains("y")) {
                 for (int i = 0; i < 9; i++) {
                     mapModel.forEachPlayer(2, player -> {
                         Card drawnCard = deck.drawCard();
                         player.getHand().add(drawnCard);
                         String drawnCountryName = drawnCard.getCountryName();
-                        String playersSignature = player.getName();
-                        shellModel.notify(Constants.Notifications.DRAWN +
-                                drawnCountryName + " - " +playersSignature);
+                        String playerName = player.getName();
+                        shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
                     });
                 }
             } else {
@@ -96,7 +94,7 @@ public class GameRoot extends BorderPane {
             mapModel.initializeGame();
 
 
-            for(int i = 0; i < 9; i++) {
+            for (int i = 0; i < 9; i++) {
                 mapModel.forEachPlayer(2, player -> {
                     Card refillDeck = player.removeCard();
                     deck.add(refillDeck);
@@ -105,7 +103,7 @@ public class GameRoot extends BorderPane {
 
             deck.addWildcards();
             deck.shuffle();
-        }, Validators.nonEmpty);
+        }, Validators.yesNo);
         shellModel.prompt(drawingTerritories);
 
 

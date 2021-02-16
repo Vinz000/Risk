@@ -131,7 +131,7 @@ public class Constants {
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
         public static final String GG = "Good game!";
-        public static final String DRAWN = "The card drawn was ";
+        public static final String DRAWN = " drew the card ";
         public static final String TERRITORY = "The cards for the territories will now be drawn.";
         public static final String TERRITORY_OPTION = "Would you like to see the card draw outcome before initialization?";
     }
