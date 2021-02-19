@@ -7,9 +7,10 @@ import player.HumanPlayer;
 import common.Validators;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
-import map.CountryNode;
+import map.Country;
 import map.MapComponent;
 import map.MapModel;
+import player.PlayerModel;
 import shell.ShellComponent;
 import shell.ShellModel;
 import shell.ShellPrompt;
@@ -24,6 +25,7 @@ public class GameRoot extends BorderPane {
     // Create models
     private final ShellModel shellModel = ShellModel.getInstance();
     private final MapModel mapModel = MapModel.getInstance();
+    private final PlayerModel playerModel = PlayerModel.getInstance();
 
     public GameRoot() {
         setId(ComponentIds.GAME_ROOT);
@@ -50,7 +52,7 @@ public class GameRoot extends BorderPane {
 
         ShellPrompt playerOnePrompt = new ShellPrompt(input -> {
             HumanPlayer humanPlayerOne = new HumanPlayer(input, Colors.PLAYER_1_COLOR);
-            mapModel.addPlayer(humanPlayerOne);
+            playerModel.addHumanPlayer(humanPlayerOne);
 
             // Send message for next prompt
             shellModel.notify(Notifications.NAME + "(P2)\n");
@@ -60,7 +62,7 @@ public class GameRoot extends BorderPane {
         ShellPrompt playerTwoPrompt = new ShellPrompt(input -> {
 
             HumanPlayer humanPlayerTwo = new HumanPlayer(input, Colors.PLAYER_2_COLOR);
-            mapModel.addPlayer(humanPlayerTwo);
+            playerModel.addHumanPlayer(humanPlayerTwo);
 
             shellModel.notify(Constants.Notifications.TERRITORY);
             shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
@@ -73,13 +75,13 @@ public class GameRoot extends BorderPane {
 
             do {
                 playerOneDiceSum = dice.getNextDice(2).getRollSum();
-                String playerOneDiceNotification = mapModel.getPlayer(0).getName() + " "
+                String playerOneDiceNotification = playerModel.getHumanPlayer(0).getName() + " "
                         + Notifications.ROLLED + dice.printRoll();
 
                 shellModel.notify(playerOneDiceNotification);
 
                 playerTwoDiceSum = dice.getNextDice(2).getRollSum();
-                String playerTwoDiceNotification = mapModel.getPlayer(1).getName() + " "
+                String playerTwoDiceNotification = playerModel.getHumanPlayer(1).getName() + " "
                         + Notifications.ROLLED + dice.printRoll();
 
                 shellModel.notify(playerTwoDiceNotification);
@@ -90,19 +92,20 @@ public class GameRoot extends BorderPane {
                     // player One goes first by default but if player One rolls a lower sum,
                     // then we change the turn so that the current player is now player Two.
 
-                    mapModel.changeTurn();
+                    playerModel.changeTurn();
                 }
 
             } while (playerOneDiceSum == playerTwoDiceSum);
 
-            shellModel.notify(String.format("%s rolled higher, so is going first\n", mapModel.getCurrentPlayer().getName()));
-            shellModel.notify("Your turn " + mapModel.getCurrentPlayer().getName());
+            String currentPlayerName = playerModel.getCurrentHumanPlayer().getName();
+            shellModel.notify(String.format("%s rolled higher, so is going first\n", currentPlayerName));
+            shellModel.notify("Your turn " + currentPlayerName);
             shellModel.notify("Please choose country to reinforce.");
         }, Validators.alwaysValid);
 
         ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
             // Place down 3 armies in corresponding countryNode
-            Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
+            Optional<Country> countryNode = mapModel.getCountryByName(input);
             countryNode.ifPresent(node -> {
                 int currentArmyCount = node.getArmy();
                 mapModel.setCountryArmyCount(node, currentArmyCount + 3);
@@ -113,7 +116,7 @@ public class GameRoot extends BorderPane {
         }, Validators.currentPlayerOwns);
 
         ShellPrompt chooseNeutral = new ShellPrompt(input -> {
-            Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
+            Optional<Country> countryNode = mapModel.getCountryByName(input);
             countryNode.ifPresent(node -> {
                 int currentArmyCount = node.getArmy();
                 mapModel.setCountryArmyCount(node, currentArmyCount + 1);
@@ -121,11 +124,11 @@ public class GameRoot extends BorderPane {
 
             shellModel.notify("Successfully placed army.");
 
-            Collections.rotate(mapModel.getNeutralPlayers(), -1);
+            Collections.rotate(playerModel.getNeutralPlayers(), -1);
         }, Validators.neutralPlayerOwns);
 
         ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> shellModel.notify(
-                String.format("Place one army owned by %s", mapModel.getNeutralPlayers().get(0).getName())
+                String.format("Place one army owned by %s", playerModel.getNeutralPlayers().get(0).getName())
         ), Validators.alwaysValid);
 
         ShellPrompt drawingTerritories = new ShellPrompt(input -> {
@@ -133,7 +136,7 @@ public class GameRoot extends BorderPane {
 
             if (input.toLowerCase().contains("y")) {
                 for (int i = 0; i < 9; i++) {
-                    mapModel.forEachPlayer(2, player -> {
+                    playerModel.forEachPlayer(2, player -> {
                         Card drawnCard = deck.drawCard();
                         player.getHand().add(drawnCard);
                         String drawnCountryName = drawnCard.getCountryName();
@@ -143,18 +146,17 @@ public class GameRoot extends BorderPane {
                 }
             } else {
                 for (int i = 0; i < 9; i++) {
-                    mapModel.forEachPlayer(2, player -> {
+                    playerModel.forEachPlayer(2, player -> {
                         Card drawnCard = deck.drawCard();
                         player.getHand().add(drawnCard);
                     });
                 }
             }
 
-            mapModel.initializeGame();
-
+            playerModel.assignInitialCountries();
 
             for (int i = 0; i < 9; i++) {
-                mapModel.forEachPlayer(2, player -> {
+                playerModel.forEachPlayer(2, player -> {
                     Card refillDeck = player.removeCard();
                     deck.add(refillDeck);
                 });

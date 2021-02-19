@@ -3,7 +3,7 @@ package map;
 import player.Player;
 import javafx.geometry.Point2D;
 
-public class CountryNode {
+public class Country {
     private final String countryName;
     private final int[] adjCountries;
     private final int continentID;
@@ -11,7 +11,7 @@ public class CountryNode {
     private int army = 0;
     private Player currentPlayer;
 
-    public CountryNode(String countryName, int[] adjCountries, int continentID, int[] coords) {
+    public Country(String countryName, int[] adjCountries, int continentID, int[] coords) {
         this.countryName = countryName;
         this.adjCountries = adjCountries;
         this.continentID = continentID;
@@ -52,8 +52,8 @@ public class CountryNode {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof CountryNode &&
-                ((CountryNode) obj).getCountryName().equals(countryName) &&
-                ((CountryNode) obj).getContinentID() == continentID;
+        return obj instanceof Country &&
+                ((Country) obj).getCountryName().equals(countryName) &&
+                ((Country) obj).getContinentID() == continentID;
     }
 }

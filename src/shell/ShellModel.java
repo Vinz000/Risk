@@ -3,7 +3,7 @@ package shell;
 import java.util.*;
 
 public class ShellModel extends Observable {
-    private final Deque<ShellPrompt> promptQueue = new LinkedList<>();
+    private final Deque<ShellPrompt> prompts = new LinkedList<>();
     private static ShellModel instance;
 
     private ShellModel() {
@@ -21,15 +21,15 @@ public class ShellModel extends Observable {
         // Invalid input was provided,
         // the [ShellPrompt] must
         // be pushed to the front of the queue!
-        promptQueue.offerFirst(shellPrompt);
+        prompts.offerFirst(shellPrompt);
     }
 
     public ShellPrompt nextPrompt() {
-        return promptQueue.poll();
+        return prompts.poll();
     }
 
     public void prompt(ShellPrompt shellPrompt) {
-        promptQueue.offer(shellPrompt);
+        prompts.offer(shellPrompt);
     }
 
     public void notify(String notification) {

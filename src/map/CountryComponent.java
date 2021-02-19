@@ -25,14 +25,14 @@ import static common.Constants.*;
  */
 
 public class CountryComponent extends StackPane implements Observer {
-    private final CountryNode countryNode;
+    private final Country country;
     private final Text armyCount = new Text();
     private final Circle countryMarker = new Circle();
     private final Tooltip tooltip = new Tooltip();
     private final List<Line> countryLinks = new ArrayList<>();
 
-    public CountryComponent(CountryNode countryNode) {
-        this.countryNode = countryNode;
+    public CountryComponent(Country country) {
+        this.country = country;
 
         MapModel mapModel = MapModel.getInstance();
         mapModel.addObserver(this);
@@ -50,19 +50,19 @@ public class CountryComponent extends StackPane implements Observer {
         setOnMouseExited(this::onMouseExited);
         setOnMouseClicked(this::onMouseClicked);
 
-        tooltip.setText(countryNode.getCountryName());
+        tooltip.setText(country.getCountryName());
 
-        setTranslateX(countryNode.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
-        setTranslateY(countryNode.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
+        setTranslateX(country.getCoords().getX() - Constants.COUNTRY_NODE_RADIUS);
+        setTranslateY(country.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
 
         armyCount.setId(Constants.ComponentIds.TEXT);
         getChildren().addAll(countryMarker, armyCount);
-        updateArmyCount(String.valueOf(countryNode.getArmy()));
+        updateArmyCount(String.valueOf(country.getArmy()));
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {
         ShellModel shellModel = ShellModel.getInstance();
-        shellModel.setInputLineText(countryNode.getCountryName());
+        shellModel.setInputLineText(country.getCountryName());
     }
 
     private void onMouseMoved(MouseEvent mouseEvent) {
@@ -90,22 +90,22 @@ public class CountryComponent extends StackPane implements Observer {
     }
 
     private void createLinks() {
-        for (int adj : countryNode.getAdjCountries()) {
+        for (int adj : country.getAdjCountries()) {
             Line line = new Line();
-            line.setStartX(countryNode.getCoords().getX());
-            line.setStartY(countryNode.getCoords().getY());
+            line.setStartX(country.getCoords().getX());
+            line.setStartY(country.getCoords().getY());
 
-            boolean isAlaskaLeft = countryNode.getCountryName().equals("Alaska") && adj == 22;
-            boolean isKamchatkaRight = countryNode.getCountryName().equals("Kamchatka") && adj == 8;
+            boolean isAlaskaLeft = country.getCountryName().equals("Alaska") && adj == 22;
+            boolean isKamchatkaRight = country.getCountryName().equals("Kamchatka") && adj == 8;
 
             if (isAlaskaLeft) {
                 line.setEndX(0);
-                line.setEndY(countryNode.getCoords().getY());
+                line.setEndY(country.getCoords().getY());
 
                 countryLinks.add(getHelperLine(adj));
             } else if (isKamchatkaRight) {
                 line.setEndX(MAP_WIDTH - 30);
-                line.setEndY(countryNode.getCoords().getY());
+                line.setEndY(country.getCoords().getY());
 
                 countryLinks.add(getHelperLine(adj));
             } else {
@@ -143,22 +143,22 @@ public class CountryComponent extends StackPane implements Observer {
     public void update(Observable o, Object arg) {
 
         MapModelArg updateArg = (MapModelArg) arg;
-        boolean isThisCountry = updateArg.arg.equals(countryNode);
+        boolean isThisCountry = updateArg.arg.equals(country);
 
         if (isThisCountry) {
 
             switch (updateArg.updateType) {
 
                 case ARMY_COUNT:
-                    String armyCount = String.valueOf(((CountryNode) updateArg.arg).getArmy());
+                    String armyCount = String.valueOf(((Country) updateArg.arg).getArmy());
                     updateArmyCount(armyCount);
                     break;
                 case CURRENT_PLAYER:
-                    Player currentPlayer = ((CountryNode) updateArg.arg).getCurrentPlayer();
+                    Player currentPlayer = ((Country) updateArg.arg).getCurrentPlayer();
                     countryMarker.setFill(currentPlayer.getColor());
 
                     String toolTipText = String.format("%s\nOwner: %s",
-                            countryNode.getCountryName(),
+                            country.getCountryName(),
                             currentPlayer.getName()
                     );
                     tooltip.setText(toolTipText);

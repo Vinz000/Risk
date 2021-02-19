@@ -22,8 +22,8 @@ public class MapComponent extends Pane implements Observer {
     }
 
     private void drawBoard(MapModel mapModel) {
-        for (CountryNode countryNode : mapModel.getCountries()) {
-            CountryComponent countryComponent = new CountryComponent(countryNode);
+        for (Country country : mapModel.getCountries()) {
+            CountryComponent countryComponent = new CountryComponent(country);
             getChildren().add(countryComponent);
 
             List<Line> countryLinks = countryComponent.getCountryLinks();
