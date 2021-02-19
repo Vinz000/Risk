@@ -5,7 +5,6 @@ import common.Constants;
 import javafx.scene.control.Label;
 import shell.model.ShellModel;
 import shell.model.ShellModelArg;
-import shell.model.ShellModelUpdateType;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -41,8 +40,10 @@ public class ShellLogTextComponent extends Label implements Observer, Component 
     public void update(Observable o, Object arg) {
         ShellModelArg updateArg = (ShellModelArg) arg;
 
-        if (updateArg.updateType.equals(ShellModelUpdateType.NOTIFICATION)) {
-            setText(getText() + "\n" + updateArg.arg);
+        switch(updateArg.updateType) {
+            case NOTIFICATION:
+                setText(getText() + "\n" + updateArg.arg);
+                break;
         }
     }
 }
