@@ -1,8 +1,8 @@
 package common;
 
 import player.Player;
-import map.Country;
-import map.MapModel;
+import map.country.Country;
+import map.model.MapModel;
 import player.PlayerModel;
 
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class Validators {
         int numMatches = (int) mapModel
                 .getCountries()
                 .stream()
-                .filter(countryNode -> countryNode.getCountryName().toLowerCase().contains(input))
+                .filter(countryNode -> countryNode.getCountryName().toLowerCase().contains(input.toLowerCase().trim()))
                 .count();
 
         return numMatches == 1;

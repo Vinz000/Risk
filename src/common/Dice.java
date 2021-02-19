@@ -1,4 +1,4 @@
-package game;
+package common;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,6 @@ public class Dice {
 
     private final Random die = new Random();
     private final List<Integer> rolledDice = new ArrayList<>();
-    private boolean hasDone = false;
 
     public Dice() {
     }

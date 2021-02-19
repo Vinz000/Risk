@@ -1,8 +1,8 @@
 package player;
 
-import cards.Card;
+import card.Card;
 import javafx.scene.paint.Color;
-import map.Country;
+import map.country.Country;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +45,10 @@ public abstract class Player {
 
     public List<Card> getHand() {
         return hand;
+    }
+
+    public void addCard(Card card) {
+        hand.add(card);
     }
 
     public Card removeCard() {

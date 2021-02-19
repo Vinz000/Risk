@@ -1,8 +1,8 @@
 package player;
 
 import common.Constants;
-import map.Country;
-import map.MapModel;
+import map.country.Country;
+import map.model.MapModel;
 
 import java.util.ArrayList;
 import java.util.List;

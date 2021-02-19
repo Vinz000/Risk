@@ -9,11 +9,6 @@ import static common.Constants.*;
 
 public class Main extends Application {
 
-    /**
-     * Application entry point.
-     *
-     * @param args TODO: what arguments will we allow for game configuration?
-     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -1,4 +1,4 @@
-package map;
+package map.model;
 
 public class MapModelArg {
     public final Object arg;

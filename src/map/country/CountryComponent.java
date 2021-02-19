@@ -1,5 +1,8 @@
-package map;
+package map.country;
 
+import common.Component;
+import map.model.MapModel;
+import map.model.MapModelArg;
 import player.Player;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tooltip;
@@ -10,7 +13,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import common.Constants;
-import shell.ShellModel;
+import shell.model.ShellModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,7 @@ import static common.Constants.*;
  * Change color of node
  */
 
-public class CountryComponent extends StackPane implements Observer {
+public class CountryComponent extends StackPane implements Observer, Component {
     private final Country country;
     private final Text armyCount = new Text();
     private final Circle countryMarker = new Circle();
@@ -34,17 +37,15 @@ public class CountryComponent extends StackPane implements Observer {
     public CountryComponent(Country country) {
         this.country = country;
 
-        MapModel mapModel = MapModel.getInstance();
-        mapModel.addObserver(this);
-
+        observe();
         build();
     }
 
-    private void build() {
+    @Override
+    public void build() {
         createLinks();
 
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
-        countryMarker.setId(Constants.ComponentIds.NEUTRAL_PLAYER);
 
         setOnMouseMoved(this::onMouseMoved);
         setOnMouseExited(this::onMouseExited);
@@ -58,6 +59,18 @@ public class CountryComponent extends StackPane implements Observer {
         armyCount.setId(Constants.ComponentIds.TEXT);
         getChildren().addAll(countryMarker, armyCount);
         updateArmyCount(String.valueOf(country.getArmy()));
+
+        setVisible(false);
+    }
+
+    @Override
+    public void setCssId() {
+    }
+
+    @Override
+    public void observe() {
+        MapModel mapModel = MapModel.getInstance();
+        mapModel.addObserver(this);
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {
@@ -162,6 +175,9 @@ public class CountryComponent extends StackPane implements Observer {
                             currentPlayer.getName()
                     );
                     tooltip.setText(toolTipText);
+                    break;
+                case VISIBLE:
+                    setVisible(true);
                     break;
             }
         }

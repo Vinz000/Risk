@@ -1,4 +1,4 @@
-package cards;
+package card;
 
 public class Card {
     private final CardType type;

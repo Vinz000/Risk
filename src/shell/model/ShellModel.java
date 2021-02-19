@@ -1,13 +1,29 @@
-package shell;
+package shell.model;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ShellModel extends Observable {
-    private final Deque<ShellPrompt> prompts = new LinkedList<>();
+
+    public static class ShellPrompt {
+        public final Consumer<String> handler;
+        public final Function<String, Boolean> validator;
+
+        public ShellPrompt(Consumer<String> handler, Function<String, Boolean> validator) {
+            this.handler = handler;
+            this.validator = validator;
+
+        }
+
+    }
+
     private static ShellModel instance;
+    private final Deque<ShellPrompt> prompts = new LinkedList<>();
 
     private ShellModel() {
     }
+
 
     public static ShellModel getInstance() {
         if (instance == null) {
@@ -43,4 +59,5 @@ public class ShellModel extends Observable {
         setChanged();
         notifyObservers(shellModelArg);
     }
+
 }
