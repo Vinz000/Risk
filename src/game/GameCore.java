@@ -1,15 +1,16 @@
 package game;
 
-import cards.Card;
-import cards.Deck;
+import card.Card;
+import card.Deck;
 import common.Constants;
+import common.Dice;
 import common.Validators;
-import map.Country;
-import map.MapModel;
+import map.country.Country;
+import map.model.MapModel;
 import player.HumanPlayer;
 import player.PlayerModel;
-import shell.ShellModel;
-import shell.ShellPrompt;
+import shell.model.ShellModel;
+import shell.model.ShellModel.ShellPrompt;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -22,39 +23,10 @@ public class GameCore {
     private static final MapModel mapModel = MapModel.getInstance();
     private static final PlayerModel playerModel = PlayerModel.getInstance();
 
-    /**
-     * All of the game logic resides here.
-     */
-    public static void start() {
-        shellModel.notify(Constants.Notifications.WELCOME);
-
-        /*
-         * Getting player names
-         */
-
-        shellModel.notify(Constants.Notifications.NAME + "(P1)");
-
-        shellModel.prompt(playerOnePrompt);
-        shellModel.prompt(playerTwoPrompt);
-        shellModel.prompt(drawingTerritories);
-        shellModel.prompt(selectFirstPlayer);
-
-        // Each player takes 12 turns
-        for (int i = 0; i < 24; i++) {
-            shellModel.prompt(chooseOwnCountry);
-
-            for (int j = 0; j < NUM_NEUTRAL_PLAYERS; j++) {
-                shellModel.prompt(beforeChoosingNeutrals);
-                shellModel.prompt(chooseNeutral);
-            }
-        }
-    }
-
     private static final ShellPrompt playerOnePrompt = new ShellPrompt(input -> {
         HumanPlayer humanPlayerOne = new HumanPlayer(input, Constants.Colors.PLAYER_1_COLOR);
         playerModel.addHumanPlayer(humanPlayerOne);
 
-        // Send message for next prompt
         shellModel.notify(Constants.Notifications.NAME + "(P2)\n");
 
     }, Validators.nonEmpty);
@@ -68,10 +40,7 @@ public class GameCore {
         shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
     }, Validators.nonEmpty);
 
-    /*
-     * Deciding which player goes first
-     */
-
+    // Deciding which player goes first
     private static final ShellPrompt selectFirstPlayer = new ShellPrompt(input -> {
         Dice dice = new Dice();
         int playerOneDiceSum;
@@ -104,13 +73,10 @@ public class GameCore {
         String currentPlayerName = playerModel.getCurrentHumanPlayer().getName();
         shellModel.notify(String.format("%s rolled higher, so is going first\n", currentPlayerName));
         shellModel.notify("Your turn " + currentPlayerName);
-        shellModel.notify("Please choose country to reinforce.");
+        shellModel.notify("Please press Enter to continue");
     }, Validators.alwaysValid);
 
-    /*
-     * Choosing own countries to reinforce
-     */
-
+    // Choosing own country to reinforce
     private static final ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
         // Place down 3 armies in corresponding countryNode
         Optional<Country> countryNode = mapModel.getCountryByName(input);
@@ -123,10 +89,12 @@ public class GameCore {
         shellModel.notify("Please press Enter to continue");
     }, Validators.currentPlayerOwns);
 
-    /*
-     * Choosing own countries to reinforce
-     */
+    // Prompts user before choosing own country
+    private static final ShellPrompt beforeChoosingOwnCountry = new ShellPrompt(input -> shellModel.notify(
+            String.format("%s choose country that you own to place 3 army.", playerModel.getCurrentHumanPlayer().getName())
+    ), Validators.alwaysValid);
 
+    // Choosing neutral countries to reinforce
     private static final ShellPrompt chooseNeutral = new ShellPrompt(input -> {
         Optional<Country> countryNode = mapModel.getCountryByName(input);
         countryNode.ifPresent(node -> {
@@ -139,14 +107,12 @@ public class GameCore {
         Collections.rotate(playerModel.getNeutralPlayers(), -1);
     }, Validators.neutralPlayerOwns);
 
+    // Message before choosing a neutral country
     private static final ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> shellModel.notify(
             String.format("Place one army owned by %s", playerModel.getNeutralPlayers().get(0).getName())
     ), Validators.alwaysValid);
 
-    /*
-     * Initial territory assignment
-     */
-
+    // Assigning countries at the start of the game
     private static final ShellPrompt drawingTerritories = new ShellPrompt(input -> {
         Deck deck = new Deck();
 
@@ -154,7 +120,7 @@ public class GameCore {
             for (int i = 0; i < 9; i++) {
                 playerModel.forEachPlayer(2, player -> {
                     Card drawnCard = deck.drawCard();
-                    player.getHand().add(drawnCard);
+                    player.addCard(drawnCard);
                     String drawnCountryName = drawnCard.getCountryName();
                     String playerName = player.getName();
                     shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
@@ -164,7 +130,7 @@ public class GameCore {
             for (int i = 0; i < 9; i++) {
                 playerModel.forEachPlayer(2, player -> {
                     Card drawnCard = deck.drawCard();
-                    player.getHand().add(drawnCard);
+                    player.addCard(drawnCard);
                 });
             }
         }
@@ -186,7 +152,26 @@ public class GameCore {
         shellModel.notify(Constants.Notifications.DICE_ROLL);
     }, Validators.yesNo);
 
-    /*
-     * Sending all prompts (in order)
-     */
+    // Game logic sequence
+    public static void start() {
+        shellModel.notify(Constants.Notifications.WELCOME);
+
+        shellModel.notify(Constants.Notifications.NAME + "(P1)");
+
+        shellModel.prompt(playerOnePrompt);
+        shellModel.prompt(playerTwoPrompt);
+        shellModel.prompt(drawingTerritories);
+        shellModel.prompt(selectFirstPlayer);
+
+        // Each player takes 12 turns
+        for (int i = 0; i < 24; i++) {
+            shellModel.prompt(beforeChoosingOwnCountry);
+            shellModel.prompt(chooseOwnCountry);
+
+            for (int j = 0; j < NUM_NEUTRAL_PLAYERS; j++) {
+                shellModel.prompt(beforeChoosingNeutrals);
+                shellModel.prompt(chooseNeutral);
+            }
+        }
+    }
 }

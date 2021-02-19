@@ -126,7 +126,6 @@ public class Constants {
     public static class Colors {
         public static final Color PLAYER_1_COLOR = Color.valueOf("#6a0dad");
         public static final Color PLAYER_2_COLOR = Color.valueOf("#ba131d");
-
         public static final Color NEUTRAL_PLAYER = Color.valueOf("#787878");
     }
 
@@ -140,16 +139,16 @@ public class Constants {
         public static final String OPTION = "What move would you like to make?";
         public static final String GG = "Good game!";
         public static final String DRAWN = " drew the card ";
-        public static final String TERRITORY = "The cards for the territories will now be drawn.";
+        public static final String TERRITORY = "The card for the territories will now be drawn.";
         public static final String TERRITORY_OPTION = "Would you like to see the card draw outcome before initialization?";
     }
 
     public static class ComponentIds {
         public static final String MAP = "map-component";
-        public static final String NEUTRAL_PLAYER = "neutral-player";
         public static final String SHELL = "shell-component";
         public static final String SHELL_INPUT = "shell-input-component";
         public static final String SHELL_LOG = "shell-log-component";
+        public static final String LOG = "log";
         public static final String GAME_ROOT = "game-root";
         public static final String TEXT = "text";
     }

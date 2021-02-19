@@ -1,4 +1,4 @@
-package map;
+package map.country;
 
 import player.Player;
 import javafx.geometry.Point2D;

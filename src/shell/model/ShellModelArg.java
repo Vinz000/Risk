@@ -1,4 +1,4 @@
-package shell;
+package shell.model;
 
 public class ShellModelArg {
     public final Object arg;

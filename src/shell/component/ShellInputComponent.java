@@ -1,16 +1,33 @@
-package shell;
+package shell.component;
 
+import common.Component;
 import common.Constants;
 import javafx.scene.control.TextField;
+import shell.model.ShellModel;
+import shell.model.ShellModelArg;
+import shell.model.ShellModelUpdateType;
 
 import java.util.Observable;
 import java.util.Observer;
 
-public class ShellInputComponent extends TextField implements Observer {
+public class ShellInputComponent extends TextField implements Observer, Component {
 
     public ShellInputComponent() {
-        setId(Constants.ComponentIds.SHELL_INPUT);
+        setCssId();
+        observe();
+    }
 
+    @Override
+    public void build() {
+    }
+
+    @Override
+    public void setCssId() {
+        setId(Constants.ComponentIds.SHELL_INPUT);
+    }
+
+    @Override
+    public void observe() {
         ShellModel shellModel = ShellModel.getInstance();
         shellModel.addObserver(this);
     }
@@ -23,7 +40,7 @@ public class ShellInputComponent extends TextField implements Observer {
             String inputText = (String) updateArg.arg;
             setText(inputText);
 
-            // sets position of cursor at the end of line
+            // Sets position of cursor at the end of line
             positionCaret(inputText.length());
         }
     }

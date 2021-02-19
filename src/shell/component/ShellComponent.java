@@ -1,25 +1,26 @@
-package shell;
+package shell.component;
 
+import common.Component;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.VBox;
+import shell.model.ShellModel;
+import shell.model.ShellModel.ShellPrompt;
 
 
 import static common.Constants.*;
 
-public class ShellComponent extends VBox {
-
-    private final ShellLogComponent logComponent = new ShellLogComponent();
-    private final ShellInputComponent inputComponent = new ShellInputComponent();
+public class ShellComponent extends VBox implements Component {
 
     public ShellComponent() {
-        setId(ComponentIds.SHELL);
-
         build();
     }
 
-    private void build() {
+    @Override
+    public void build() {
         ShellModel shellModel = ShellModel.getInstance();
+        ShellInputComponent inputComponent = new ShellInputComponent();
+        ShellLogComponent logComponent = new ShellLogComponent();
 
         setSpacing(10);
 
@@ -47,5 +48,14 @@ public class ShellComponent extends VBox {
         inputComponent.setOnAction(onEnterPressed);
 
         getChildren().addAll(logComponent, inputComponent);
+    }
+
+    @Override
+    public void setCssId() {
+        setId(ComponentIds.SHELL);
+    }
+
+    @Override
+    public void observe() {
     }
 }

@@ -1,23 +1,25 @@
-package map;
+package map.model;
 
+import map.country.Country;
 import player.Player;
 
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.function.Predicate;
 
 import static common.Constants.*;
 
 public class MapModel extends Observable {
-    private final List<Country> countries = new ArrayList<>();
     private static MapModel instance;
+    private final List<Country> countries = new ArrayList<>();
 
     private MapModel() {
         createCountries();
     }
 
-    public static MapModel getInstance() {
+    public static synchronized MapModel getInstance() {
         if (instance == null) {
             return instance = new MapModel();
         }
@@ -37,9 +39,14 @@ public class MapModel extends Observable {
     }
 
     public Optional<Country> getCountryByName(String countryName) {
+        Predicate<Country> hasSameName = country -> country
+                .getCountryName()
+                .toLowerCase()
+                .contains(countryName.toLowerCase().trim());
+
         return countries
                 .stream()
-                .filter(countryNode -> countryNode.getCountryName().toLowerCase().contains(countryName))
+                .filter(hasSameName)
                 .findFirst();
     }
 
