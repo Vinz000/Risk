@@ -58,6 +58,8 @@ public class CountryComponent extends StackPane implements Observer {
         armyCount.setId(Constants.ComponentIds.TEXT);
         getChildren().addAll(countryMarker, armyCount);
         updateArmyCount(String.valueOf(country.getArmy()));
+
+        setVisible(false);
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {
@@ -162,6 +164,9 @@ public class CountryComponent extends StackPane implements Observer {
                             currentPlayer.getName()
                     );
                     tooltip.setText(toolTipText);
+                    break;
+                case VISIBLE:
+                    setVisible(true);
                     break;
             }
         }

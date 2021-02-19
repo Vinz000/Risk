@@ -34,10 +34,6 @@
     -fx-effect: dropshadow(gaussian, #3B4040, 10, 0, 0, 3);
 }
 
-#log {
-    -fx-text-fill: white;
-}
-
 #input-line {
     -fx-background-color: #697777;
     -fx-padding: 5;
@@ -51,3 +47,48 @@
 #shell-component {
     -fx-background-color: transparent;
 }
+
+#log {
+    -fx-text-fill: white;
+}
+
+#shell-input-component {
+    -fx-background-color: #697777;
+    -fx-padding: 5;
+    -fx-text-fill: white;
+    -fx-border-style: hidden;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+#shell-component {
+    -fx-background-color: transparent;
+}
+
+#shell-log-component {
+    -fx-background: #5A6868;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button,
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    visibility: hidden;
+    -fx-padding: 0 3.5;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #697777;
+    -fx-background-radius: 10;
+}
+
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #485252;
+}
+

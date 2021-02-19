@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import map.MapComponent;
 import shell.ShellComponent;
+import shell.ShellModel;
 
 import static common.Constants.ComponentIds;
 

@@ -75,10 +75,8 @@ public class Constants {
 
     public static final int MAP_WIDTH = 1000;    // must be even
     public static final int MAP_HEIGHT = 600;
-    public static final int SHELL_WIDTH = 200;
+    public static final int SHELL_WIDTH = 250;
     public static final int COUNTRY_NODE_RADIUS = 10;
-    public static final int CONTINENT_PANE_WIDTH = 140;
-    public static final int CONTINENT_PANE_HEIGHT = 180;
 
     public static final int[][] COUNTRY_COORDS = {
             {180, 115},     // 0
@@ -150,8 +148,8 @@ public class Constants {
         public static final String MAP = "map-component";
         public static final String NEUTRAL_PLAYER = "neutral-player";
         public static final String SHELL = "shell-component";
-        public static final String SHELL_INPUT = "input-line";
-        public static final String SHELL_LOG = "log";
+        public static final String SHELL_INPUT = "shell-input-component";
+        public static final String SHELL_LOG = "shell-log-component";
         public static final String GAME_ROOT = "game-root";
         public static final String TEXT = "text";
     }

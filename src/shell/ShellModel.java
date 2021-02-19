@@ -3,8 +3,8 @@ package shell;
 import java.util.*;
 
 public class ShellModel extends Observable {
-    private final Deque<ShellPrompt> prompts = new LinkedList<>();
     private static ShellModel instance;
+    private final Deque<ShellPrompt> prompts = new LinkedList<>();
 
     private ShellModel() {
     }

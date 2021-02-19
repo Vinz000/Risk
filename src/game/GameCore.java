@@ -165,6 +165,8 @@ public class GameCore {
             deck.addWildcards();
             deck.shuffle();
 
+            mapModel.showCountryComponents();
+
             shellModel.notify(Constants.Notifications.DICE_ROLL);
         }, Validators.yesNo);
 

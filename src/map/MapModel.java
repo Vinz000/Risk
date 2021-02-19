@@ -56,5 +56,13 @@ public class MapModel extends Observable {
         setChanged();
         notifyObservers(mapModelArg);
     }
+
+    public void showCountryComponents() {
+        for (Country country : countries) {
+            MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.VISIBLE);
+            setChanged();
+            notifyObservers(mapModelArg);
+        }
+    }
 }
 
