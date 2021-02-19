@@ -1,5 +1,6 @@
 package map;
 
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
@@ -11,19 +12,23 @@ import static common.Constants.*;
 
 public class MapComponent extends Pane implements Observer {
 
-    public MapComponent(MapModel mapModel) {
-        drawBoard(mapModel);
+    public MapComponent() {
         setId(ComponentIds.MAP);
+
+        MapModel mapModel = MapModel.getInstance();
+        mapModel.addObserver(this);
+
+        drawBoard(mapModel);
     }
 
     private void drawBoard(MapModel mapModel) {
-        for (CountryNode countryNode : mapModel.getCountries()) {
-            CountryComponent countryComponent = new CountryComponent(countryNode);
+        for (Country country : mapModel.getCountries()) {
+            CountryComponent countryComponent = new CountryComponent(country);
             getChildren().add(countryComponent);
 
             List<Line> countryLinks = countryComponent.getCountryLinks();
             getChildren().addAll(countryLinks);
-            countryLinks.forEach(link -> link.toBack());
+            countryLinks.forEach(Node::toBack);
         }
     }
 

@@ -2,7 +2,7 @@ package player;
 
 import cards.Card;
 import javafx.scene.paint.Color;
-import map.CountryNode;
+import map.Country;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class Player {
     private final String name;
     private final Color color;
-    private final List<CountryNode> ownedCountries = new ArrayList<>();
+    private final List<Country> ownedCountries = new ArrayList<>();
     private final List<Card> hand = new ArrayList<>();
     private int reinforcement;
 
@@ -27,11 +27,11 @@ public abstract class Player {
         return color;
     }
 
-    public void addCountry(CountryNode countryNode) {
-        ownedCountries.add(countryNode);
+    public void addCountry(Country country) {
+        ownedCountries.add(country);
     }
 
-    public List<CountryNode> getOwnedCountries() {
+    public List<Country> getOwnedCountries() {
         return ownedCountries;
     }
 

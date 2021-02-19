@@ -1,8 +1,9 @@
 package common;
 
 import player.Player;
-import map.CountryNode;
+import map.Country;
 import map.MapModel;
+import player.PlayerModel;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -17,22 +18,24 @@ public class Validators {
                     input.toLowerCase().equals("n") ||
                     input.equalsIgnoreCase("no") ||
                     input.toLowerCase().equals("y");
-    private static final MapModel mapModel = MapModel.getMapModel();
 
     public static final Function<String, Boolean> currentPlayerOwns = input -> {
-        Player player = mapModel.getCurrentPlayer();
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentHumanPlayer = playerModel.getCurrentHumanPlayer();
 
-        return ownsCountryNode(player, input);
+        return ownsCountryNode(currentHumanPlayer, input);
     };
 
     public static final Function<String, Boolean> neutralPlayerOwns = input -> {
-        Player player = mapModel.getNeutralPlayers().get(0);
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player firstNeutralPlayer = playerModel.getNeutralPlayers().get(0);
 
-        return ownsCountryNode(player, input);
+        return ownsCountryNode(firstNeutralPlayer, input);
     };
 
     // Helper functions
     private static boolean validCountry(String input) {
+        MapModel mapModel = MapModel.getInstance();
         int numMatches = (int) mapModel
                 .getCountries()
                 .stream()
@@ -45,7 +48,8 @@ public class Validators {
     private static boolean ownsCountryNode(Player player, String input) {
         if (validCountry(input)) {
 
-            Optional<CountryNode> countryNode = mapModel.fetchCountry(input);
+            MapModel mapModel = MapModel.getInstance();
+            Optional<Country> countryNode = mapModel.getCountryByName(input);
             return countryNode.map(node -> node.getCurrentPlayer().equals(player)).orElse(false);
 
         }

@@ -1,18 +1,10 @@
 package player;
 
 import javafx.scene.paint.Color;
-import map.CountryNode;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class HumanPlayer extends Player {
-
     private final String id;
-    private int reinforcement = 0;
-//    private final Deck deck;
-    private final List<CountryNode> countryNodeList = new ArrayList<>();
 
     public HumanPlayer(String name, Color color) {
         super(name, color);
@@ -23,4 +15,8 @@ public class HumanPlayer extends Player {
         return id;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof HumanPlayer && ((HumanPlayer) obj).getId().equals(id);
+    }
 }

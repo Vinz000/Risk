@@ -1,5 +1,6 @@
 package shell;
 
+import common.Constants;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -18,8 +19,12 @@ public class ShellComponent extends VBox implements Observer {
     private final Label log = new Label();
     private final TextField inputLine = new TextField();
 
-    public ShellComponent(ShellModel shellModel) {
-        super();
+    public ShellComponent() {
+        setId(Constants.ComponentIds.SHELL);
+
+        ShellModel shellModel = ShellModel.getInstance();
+        shellModel.addObserver(this);
+
         build(shellModel);
     }
 
@@ -67,12 +72,15 @@ public class ShellComponent extends VBox implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        ShellModelArg updateArg = (ShellModelArg) arg;
 
-        // [arg] is a notification.
-        if (arg instanceof String) {
-            appendLogText((String) arg);
+        switch (updateArg.updateType) {
+            case NOTIFICATION:
+                appendLogText((String) updateArg.arg);
+                break;
+            case SET_INPUT_LINE:
+                inputLine.setText((String) updateArg.arg);
+                break;
         }
     }
-
-
 }
