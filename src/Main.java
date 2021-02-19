@@ -1,4 +1,5 @@
-import game.GameRoot;
+import game.GameComponent;
+import game.GameCore;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -18,17 +19,19 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        GameRoot gameRoot = new GameRoot();
-        primaryStage.getIcons().add(new Image(Paths.ICON));
+    public void start(Stage primaryStage) {
 
+        // Create UI components
+        GameComponent gameComponent = new GameComponent();
         Scene gameScene = new Scene(
-                gameRoot,
+                gameComponent,
                 MAP_WIDTH + SHELL_WIDTH,
                 MAP_HEIGHT
         );
-
         gameScene.getStylesheets().add(Paths.STYLE_SHEET);
+
+        // Stage configuration
+        primaryStage.getIcons().add(new Image(Paths.ICON));
         primaryStage.setMinWidth(MAP_WIDTH + SHELL_WIDTH);
         primaryStage.setMinHeight(MAP_HEIGHT);
         primaryStage.setResizable(false);
@@ -36,7 +39,7 @@ public class Main extends Application {
         primaryStage.setScene(gameScene);
         primaryStage.show();
 
-        // Start the game!
-        gameRoot.start();
+        // Start
+        GameCore.start();
     }
 }
