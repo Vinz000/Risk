@@ -50,16 +50,16 @@ public class MapModel extends Observable {
                 .findFirst();
     }
 
-    public void setCountryArmyCount(Country country, int army) {
-        country.setArmy(army);
+    public void setCountryArmyCount(Country country, int armyCount) {
+        country.setArmyCount(armyCount);
         MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.ARMY_COUNT);
         setChanged();
         notifyObservers(mapModelArg);
     }
 
-    public void setCountryCurrentPlayer(Country country, Player player) {
-        country.setCurrentPlayer(player);
-        MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.CURRENT_PLAYER);
+    public void setCountryOccupier(Country country, Player player) {
+        country.setOccupier(player);
+        MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.OCCUPIER);
         setChanged();
         notifyObservers(mapModelArg);
     }

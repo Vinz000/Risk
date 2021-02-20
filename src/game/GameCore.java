@@ -4,7 +4,7 @@ import card.Card;
 import card.Deck;
 import common.Constants;
 import common.Dice;
-import common.Validators;
+import common.validation.Validators;
 import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;
@@ -81,31 +81,31 @@ public class GameCore {
         // Place down 3 armies in corresponding countryNode
         Optional<Country> countryNode = mapModel.getCountryByName(input);
         countryNode.ifPresent(node -> {
-            int currentArmyCount = node.getArmy();
+            int currentArmyCount = node.getArmyCount();
             mapModel.setCountryArmyCount(node, currentArmyCount + 3);
         });
 
         shellModel.notify("Successfully placed armies down");
         shellModel.notify("Please press Enter to continue");
-    }, Validators.currentPlayerOwns);
+    }, Validators.currentPlayerOccupies);
 
     // Prompts user before choosing own country
     private static final ShellPrompt beforeChoosingOwnCountry = new ShellPrompt(input -> shellModel.notify(
-            String.format("%s choose country that you own to place 3 army.", playerModel.getCurrentHumanPlayer().getName())
+            String.format("%s choose country that you own to place 3 armies.", playerModel.getCurrentHumanPlayer().getName())
     ), Validators.alwaysValid);
 
     // Choosing neutral countries to reinforce
     private static final ShellPrompt chooseNeutral = new ShellPrompt(input -> {
         Optional<Country> countryNode = mapModel.getCountryByName(input);
         countryNode.ifPresent(node -> {
-            int currentArmyCount = node.getArmy();
+            int currentArmyCount = node.getArmyCount();
             mapModel.setCountryArmyCount(node, currentArmyCount + 1);
         });
 
         shellModel.notify("Successfully placed army.");
 
         Collections.rotate(playerModel.getNeutralPlayers(), -1);
-    }, Validators.neutralPlayerOwns);
+    }, Validators.neutralPlayerOccupies);
 
     // Message before choosing a neutral country
     private static final ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> shellModel.notify(

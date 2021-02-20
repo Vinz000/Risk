@@ -58,7 +58,7 @@ public class CountryComponent extends StackPane implements Observer, Component {
 
         armyCount.setId(Constants.ComponentIds.TEXT);
         getChildren().addAll(countryMarker, armyCount);
-        updateArmyCount(String.valueOf(country.getArmy()));
+        updateArmyCount(String.valueOf(country.getArmyCount()));
 
         setVisible(false);
     }
@@ -163,16 +163,16 @@ public class CountryComponent extends StackPane implements Observer, Component {
             switch (updateArg.updateType) {
 
                 case ARMY_COUNT:
-                    String armyCount = String.valueOf(((Country) updateArg.arg).getArmy());
+                    String armyCount = String.valueOf(((Country) updateArg.arg).getArmyCount());
                     updateArmyCount(armyCount);
                     break;
-                case CURRENT_PLAYER:
-                    Player currentPlayer = ((Country) updateArg.arg).getCurrentPlayer();
-                    countryMarker.setFill(currentPlayer.getColor());
+                case OCCUPIER:
+                    Player countryOccupier = ((Country) updateArg.arg).getOccupier();
+                    countryMarker.setFill(countryOccupier.getColor());
 
                     String toolTipText = String.format("%s\nOwner: %s",
                             country.getCountryName(),
-                            currentPlayer.getName()
+                            countryOccupier.getName()
                     );
                     tooltip.setText(toolTipText);
                     break;

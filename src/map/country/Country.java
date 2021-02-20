@@ -8,8 +8,8 @@ public class Country {
     private final int[] adjCountries;
     private final int continentID;
     private final Point2D coords;
-    private int army = 0;
-    private Player currentPlayer;
+    private int armyCount = 0;
+    private Player occupier;
 
     public Country(String countryName, int[] adjCountries, int continentID, int[] coords) {
         this.countryName = countryName;
@@ -34,20 +34,20 @@ public class Country {
         return continentID;
     }
 
-    public int getArmy() {
-        return army;
+    public int getArmyCount() {
+        return armyCount;
     }
 
-    public void setArmy(int army) {
-        this.army = army;
+    public void setArmyCount(int armyCount) {
+        this.armyCount = armyCount;
     }
 
-    public Player getCurrentPlayer() {
-        return currentPlayer;
+    public Player getOccupier() {
+        return occupier;
     }
 
-    public void setCurrentPlayer(Player player) {
-        this.currentPlayer = player;
+    public void setOccupier(Player player) {
+        this.occupier = player;
     }
 
     @Override
