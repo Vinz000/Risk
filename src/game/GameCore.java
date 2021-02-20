@@ -78,11 +78,11 @@ public class GameCore {
 
     // Choosing own country to reinforce
     private static final ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
-        // Place down 3 armies in corresponding countryNode
-        Optional<Country> countryNode = mapModel.getCountryByName(input);
-        countryNode.ifPresent(node -> {
-            int currentArmyCount = node.getArmyCount();
-            mapModel.setCountryArmyCount(node, currentArmyCount + 3);
+        // Place down 3 armies in corresponding country
+        Optional<Country> country = mapModel.getCountryByName(input);
+        country.ifPresent(validCountry -> {
+            int currentArmyCount = validCountry.getArmyCount();
+            mapModel.setCountryArmyCount(validCountry, currentArmyCount + 3);
         });
 
         shellModel.notify("Successfully placed armies down");
@@ -96,10 +96,10 @@ public class GameCore {
 
     // Choosing neutral countries to reinforce
     private static final ShellPrompt chooseNeutral = new ShellPrompt(input -> {
-        Optional<Country> countryNode = mapModel.getCountryByName(input);
-        countryNode.ifPresent(node -> {
-            int currentArmyCount = node.getArmyCount();
-            mapModel.setCountryArmyCount(node, currentArmyCount + 1);
+        Optional<Country> country = mapModel.getCountryByName(input);
+        country.ifPresent(validCountry -> {
+            int currentArmyCount = validCountry.getArmyCount();
+            mapModel.setCountryArmyCount(validCountry, currentArmyCount + 1);
         });
 
         shellModel.notify("Successfully placed army.");

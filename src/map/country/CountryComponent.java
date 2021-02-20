@@ -22,11 +22,6 @@ import java.util.Observer;
 
 import static common.Constants.*;
 
-/**
- * So we keep Country as just a data structure
- * Change color of node
- */
-
 public class CountryComponent extends StackPane implements Observer, Component {
     private final Country country;
     private final Text armyCount = new Text();
