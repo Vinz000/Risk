@@ -13,22 +13,25 @@ public class Dice {
     public Dice() {
     }
 
-    public Dice getNextDice(int rolledDice) {
+    public List<Integer> getNextDice(int diceCount) {
+        rollDice(diceCount);
+        return rolledDice;
+    }
 
+    private void rollDice(int diceCount) {
         this.rolledDice.clear();
 
-        for (int i = 0; i < rolledDice; i++) {
+        for (int i = 0; i < diceCount; i++) {
             this.rolledDice.add(die.nextInt(6) + 1);
         }
 
         // Sort then reverse
         Collections.sort(this.rolledDice);
         Collections.reverse(this.rolledDice);
-
-        return this;
     }
 
-    public int getRollSum() {
+    public int getRollSum(int diceCount) {
+        rollDice(diceCount);
         return rolledDice.stream().reduce(0, Integer::sum);
     }
 
