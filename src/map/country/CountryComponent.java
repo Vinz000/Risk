@@ -1,6 +1,7 @@
 package map.country;
 
 import common.Component;
+import javafx.scene.effect.Glow;
 import map.model.MapModel;
 import map.model.MapModelArg;
 import player.Player;
@@ -173,6 +174,9 @@ public class CountryComponent extends StackPane implements Observer, Component {
                     break;
                 case VISIBLE:
                     setVisible(true);
+                    break;
+                case HIGHLIGHT:
+                    setEffect(new Glow());
                     break;
             }
         }

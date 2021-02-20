@@ -5,6 +5,7 @@ import common.Constants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class Deck {
     private final List<Card> deck = new ArrayList<>(Constants.COUNTRY_NAMES.length);
@@ -26,14 +27,18 @@ public class Deck {
         Collections.shuffle(deck);
     }
 
-    public Card drawCard() {
-        Card drawCard = deck.get(0);
-        deck.remove(0);
+    public Optional<Card> drawCard() {
+        Optional<Card> nextCard = Optional.ofNullable(deckSize() > 0 ? deck.get(0) : null);
+        nextCard.ifPresent(ignored -> deck.remove(0));
 
-        return drawCard;
+        return nextCard;
     }
 
-    public void add(Card card) {
+    public void add(Card card) throws IllegalArgumentException {
+        if (card == null) {
+            throw new IllegalArgumentException("Card cannot be null.");
+        }
+
         deck.add(card);
     }
 

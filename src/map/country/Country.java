@@ -38,8 +38,11 @@ public class Country {
         return armyCount;
     }
 
-    public void setArmyCount(int armyCount) {
-        this.armyCount = armyCount;
+    public void updateArmyCount(int armyCount) {
+        if (this.armyCount + armyCount < 0) {
+            throw new IllegalArgumentException("ArmyCount cannot be less than 0.");
+        }
+        this.armyCount += armyCount;
     }
 
     public Player getOccupier() {

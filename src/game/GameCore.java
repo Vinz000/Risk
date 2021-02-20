@@ -8,6 +8,7 @@ import common.validation.Validators;
 import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;
+import player.Player;
 import player.PlayerModel;
 import shell.model.ShellModel;
 import shell.model.ShellModel.ShellPrompt;
@@ -47,13 +48,13 @@ public class GameCore {
         int playerTwoDiceSum;
 
         do {
-            playerOneDiceSum = dice.getNextDice(2).getRollSum();
+            playerOneDiceSum = dice.getRollSum(2);
             String playerOneDiceNotification = playerModel.getHumanPlayer(0).getName() + " "
                     + Constants.Notifications.ROLLED + dice.printRoll();
 
             shellModel.notify(playerOneDiceNotification);
 
-            playerTwoDiceSum = dice.getNextDice(2).getRollSum();
+            playerTwoDiceSum = dice.getRollSum(2);
             String playerTwoDiceNotification = playerModel.getHumanPlayer(1).getName() + " "
                     + Constants.Notifications.ROLLED + dice.printRoll();
 
@@ -80,19 +81,31 @@ public class GameCore {
     private static final ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
         // Place down 3 armies in corresponding country
         Optional<Country> country = mapModel.getCountryByName(input);
-        country.ifPresent(validCountry -> {
-            int currentArmyCount = validCountry.getArmyCount();
-            mapModel.setCountryArmyCount(validCountry, currentArmyCount + 3);
-        });
+        country.ifPresent(validCountry -> mapModel.setCountryArmyCount(validCountry, 3));
+
+        // Undo highlight of owned countries
+        playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
+
+        // Change turn
+        playerModel.changeTurn();
 
         shellModel.notify("Successfully placed armies down");
         shellModel.notify("Please press Enter to continue");
     }, Validators.currentPlayerOccupies);
 
     // Prompts user before choosing own country
-    private static final ShellPrompt beforeChoosingOwnCountry = new ShellPrompt(input -> shellModel.notify(
-            String.format("%s choose country that you own to place 3 armies.", playerModel.getCurrentHumanPlayer().getName())
-    ), Validators.alwaysValid);
+    private static final ShellPrompt beforeChoosingOwnCountry = new ShellPrompt(input -> {
+
+        System.out.println(playerModel.getCurrentHumanPlayer());
+        System.out.println(playerModel.getCurrentHumanPlayer().getOwnedCountries());
+
+        playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
+
+        shellModel.notify(
+                String.format("%s choose country that you own to place 3 armies.", playerModel.getCurrentHumanPlayer().getName())
+        );
+
+    }, Validators.alwaysValid);
 
     // Choosing neutral countries to reinforce
     private static final ShellPrompt chooseNeutral = new ShellPrompt(input -> {
@@ -104,13 +117,22 @@ public class GameCore {
 
         shellModel.notify("Successfully placed army.");
 
+        // Undo highlight
+        playerModel.getNeutralPlayers().get(0).getOwnedCountries().forEach(mapModel::highlightCountry);
+
         Collections.rotate(playerModel.getNeutralPlayers(), -1);
     }, Validators.neutralPlayerOccupies);
 
     // Message before choosing a neutral country
-    private static final ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> shellModel.notify(
-            String.format("Place one army owned by %s", playerModel.getNeutralPlayers().get(0).getName())
-    ), Validators.alwaysValid);
+    private static final ShellPrompt beforeChoosingNeutrals = new ShellPrompt(input -> {
+        Player currentNeutralPlayer = playerModel.getNeutralPlayers().get(0);
+
+        currentNeutralPlayer.getOwnedCountries().forEach(mapModel::highlightCountry);
+
+        shellModel.notify(
+                String.format("Place one army owned by %s", playerModel.getNeutralPlayers().get(0).getName())
+        );
+    }, Validators.alwaysValid);
 
     // Assigning countries at the start of the game
     private static final ShellPrompt drawingTerritories = new ShellPrompt(input -> {
@@ -119,36 +141,42 @@ public class GameCore {
         if (input.toLowerCase().contains("y")) {
             for (int i = 0; i < 9; i++) {
                 playerModel.forEachHumanPlayer(player -> {
-                    Card drawnCard = deck.drawCard();
-                    player.addCard(drawnCard);
-                    String drawnCountryName = drawnCard.getCountryName();
-                    String playerName = player.getName();
-                    shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
+                    Optional<Card> nullableCard = deck.drawCard();
+
+                    nullableCard.ifPresent(drawnCard -> {
+                        player.addCard(drawnCard);
+                        String drawnCountryName = drawnCard.getCountryName();
+                        String playerName = player.getName();
+                        shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
+                    });
                 });
             }
 
             for (int j = 0; j < 6; j++) {
                 playerModel.forEachNeutralPlayer(player -> {
-                    Card drawnCard = deck.drawCard();
-                    player.addCard(drawnCard);
-                    String drawnCountryName = drawnCard.getCountryName();
-                    String playerName = player.getName();
-                    shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
+                    Optional<Card> nullableCard = deck.drawCard();
+                    nullableCard.ifPresent(drawnCard -> {
+                        player.addCard(drawnCard);
+                        String drawnCountryName = drawnCard.getCountryName();
+                        String playerName = player.getName();
+                        shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
+                    });
+
                 });
             }
 
         } else {
             for (int i = 0; i < 9; i++) {
                 playerModel.forEachHumanPlayer(player -> {
-                    Card drawnCard = deck.drawCard();
-                    player.addCard(drawnCard);
+                    Optional<Card> nullableCard = deck.drawCard();
+                    nullableCard.ifPresent(player::addCard);
                 });
             }
 
             for (int j = 0; j < 6; j++) {
                 playerModel.forEachNeutralPlayer(player -> {
-                    Card drawnCard = deck.drawCard();
-                    player.addCard(drawnCard);
+                    Optional<Card> nullableCard = deck.drawCard();
+                    nullableCard.ifPresent(player::addCard);
                 });
             }
         }

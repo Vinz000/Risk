@@ -55,7 +55,7 @@ public class MapModel extends Observable {
     }
 
     public void setCountryArmyCount(Country country, int armyCount) {
-        country.setArmyCount(armyCount);
+        country.updateArmyCount(armyCount);
         MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.ARMY_COUNT);
         setChanged();
         notifyObservers(mapModelArg);
@@ -75,5 +75,12 @@ public class MapModel extends Observable {
             notifyObservers(mapModelArg);
         }
     }
+
+    public void highlightCountry(Country country) {
+        MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.HIGHLIGHT);
+        setChanged();
+        notifyObservers(mapModelArg);
+    }
+
 }
 
