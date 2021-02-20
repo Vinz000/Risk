@@ -2,6 +2,7 @@ package shell.component;
 
 import common.Component;
 import common.Constants;
+import common.validation.ValidatorResponse;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -17,6 +18,7 @@ public class ShellInputComponent extends TextField implements Observer, Componen
     public ShellInputComponent() {
         setCssId();
         observe();
+        build();
     }
 
     private void onEnterPressed(Event event) {
@@ -27,10 +29,11 @@ public class ShellInputComponent extends TextField implements Observer, Componen
 
         // If there is a value in the queue...
         if (nextPrompt != null) {
-            if (nextPrompt.validator.apply(userInput)) {
+            ValidatorResponse validatorResponse = nextPrompt.validator.apply(userInput);
+            if (validatorResponse.isValid()) {
                 nextPrompt.handler.accept(userInput);
             } else {
-                shellModel.notify("Invalid Input.");
+                shellModel.notify(validatorResponse.getMessage());
                 shellModel.retryPrompt(nextPrompt);
             }
         } else {

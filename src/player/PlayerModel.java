@@ -89,7 +89,7 @@ public class PlayerModel extends Observable {
                     if (playerCountryName.equals(country.getCountryName())) {
 
                         // Sets that country as a players if a match is found.
-                        mapModel.setCountryCurrentPlayer(country, currentPlayer);
+                        mapModel.setCountryOccupier(country, currentPlayer);
                         playerControlledCountries++;
                     }
                     mapModel.setCountryArmyCount(country, 1);

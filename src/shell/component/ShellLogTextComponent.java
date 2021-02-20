@@ -40,7 +40,7 @@ public class ShellLogTextComponent extends Label implements Observer, Component 
     public void update(Observable o, Object arg) {
         ShellModelArg updateArg = (ShellModelArg) arg;
 
-        switch(updateArg.updateType) {
+        switch (updateArg.updateType) {
             case NOTIFICATION:
                 setText(getText() + "\n" + updateArg.arg);
                 break;

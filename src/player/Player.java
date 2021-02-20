@@ -6,8 +6,10 @@ import map.country.Country;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class Player {
+    private final String id;
     private final String name;
     private final Color color;
     private final List<Country> ownedCountries = new ArrayList<>();
@@ -15,6 +17,7 @@ public abstract class Player {
     private int reinforcement;
 
     public Player(String name, Color color) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.color = color;
     }
@@ -58,4 +61,8 @@ public abstract class Player {
         return drawCard;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Player && ((Player) obj).id.equals(id);
+    }
 }
