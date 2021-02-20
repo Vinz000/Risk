@@ -81,7 +81,7 @@ public class GameCore {
     private static final ShellPrompt chooseOwnCountry = new ShellPrompt(input -> {
         // Place down 3 armies in corresponding country
         Optional<Country> country = mapModel.getCountryByName(input);
-        country.ifPresent(validCountry -> mapModel.setCountryArmyCount(validCountry, 3));
+        country.ifPresent(validCountry -> mapModel.updateCountryArmyCount(validCountry, 3));
 
         // Undo highlight of owned countries
         playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
@@ -96,9 +96,6 @@ public class GameCore {
     // Prompts user before choosing own country
     private static final ShellPrompt beforeChoosingOwnCountry = new ShellPrompt(input -> {
 
-        System.out.println(playerModel.getCurrentHumanPlayer());
-        System.out.println(playerModel.getCurrentHumanPlayer().getOwnedCountries());
-
         playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
 
         shellModel.notify(
@@ -112,7 +109,7 @@ public class GameCore {
         Optional<Country> country = mapModel.getCountryByName(input);
         country.ifPresent(validCountry -> {
             int currentArmyCount = validCountry.getArmyCount();
-            mapModel.setCountryArmyCount(validCountry, currentArmyCount + 1);
+            mapModel.updateCountryArmyCount(validCountry, currentArmyCount + 1);
         });
 
         shellModel.notify("Successfully placed army.");

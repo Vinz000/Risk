@@ -88,7 +88,7 @@ public class PlayerModel extends Observable {
                 nullableCountry.ifPresent(country -> {
                     mapModel.setCountryOccupier(country, player);
                     player.addCountry(country);
-                    mapModel.setCountryArmyCount(country, 1);
+                    mapModel.updateCountryArmyCount(country, 1);
                     // TODO move deck refill here.
                 });
             }
