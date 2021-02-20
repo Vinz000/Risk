@@ -39,6 +39,10 @@ public class MapModel extends Observable {
     }
 
     public Optional<Country> getCountryByName(String countryName) {
+        if (countryName.isEmpty()) {
+            return Optional.empty();
+        }
+
         Predicate<Country> hasSameName = country -> country
                 .getCountryName()
                 .toLowerCase()

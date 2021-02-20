@@ -1,5 +1,6 @@
 package player;
 
+import card.Card;
 import common.Constants;
 import map.country.Country;
 import map.model.MapModel;
@@ -7,10 +8,11 @@ import map.model.MapModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Optional;
 import java.util.function.Consumer;
 
-import static common.Constants.*;
-import static common.Constants.INIT_COUNTRIES_PLAYER;
+import static common.Constants.NUM_HUMAN_PLAYERS;
+import static common.Constants.NUM_NEUTRAL_PLAYERS;
 
 public class PlayerModel extends Observable {
     private final List<Player> humanPlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
@@ -63,38 +65,39 @@ public class PlayerModel extends Observable {
         currentPlayerIndex %= NUM_HUMAN_PLAYERS;
     }
 
-    public void forEachPlayer(int maxIndex, Consumer<Player> callback) {
-        for (int i = 0; i < maxIndex; i++) {
-            Player currentPlayer = getHumanPlayer(i);
-            callback.accept(currentPlayer);
+    public void forEachHumanPlayer(Consumer<Player> callback) {
+        for (Player player : humanPlayers) {
+            callback.accept(player);
         }
     }
 
-    public void assignInitialCountries() {
+    public void forEachNeutralPlayer(Consumer<Player> callback) {
+        for (Player player : neutralPlayers) {
+            callback.accept(player);
+        }
+    }
+
+    private void assignInitialCountries(List<Player> players) {
 
         MapModel mapModel = MapModel.getInstance();
-        int currentPlayerIndex = 0;
-        int playerControlledCountries = 0;
 
-        // While playerControlledCountries is less than the initial starting requirement continue to iterate.
-        while (playerControlledCountries < INIT_COUNTRIES_PLAYER * 2) {
-            Player currentPlayer = humanPlayers.get(currentPlayerIndex++);
-
-            // Iterates through the players hand positions and gets the country name on the card.
-            for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
-                String playerCountryName = currentPlayer.getHand().get(i).getCountryName();
-
-                // Iterates through the country list to find a matching country name.
-                for (Country country : mapModel.getCountries()) {
-                    if (playerCountryName.equals(country.getCountryName())) {
-
-                        // Sets that country as a players if a match is found.
-                        mapModel.setCountryOccupier(country, currentPlayer);
-                        playerControlledCountries++;
-                    }
+        players.forEach(player -> {
+            for (Card card : player.getHand()) {
+                String playerCountryName = card.getCountryName();
+                Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
+                nullableCountry.ifPresent(country -> {
+                    mapModel.setCountryOccupier(country, player);
+                    player.addCountry(country);
                     mapModel.setCountryArmyCount(country, 1);
-                }
+                    // TODO move deck refill here.
+                });
             }
-        }
+        });
     }
+
+    public void assignAllInitialCountries() {
+        assignInitialCountries(humanPlayers);
+        assignInitialCountries(neutralPlayers);
+    }
+
 }

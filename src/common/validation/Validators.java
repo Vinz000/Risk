@@ -59,9 +59,7 @@ public class Validators {
             Country country = inputCountry.get();
             Player countryOccupier = country.getOccupier();
 
-            // TODO: once neutral players are given countries,
-            //       `countryOccupier == null` will not be necessary.
-            if (countryOccupier == null || !countryOccupier.equals(player)) {
+            if (!countryOccupier.equals(player)) {
                 invalidMessage = String.format("%s does not own %s", player.getName(), country.getCountryName());
             }
         } else {

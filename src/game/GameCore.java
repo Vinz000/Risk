@@ -118,7 +118,7 @@ public class GameCore {
 
         if (input.toLowerCase().contains("y")) {
             for (int i = 0; i < 9; i++) {
-                playerModel.forEachPlayer(2, player -> {
+                playerModel.forEachHumanPlayer(player -> {
                     Card drawnCard = deck.drawCard();
                     player.addCard(drawnCard);
                     String drawnCountryName = drawnCard.getCountryName();
@@ -126,19 +126,44 @@ public class GameCore {
                     shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
                 });
             }
+
+            for (int j = 0; j < 6; j++) {
+                playerModel.forEachNeutralPlayer(player -> {
+                    Card drawnCard = deck.drawCard();
+                    player.addCard(drawnCard);
+                    String drawnCountryName = drawnCard.getCountryName();
+                    String playerName = player.getName();
+                    shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
+                });
+            }
+
         } else {
             for (int i = 0; i < 9; i++) {
-                playerModel.forEachPlayer(2, player -> {
+                playerModel.forEachHumanPlayer(player -> {
+                    Card drawnCard = deck.drawCard();
+                    player.addCard(drawnCard);
+                });
+            }
+
+            for (int j = 0; j < 6; j++) {
+                playerModel.forEachNeutralPlayer(player -> {
                     Card drawnCard = deck.drawCard();
                     player.addCard(drawnCard);
                 });
             }
         }
 
-        playerModel.assignInitialCountries();
+        playerModel.assignAllInitialCountries();
 
         for (int i = 0; i < 9; i++) {
-            playerModel.forEachPlayer(2, player -> {
+            playerModel.forEachHumanPlayer(player -> {
+                Card refillDeck = player.removeCard();
+                deck.add(refillDeck);
+            });
+        }
+
+        for (int j = 0; j < 6; j++) {
+            playerModel.forEachNeutralPlayer(player -> {
                 Card refillDeck = player.removeCard();
                 deck.add(refillDeck);
             });
