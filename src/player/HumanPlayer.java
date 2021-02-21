@@ -1,6 +1,7 @@
 package player;
 
 import javafx.scene.paint.Color;
+
 import java.util.UUID;
 
 public class HumanPlayer extends Player {

@@ -10,21 +10,21 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
-    Deck deck = new Deck();
+    Deck deck;
 
     @BeforeEach
     void setUp() {
-        deck = new Deck();
+        deck = Deck.getInstance();
     }
 
-    @Test
-    void testDeck() {
-        try {
-            new Deck();
-        } catch (IllegalArgumentException e) {
-            fail("Constructor should create instance of a new Deck.");
-        }
-    }
+//    @Test
+//    void testDeck() {
+//        try {
+//            new Deck();
+//        } catch (IllegalArgumentException e) {
+//            fail("Constructor should create instance of a new Deck.");
+//        }
+//    }
 
     @Test
     void getDeck() {

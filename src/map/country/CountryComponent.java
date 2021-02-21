@@ -1,7 +1,7 @@
 package map.country;
 
 import common.Component;
-import javafx.scene.effect.Glow;
+import javafx.scene.paint.Color;
 import map.model.MapModel;
 import map.model.MapModelArg;
 import player.Player;
@@ -27,6 +27,7 @@ public class CountryComponent extends StackPane implements Observer, Component {
     private final Country country;
     private final Text armyCount = new Text();
     private final Circle countryMarker = new Circle();
+    private final Circle countryHighlighter = new Circle();
     private final Tooltip tooltip = new Tooltip();
     private final List<Line> countryLinks = new ArrayList<>();
 
@@ -41,6 +42,10 @@ public class CountryComponent extends StackPane implements Observer, Component {
     public void build() {
         createLinks();
 
+        countryHighlighter.setRadius(COUNTRY_NODE_RADIUS + 2);
+        countryHighlighter.setFill(Color.valueOf("#ffffff"));
+        countryHighlighter.opacityProperty().setValue(0.8);
+
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
 
         setOnMouseMoved(this::onMouseMoved);
@@ -53,9 +58,10 @@ public class CountryComponent extends StackPane implements Observer, Component {
         setTranslateY(country.getCoords().getY() - Constants.COUNTRY_NODE_RADIUS);
 
         armyCount.setId(Constants.ComponentIds.TEXT);
-        getChildren().addAll(countryMarker, armyCount);
+        getChildren().addAll(countryHighlighter, countryMarker, armyCount);
         updateArmyCount(String.valueOf(country.getArmyCount()));
 
+        countryHighlighter.setVisible(false);
         setVisible(false);
     }
 
@@ -176,7 +182,7 @@ public class CountryComponent extends StackPane implements Observer, Component {
                     setVisible(true);
                     break;
                 case HIGHLIGHT:
-                    setEffect(new Glow());
+                    countryHighlighter.setVisible(!countryHighlighter.isVisible());
                     break;
             }
         }

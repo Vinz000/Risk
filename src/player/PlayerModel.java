@@ -1,6 +1,7 @@
 package player;
 
 import card.Card;
+import card.Deck;
 import common.Constants;
 import map.country.Country;
 import map.model.MapModel;
@@ -11,21 +12,19 @@ import java.util.Observable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static common.Constants.NUM_HUMAN_PLAYERS;
-import static common.Constants.NUM_NEUTRAL_PLAYERS;
+import static common.Constants.*;
 
 public class PlayerModel extends Observable {
+    private static PlayerModel instance;
     private final List<Player> humanPlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
     private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
     private int currentPlayerIndex = 0;
-
-    private static PlayerModel instance;
 
     private PlayerModel() {
         createNeutralPlayers();
     }
 
-    public static PlayerModel getInstance() {
+    public static synchronized PlayerModel getInstance() {
         if (instance == null) {
             return instance = new PlayerModel();
         }
@@ -80,6 +79,7 @@ public class PlayerModel extends Observable {
     private void assignInitialCountries(List<Player> players) {
 
         MapModel mapModel = MapModel.getInstance();
+        Deck deck = Deck.getInstance();
 
         players.forEach(player -> {
             for (Card card : player.getHand()) {
@@ -87,9 +87,10 @@ public class PlayerModel extends Observable {
                 Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
                 nullableCountry.ifPresent(country -> {
                     mapModel.setCountryOccupier(country, player);
-                    player.addCountry(country);
                     mapModel.updateCountryArmyCount(country, 1);
-                    // TODO move deck refill here.
+
+                    player.addCountry(country);
+
                 });
             }
         });

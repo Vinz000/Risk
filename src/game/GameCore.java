@@ -16,7 +16,7 @@ import shell.model.ShellModel.ShellPrompt;
 import java.util.Collections;
 import java.util.Optional;
 
-import static common.Constants.NUM_NEUTRAL_PLAYERS;
+import static common.Constants.*;
 
 public class GameCore {
 
@@ -28,7 +28,8 @@ public class GameCore {
         HumanPlayer humanPlayerOne = new HumanPlayer(input, Constants.Colors.PLAYER_1_COLOR);
         playerModel.addHumanPlayer(humanPlayerOne);
 
-        shellModel.notify(Constants.Notifications.NAME + "(P2)\n");
+        shellModel.notify("Welcome " + humanPlayerOne.getName());
+        shellModel.notify(Constants.Notifications.NAME + "(P2)");
 
     }, Validators.nonEmpty);
 
@@ -36,6 +37,8 @@ public class GameCore {
 
         HumanPlayer humanPlayerTwo = new HumanPlayer(input, Constants.Colors.PLAYER_2_COLOR);
         playerModel.addHumanPlayer(humanPlayerTwo);
+
+        shellModel.notify("Welcome " + humanPlayerTwo.getName() + "\n");
 
         shellModel.notify(Constants.Notifications.TERRITORY);
         shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
@@ -72,8 +75,7 @@ public class GameCore {
         } while (playerOneDiceSum == playerTwoDiceSum);
 
         String currentPlayerName = playerModel.getCurrentHumanPlayer().getName();
-        shellModel.notify(String.format("%s rolled higher, so is going first\n", currentPlayerName));
-        shellModel.notify("Your turn " + currentPlayerName);
+        shellModel.notify(String.format("%s rolled higher, so is going first", currentPlayerName));
         shellModel.notify("Please press Enter to continue");
     }, Validators.alwaysValid);
 
@@ -86,9 +88,6 @@ public class GameCore {
         // Undo highlight of owned countries
         playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
 
-        // Change turn
-        playerModel.changeTurn();
-
         shellModel.notify("Successfully placed armies down");
         shellModel.notify("Please press Enter to continue");
     }, Validators.currentPlayerOccupies);
@@ -98,9 +97,9 @@ public class GameCore {
 
         playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
 
-        shellModel.notify(
-                String.format("%s choose country that you own to place 3 armies.", playerModel.getCurrentHumanPlayer().getName())
-        );
+        shellModel.notify("\nYour turn " + playerModel.getCurrentHumanPlayer().getName());
+        shellModel.notify("choose country that you own to place 3 armies.");
+
 
     }, Validators.alwaysValid);
 
@@ -111,8 +110,15 @@ public class GameCore {
 
         shellModel.notify("Successfully placed army.");
 
+        Player currentNeutralPlayer = playerModel.getNeutralPlayers().get(0);
+
         // Undo highlight
-        playerModel.getNeutralPlayers().get(0).getOwnedCountries().forEach(mapModel::highlightCountry);
+        currentNeutralPlayer.getOwnedCountries().forEach(mapModel::highlightCountry);
+
+        // Change turn if current neutralPlayer is neutralPlayer4
+        if (currentNeutralPlayer.getName().contains("4")) {
+            playerModel.changeTurn();
+        }
 
         Collections.rotate(playerModel.getNeutralPlayers(), -1);
     }, Validators.neutralPlayerOccupies);
@@ -130,10 +136,10 @@ public class GameCore {
 
     // Assigning countries at the start of the game
     private static final ShellPrompt drawingTerritories = new ShellPrompt(input -> {
-        Deck deck = new Deck();
+        Deck deck = Deck.getInstance();
 
         if (input.toLowerCase().contains("y")) {
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
                 playerModel.forEachHumanPlayer(player -> {
                     Optional<Card> nullableCard = deck.drawCard();
 
@@ -146,7 +152,7 @@ public class GameCore {
                 });
             }
 
-            for (int j = 0; j < 6; j++) {
+            for (int j = 0; j < INIT_COUNTRIES_NEUTRAL; j++) {
                 playerModel.forEachNeutralPlayer(player -> {
                     Optional<Card> nullableCard = deck.drawCard();
                     nullableCard.ifPresent(drawnCard -> {
@@ -160,14 +166,14 @@ public class GameCore {
             }
 
         } else {
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
                 playerModel.forEachHumanPlayer(player -> {
                     Optional<Card> nullableCard = deck.drawCard();
                     nullableCard.ifPresent(player::addCard);
                 });
             }
 
-            for (int j = 0; j < 6; j++) {
+            for (int j = 0; j < INIT_COUNTRIES_NEUTRAL; j++) {
                 playerModel.forEachNeutralPlayer(player -> {
                     Optional<Card> nullableCard = deck.drawCard();
                     nullableCard.ifPresent(player::addCard);
@@ -177,26 +183,15 @@ public class GameCore {
 
         playerModel.assignAllInitialCountries();
 
-        for (int i = 0; i < 9; i++) {
-            playerModel.forEachHumanPlayer(player -> {
-                Card refillDeck = player.removeCard();
-                deck.add(refillDeck);
-            });
-        }
-
-        for (int j = 0; j < 6; j++) {
-            playerModel.forEachNeutralPlayer(player -> {
-                Card refillDeck = player.removeCard();
-                deck.add(refillDeck);
-            });
-        }
+        playerModel.forEachHumanPlayer(player -> deck.add(player.removeCard()));
+        playerModel.forEachNeutralPlayer(player -> deck.add(player.removeCard()));
 
         deck.addWildcards();
         deck.shuffle();
 
         mapModel.showCountryComponents();
 
-        shellModel.notify(Constants.Notifications.DICE_ROLL);
+        shellModel.notify("\n" + Constants.Notifications.DICE_ROLL);
     }, Validators.yesNo);
 
     // Game logic sequence
@@ -210,8 +205,8 @@ public class GameCore {
         shellModel.prompt(drawingTerritories);
         shellModel.prompt(selectFirstPlayer);
 
-        // Each player takes 12 turns
-        for (int i = 0; i < 24; i++) {
+        // Each player takes 9 turns
+        for (int i = 0; i < 18; i++) {
             shellModel.prompt(beforeChoosingOwnCountry);
             shellModel.prompt(chooseOwnCountry);
 

@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class Deck {
+    private static Deck instance;
+
     private final List<Card> deck = new ArrayList<>(Constants.COUNTRY_NAMES.length);
 
-    public Deck() {
+    private Deck() {
         for (int i = 0; i < Constants.NUM_INDIVIDUAL_CARDS; i++) {
             deck.add(new Card(CardType.SOLDIER, Constants.COUNTRY_NAMES[i]));
             deck.add(new Card(CardType.CALVARY, Constants.COUNTRY_NAMES[i + 14]));
@@ -18,6 +20,13 @@ public class Deck {
 
         }
         Collections.shuffle(deck);
+    }
+
+    public static synchronized Deck getInstance() {
+        if (instance == null) {
+            instance = new Deck();
+        }
+        return instance;
     }
 
     public void addWildcards() {

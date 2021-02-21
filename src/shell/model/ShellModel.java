@@ -27,7 +27,7 @@ public class ShellModel extends Observable {
     }
 
 
-    public static ShellModel getInstance() {
+    public static synchronized ShellModel getInstance() {
         if (instance == null) {
             return instance = new ShellModel();
         }
