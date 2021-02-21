@@ -6,8 +6,9 @@ Our implementation of the war/strategy game, Risk.
 
 1. Download `Team7_Sprint_2`
 2. Change to that directory
-3. Run `$ java -Dprism.order=sw -jar .\Team7-Sprint-2.jar`
+3. Run `$ java -Dprism.order=sw -jar ./Team7.jar`
 
+> **Note**: MacOS users should leave out the JVM option
 
 ### Tools
 
