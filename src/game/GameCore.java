@@ -107,10 +107,7 @@ public class GameCore {
     // Choosing neutral countries to reinforce
     private static final ShellPrompt chooseNeutral = new ShellPrompt(input -> {
         Optional<Country> country = mapModel.getCountryByName(input);
-        country.ifPresent(validCountry -> {
-            int currentArmyCount = validCountry.getArmyCount();
-            mapModel.updateCountryArmyCount(validCountry, currentArmyCount + 1);
-        });
+        country.ifPresent(validCountry -> mapModel.updateCountryArmyCount(validCountry, 1));
 
         shellModel.notify("Successfully placed army.");
 
