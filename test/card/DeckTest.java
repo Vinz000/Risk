@@ -17,45 +17,15 @@ class DeckTest {
         deck = Deck.getInstance();
     }
 
-//    @Test
-//    void testDeck() {
-//        try {
-//            new Deck();
-//        } catch (IllegalArgumentException e) {
-//            fail("Constructor should create instance of a new Deck.");
-//        }
-//    }
-
     @Test
-    void getDeck() {
+    void getDeck_GettingInstanceOfDeck_ShouldGetInstance() {
         List<Card> cardList = deck.getDeck();
-        assertEquals(cardList.size(), 42);
 
-        int soldierTypeCardsCount = (int) cardList
-                .stream()
-                .filter(card -> card.getType() == CardType.SOLDIER)
-                .count();
-        int artilleryTypeCardsCount = (int) cardList
-                .stream()
-                .filter(card -> card.getType() == CardType.ARTILLERY)
-                .count();
-        int cavalryTypeCardsCount = (int) cardList
-                .stream()
-                .filter(card -> card.getType() == CardType.CALVARY)
-                .count();
-        int wildCardsCount = (int) cardList
-                .stream()
-                .filter(card -> card.getType() == CardType.WILDCARD)
-                .count();
-
-        assertEquals(soldierTypeCardsCount, 14);
-        assertEquals(artilleryTypeCardsCount, 14);
-        assertEquals(cavalryTypeCardsCount, 14);
-        assertEquals(wildCardsCount, 0);
+        assertNotNull(cardList);
     }
 
     @Test
-    void testDrawCard() {
+    void drawCard_DrawCardFromTopOfDeck_ShouldReturnFirstCard() {
         List<Card> cardList = deck.getDeck();
         Card card2 = cardList.get(0);
         Optional<Card> card = deck.drawCard();
@@ -65,7 +35,7 @@ class DeckTest {
     }
 
     @Test
-    void testDrawCardShouldReturnNull() {
+    void drawCard_DrawingCardFromEmptyDeck_ShouldReturnNull() {
         while(deck.deckSize() > 0) {
             deck.drawCard();
         }
@@ -76,19 +46,19 @@ class DeckTest {
     }
 
     @Test
-    void testAdd() {
+    void add_AddingCardToDeck_ShouldAddToBottomOfDeck() {
         Card card = new Card(CardType.ARTILLERY, "VLL");
         deck.add(card);
         assertEquals(card, deck.getDeck().get(deck.getDeck().size() - 1));
     }
 
     @Test
-    void testAddNullParameters() {
+    void add_NullAsParam_ShouldReturnException() {
         assertThrows(IllegalArgumentException.class, () -> deck.add(null));
     }
 
     @Test
-    void addWildcards() {
+    void addWildcards_AddWildcardsToDeck_ShouldHaveWildCardsInDeck() {
         deck.addWildcards();
         List<Card> cardList = deck.getDeck();
 
@@ -102,7 +72,7 @@ class DeckTest {
     }
 
     @Test
-    void shuffle() {
+    void shuffle_ShufflingDeck_ShouldShuffleTheDeck() {
         List<Card> cardListCloned = new ArrayList<>(deck.getDeck());
         List<Card> cardList = deck.getDeck();
         deck.shuffle();
@@ -113,9 +83,9 @@ class DeckTest {
     }
 
     @Test
-    void deckSize() {
-        assertEquals(deck.deckSize(), 42);
-        deck.drawCard();
-        assertEquals(deck.deckSize(), 41);
+    void deckSize_GettingDeckSize_ShouldReturnAccurateDeckSize() {
+        int currentDeckSize = deck.deckSize();
+        deck.addWildcards();
+        assertEquals(deck.deckSize(), currentDeckSize + 2);
     }
 }

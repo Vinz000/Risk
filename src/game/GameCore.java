@@ -70,6 +70,8 @@ public class GameCore {
                 // then we change the turn so that the current player is now player Two.
 
                 playerModel.changeTurn();
+            } else {
+                playerModel.updatePlayerIndicator();
             }
 
         } while (playerOneDiceSum == playerTwoDiceSum);
@@ -98,7 +100,7 @@ public class GameCore {
         playerModel.getCurrentHumanPlayer().getOwnedCountries().forEach(mapModel::highlightCountry);
 
         shellModel.notify("\nYour turn " + playerModel.getCurrentHumanPlayer().getName());
-        shellModel.notify("choose country that you own to place 3 armies.");
+        shellModel.notify("Choose country that you own to place 3 armies.");
 
 
     }, Validators.alwaysValid);
@@ -155,6 +157,7 @@ public class GameCore {
             for (int j = 0; j < INIT_COUNTRIES_NEUTRAL; j++) {
                 playerModel.forEachNeutralPlayer(player -> {
                     Optional<Card> nullableCard = deck.drawCard();
+
                     nullableCard.ifPresent(drawnCard -> {
                         player.addCard(drawnCard);
                         String drawnCountryName = drawnCard.getCountryName();
@@ -164,7 +167,6 @@ public class GameCore {
 
                 });
             }
-
         } else {
             for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
                 playerModel.forEachHumanPlayer(player -> {
@@ -205,8 +207,7 @@ public class GameCore {
         shellModel.prompt(drawingTerritories);
         shellModel.prompt(selectFirstPlayer);
 
-        // Each player takes 9 turns
-        for (int i = 0; i < 18; i++) {
+        for (int i = 0; i < INIT_REINFORCEMENT_TURNS * 2; i++) {
             shellModel.prompt(beforeChoosingOwnCountry);
             shellModel.prompt(chooseOwnCountry);
 

@@ -19,7 +19,7 @@ class CountryTest {
     }
 
     @Test
-    public void testCountry() {
+    public void countryCallingCountryConstructorShouldCreateNewInstance() {
         try {
             new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
             new Country(COUNTRY_NAMES[2], ADJACENT[2], CONTINENT_IDS[2], COUNTRY_COORDS[2]);
@@ -30,45 +30,53 @@ class CountryTest {
     }
 
     @Test
-    public void testCountryIllegalParameters() {
-        try {
-            new Country(null, ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
-            new Country(COUNTRY_NAMES[2], null, CONTINENT_IDS[2], COUNTRY_COORDS[2]);
-            new Country(COUNTRY_NAMES[8], ADJACENT[8], -1, COUNTRY_COORDS[8]);
-            new Country(COUNTRY_NAMES[8], ADJACENT[8], CONTINENT_IDS[8], null);
-            fail("Illegal values allowed in constructor.");
-        } catch (Exception ignored) {
-        }
+    public void countryNullAs1stParamShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> new Country(null, ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]));
     }
 
     @Test
-    void testGetCoords() {
+    public void countryNullAs2ndParamShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> new Country(COUNTRY_NAMES[2], null, CONTINENT_IDS[2], COUNTRY_COORDS[2]));
+    }
+
+    @Test
+    public void countryNegativeInputAs3rdParamShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> new Country(COUNTRY_NAMES[8], ADJACENT[8], -1, COUNTRY_COORDS[8]));
+    }
+
+    @Test
+    public void countryNullAs4thParamShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> new Country(COUNTRY_NAMES[8], ADJACENT[8], CONTINENT_IDS[8], null));
+    }
+
+    @Test
+    void getCoordsGettingCoordinateOfCountryShouldReturnCoordinates() {
         assertEquals(country.getCoords().getX(), COUNTRY_COORDS[0][0]);
         assertEquals(country.getCoords().getY(), COUNTRY_COORDS[0][1]);
     }
 
     @Test
-    void testGetCountryName() {
+    void getCountryNameGettingCountryNameShouldReturnCorrectCountryName() {
         assertEquals(country.getCountryName(), COUNTRY_NAMES[0]);
     }
 
     @Test
-    void testGetAdjCountries() {
+    void getAdjCountriesGettingAdjCountriesShouldReturnAdjCountries() {
         assertEquals(country.getAdjCountries(), ADJACENT[0]);
     }
 
     @Test
-    void testGetContinentID() {
+    void getContinentIDGettingContinentIdShouldReturnCorrectContinentID() {
         assertEquals(country.getContinentID(), CONTINENT_IDS[0]);
     }
 
     @Test
-    void testGetArmy() {
+    void getArmyCountGettingCurrentArmyCountShouldReturnCurrentArmyCount() {
         assertEquals(country.getArmyCount(), 0);
     }
 
     @Test
-    void testUpdateArmy() {
+    void updateArmyUpdatingCurrentArmyCountShouldChangeArmyCount() {
         country.updateArmyCount(3);
         assertEquals(country.getArmyCount(), 3);
         country.updateArmyCount(-2);
@@ -78,27 +86,30 @@ class CountryTest {
     }
 
     @Test
-    void testUpdateArmyLessThanZero() {
+    void updateArmyCountUpdateArmyCountSoItsLessThanZeroShouldReturnException() {
         assertThrows(IllegalArgumentException.class, () -> country.updateArmyCount(-1));
     }
 
     @Test
-    void getCurrentPlayer() {
+    void getOccupierGettingOccupierShouldReturnCurrentOccupier() {
         assertNull(country.getOccupier());
     }
 
     @Test
-    void setCurrentPlayer() {
+    void setCurrentOccupierSettingANewOccupierShouldSetNewOccupier() {
         Player player = new HumanPlayer("John", Color.valueOf("#000000"));
         country.setOccupier(player);
         assertEquals(country.getOccupier(), player);
     }
 
     @Test
-    void testEquals() {
+    void equalsTestingSameCountriesAreEqualShouldReturnTrue() {
         Country country2 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
         assertEquals(country, country2);
+    }
 
+    @Test
+    void equalsTestingDifferentCountriesAreEqualShouldReturnFalse() {
         Country country3 = new Country(COUNTRY_NAMES[1], ADJACENT[1], CONTINENT_IDS[1], COUNTRY_COORDS[1]);
         assertNotEquals(country, country3);
     }

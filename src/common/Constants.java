@@ -15,6 +15,7 @@ public class Constants {
     public static final int NUM_MAIN_CARDS_PLUS_WILDCARDS = 44;
     public static final int NUM_INDIVIDUAL_CARDS = 14;
     public static final int NUM_WILDCARDS = 2;
+    public static final int INIT_REINFORCEMENT_TURNS = 9;
 
     public static final String[] COUNTRY_NAMES = {
             "Ontario", "Quebec", "NW Territory", "Alberta", "Greenland", "E United States", "W United States", "Central America", "Alaska",
@@ -77,6 +78,13 @@ public class Constants {
     public static final int MAP_HEIGHT = 600;
     public static final int SHELL_WIDTH = 250;
     public static final int COUNTRY_NODE_RADIUS = 10;
+
+    public static final int PLAYER_INDICATOR_WIDTH = 175;
+    public static final int PLAYER_INDICATOR_HEIGHT = 45;
+    public static final int PLAYER_INDICATOR_X = 445;
+    public static final int PLAYER_INDICATOR_Y = 500;
+    public static final double PLAYER_COLOR_INDICATOR_RADIUS = 17.5;
+
 
     public static final int[][] COUNTRY_COORDS = {
             {180, 115},     // 0

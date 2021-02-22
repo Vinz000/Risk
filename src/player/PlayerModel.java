@@ -12,7 +12,8 @@ import java.util.Observable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static common.Constants.*;
+import static common.Constants.NUM_HUMAN_PLAYERS;
+import static common.Constants.NUM_NEUTRAL_PLAYERS;
 
 public class PlayerModel extends Observable {
     private static PlayerModel instance;
@@ -62,6 +63,13 @@ public class PlayerModel extends Observable {
     public void changeTurn() {
         currentPlayerIndex++;
         currentPlayerIndex %= NUM_HUMAN_PLAYERS;
+
+        updatePlayerIndicator();
+    }
+
+    public void updatePlayerIndicator() {
+        setChanged();
+        notifyObservers(getCurrentHumanPlayer());
     }
 
     public void forEachHumanPlayer(Consumer<Player> callback) {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class Player {
+public class Player {
     private final String id;
     private final String name;
     private final Color color;
@@ -16,7 +16,11 @@ public abstract class Player {
     private final List<Card> hand = new ArrayList<>();
     private int reinforcement;
 
-    public Player(String name, Color color) {
+    public Player(String name, Color color) throws IllegalArgumentException {
+        if (isNull(name) || name.trim().isEmpty() || isNull(color)) {
+            throw new IllegalArgumentException("Illegal parameters");
+        }
+
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.color = color;
@@ -31,6 +35,9 @@ public abstract class Player {
     }
 
     public void addCountry(Country country) {
+        if (isNull(country)) {
+            throw new IllegalArgumentException("Country is Null");
+        }
         ownedCountries.add(country);
     }
 
@@ -39,6 +46,9 @@ public abstract class Player {
     }
 
     public void updateReinforcement(int armyOffset) {
+        if (reinforcement + armyOffset < 0) {
+            throw new IllegalArgumentException("Reinforcement should never be less than 0");
+        }
         reinforcement += armyOffset;
     }
 
@@ -51,14 +61,21 @@ public abstract class Player {
     }
 
     public void addCard(Card card) {
+        if (isNull(card) ) {
+            throw new IllegalArgumentException("Card is null");
+        }
         hand.add(card);
     }
 
-    public Card removeCard() {
-        Card drawCard = hand.get(0);
-        hand.remove(0);
+    public Card removeCard() throws IllegalArgumentException{
+        if (hand.size() == 0) {
+            throw new IllegalArgumentException("Cannot remove card");
+        }
+        return hand.remove(0);
+    }
 
-        return drawCard;
+    private boolean isNull(Object obj) {
+        return obj == null;
     }
 
     @Override

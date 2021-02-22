@@ -1,7 +1,7 @@
 package map.country;
 
-import player.Player;
 import javafx.geometry.Point2D;
+import player.Player;
 
 public class Country {
     private final String countryName;
@@ -11,7 +11,10 @@ public class Country {
     private int armyCount = 0;
     private Player occupier;
 
-    public Country(String countryName, int[] adjCountries, int continentID, int[] coords) {
+    public Country(String countryName, int[] adjCountries, int continentID, int[] coords) throws IllegalArgumentException {
+        if (countryName == null || adjCountries == null || continentID < 0 || coords == null) {
+            throw new IllegalArgumentException("Parameters are not valid");
+        }
         this.countryName = countryName;
         this.adjCountries = adjCountries;
         this.continentID = continentID;

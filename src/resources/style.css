@@ -9,7 +9,8 @@
     -fx-grey-2: #697777;
     -fx-grey-3: #485252;
 
-    -fx-blue: #126D98;
+    -fx-blue1: #126D98;
+    -fx-blue2: #06577D;
 }
 
 #text {
@@ -26,7 +27,7 @@
     -fx-background-image: url("gameMap.png");
     -fx-background-position: top -70 left -5;
     -fx-border-radius: 10;
-    -fx-background-color: -fx-blue;
+    -fx-background-color: -fx-blue1;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, #3B4040, 10, 0, 0, 3);
 }
@@ -77,5 +78,12 @@
 
 .scroll-bar:vertical .thumb:hover {
     -fx-background-color: -fx-grey-3;
+}
+
+#player-indicator {
+    -fx-padding: 5;
+    -fx-background-color: -fx-blue2;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
 }
 
