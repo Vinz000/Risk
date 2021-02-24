@@ -1,11 +1,12 @@
 package player;
 
-import card.Card;
+import deck.Card;
 import javafx.scene.paint.Color;
 import map.country.Country;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Player {
@@ -13,13 +14,14 @@ public abstract class Player {
     private final String name;
     private final Color color;
     private final List<Country> ownedCountries = new ArrayList<>();
-    private final List<Card> hand = new ArrayList<>();
-    private int reinforcement;
+    private final List<Card> cards = new ArrayList<>();
 
-    public Player(String name, Color color) {
+    public Player(String name, Color color) throws IllegalArgumentException {
+        assert !name.trim().isEmpty() : "Name cannot be empty";
+
         this.id = UUID.randomUUID().toString();
-        this.name = name;
-        this.color = color;
+        this.name = Objects.requireNonNull(name);
+        this.color = Objects.requireNonNull(color);
     }
 
     public String getName() {
@@ -31,6 +33,8 @@ public abstract class Player {
     }
 
     public void addCountry(Country country) {
+        Objects.requireNonNull(country);
+
         ownedCountries.add(country);
     }
 
@@ -38,27 +42,26 @@ public abstract class Player {
         return ownedCountries;
     }
 
-    public void updateReinforcement(int armyOffset) {
-        reinforcement += armyOffset;
-    }
-
+    // TODO: Change Method (Should return calculated reinforcement)
     public int getReinforcement() {
-        return reinforcement;
+        return 0;
     }
 
-    public List<Card> getHand() {
-        return hand;
+    public List<Card> getCards() {
+        return cards;
     }
 
     public void addCard(Card card) {
-        hand.add(card);
+        Objects.requireNonNull(card);
+
+        cards.add(card);
     }
 
-    public Card removeCard() {
-        Card drawCard = hand.get(0);
-        hand.remove(0);
+    // TODO: Change so that it removes specific card
+    public Card removeCard() throws IllegalArgumentException {
+        assert getCards().size() > 0 : "Cannot remove from empty hand";
 
-        return drawCard;
+        return cards.remove(0);
     }
 
     @Override

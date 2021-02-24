@@ -3,7 +3,7 @@ package shell.component;
 import common.Component;
 import javafx.scene.layout.VBox;
 
-import static common.Constants.*;
+import static common.Constants.ComponentIds;
 
 public class ShellComponent extends VBox implements Component {
 

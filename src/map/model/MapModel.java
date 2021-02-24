@@ -3,10 +3,10 @@ package map.model;
 import map.country.Country;
 import player.Player;
 
-import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static common.Constants.*;

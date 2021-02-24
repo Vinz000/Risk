@@ -1,9 +1,13 @@
-package player;
+package player.model;
 
-import card.Card;
 import common.Constants;
+import deck.Card;
+import deck.Deck;
 import map.country.Country;
 import map.model.MapModel;
+import player.HumanPlayer;
+import player.NeutralPlayer;
+import player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +19,17 @@ import static common.Constants.NUM_HUMAN_PLAYERS;
 import static common.Constants.NUM_NEUTRAL_PLAYERS;
 
 public class PlayerModel extends Observable {
+
+    private static PlayerModel instance;
     private final List<Player> humanPlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
     private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
     private int currentPlayerIndex = 0;
-
-    private static PlayerModel instance;
 
     private PlayerModel() {
         createNeutralPlayers();
     }
 
-    public static PlayerModel getInstance() {
+    public static synchronized PlayerModel getInstance() {
         if (instance == null) {
             return instance = new PlayerModel();
         }
@@ -63,6 +67,20 @@ public class PlayerModel extends Observable {
     public void changeTurn() {
         currentPlayerIndex++;
         currentPlayerIndex %= NUM_HUMAN_PLAYERS;
+
+        updatePlayerIndicator();
+    }
+
+    public void updatePlayerIndicator() {
+        PlayerModelArg playerModelArg = new PlayerModelArg(getCurrentHumanPlayer(), PlayerModelUpdateType.CHANGED_PLAYER);
+        setChanged();
+        notifyObservers(playerModelArg);
+    }
+
+    public void showPlayerIndicator() {
+        PlayerModelArg playerModelArg = new PlayerModelArg(null, PlayerModelUpdateType.VISIBLE);
+        setChanged();
+        notifyObservers(playerModelArg);
     }
 
     public void forEachHumanPlayer(Consumer<Player> callback) {
@@ -80,16 +98,18 @@ public class PlayerModel extends Observable {
     private void assignInitialCountries(List<Player> players) {
 
         MapModel mapModel = MapModel.getInstance();
+        Deck deck = Deck.getInstance();
 
         players.forEach(player -> {
-            for (Card card : player.getHand()) {
+            for (Card card : player.getCards()) {
                 String playerCountryName = card.getCountryName();
                 Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
                 nullableCountry.ifPresent(country -> {
                     mapModel.setCountryOccupier(country, player);
-                    player.addCountry(country);
                     mapModel.updateCountryArmyCount(country, 1);
-                    // TODO move deck refill here.
+
+                    player.addCountry(country);
+
                 });
             }
         });
@@ -99,5 +119,4 @@ public class PlayerModel extends Observable {
         assignInitialCountries(humanPlayers);
         assignInitialCountries(neutralPlayers);
     }
-
 }

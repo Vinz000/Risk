@@ -2,7 +2,9 @@ package shell.model;
 
 import common.validation.ValidatorResponse;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Observable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -27,7 +29,7 @@ public class ShellModel extends Observable {
     }
 
 
-    public static ShellModel getInstance() {
+    public static synchronized ShellModel getInstance() {
         if (instance == null) {
             return instance = new ShellModel();
         }

@@ -1,19 +1,20 @@
 package map.country;
 
 import common.Component;
-import javafx.scene.effect.Glow;
-import map.model.MapModel;
-import map.model.MapModelArg;
-import player.Player;
+import common.Constants;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
-import common.Constants;
+import map.model.MapModel;
+import map.model.MapModelArg;
+import player.Player;
 import shell.model.ShellModel;
 
 import java.util.ArrayList;
@@ -41,6 +42,9 @@ public class CountryComponent extends StackPane implements Observer, Component {
     public void build() {
         createLinks();
 
+        countryMarker.setStroke(Color.BLACK);
+        countryMarker.setStrokeType(StrokeType.INSIDE);
+        countryMarker.setStrokeWidth(0);
         countryMarker.setRadius(Constants.COUNTRY_NODE_RADIUS);
 
         setOnMouseMoved(this::onMouseMoved);
@@ -148,6 +152,11 @@ public class CountryComponent extends StackPane implements Observer, Component {
         armyCount.setText(text);
     }
 
+    private void toggleHighlight(boolean enable) {
+        int radiusBonus = enable ? 2 : 0;
+        countryMarker.setRadius(COUNTRY_NODE_RADIUS + radiusBonus);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
 
@@ -176,7 +185,8 @@ public class CountryComponent extends StackPane implements Observer, Component {
                     setVisible(true);
                     break;
                 case HIGHLIGHT:
-                    setEffect(new Glow());
+                    boolean enable = countryMarker.getRadius() == COUNTRY_NODE_RADIUS;
+                    toggleHighlight(enable);
                     break;
             }
         }
