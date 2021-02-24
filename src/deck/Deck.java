@@ -10,15 +10,15 @@ import static common.Constants.*;
 public class Deck {
     private static Deck instance;
 
-    private final List<Card> deck = new ArrayList<>(COUNTRY_NAMES.length);
+    private final List<Card> cards = new ArrayList<>(COUNTRY_NAMES.length);
 
     private Deck() {
         for (int i = 0; i < NUM_INDIVIDUAL_CARDS; i++) {
-            deck.add(new Card(CardType.SOLDIER, COUNTRY_NAMES[i]));
-            deck.add(new Card(CardType.CALVARY, COUNTRY_NAMES[i + 14]));
-            deck.add(new Card(CardType.ARTILLERY, COUNTRY_NAMES[i + 28]));
+            cards.add(new Card(CardType.SOLDIER, COUNTRY_NAMES[i]));
+            cards.add(new Card(CardType.CALVARY, COUNTRY_NAMES[i + 14]));
+            cards.add(new Card(CardType.ARTILLERY, COUNTRY_NAMES[i + 28]));
         }
-        Collections.shuffle(deck);
+        Collections.shuffle(cards);
     }
 
     public static synchronized Deck getInstance() {
@@ -30,14 +30,14 @@ public class Deck {
 
     public void addWildcards() {
         for (int i = 0; i < NUM_WILDCARDS; i++) {
-            deck.add(new Card(CardType.WILDCARD, "wildcard"));
+            cards.add(new Card(CardType.WILDCARD, "wildcard"));
         }
-        Collections.shuffle(deck);
+        Collections.shuffle(cards);
     }
 
     public Optional<Card> drawCard() {
-        Optional<Card> nextCard = Optional.ofNullable(deckSize() > 0 ? deck.get(0) : null);
-        nextCard.ifPresent(ignored -> deck.remove(0));
+        Optional<Card> nextCard = Optional.ofNullable(deckSize() > 0 ? cards.get(0) : null);
+        nextCard.ifPresent(ignored -> cards.remove(0));
 
         return nextCard;
     }
@@ -47,18 +47,18 @@ public class Deck {
             throw new IllegalArgumentException("Card cannot be null.");
         }
 
-        deck.add(card);
+        cards.add(card);
     }
 
     public void shuffle() {
-        Collections.shuffle(deck);
+        Collections.shuffle(cards);
     }
 
-    public List<Card> getDeck() {
-        return deck;
+    public List<Card> getCards() {
+        return cards;
     }
 
     public int deckSize() {
-        return deck.size();
+        return cards.size();
     }
 }

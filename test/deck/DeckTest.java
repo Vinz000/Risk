@@ -13,7 +13,7 @@ class DeckTest {
 
     @Test
     void testDeckShouldReturnTopCard() {
-        List<Card> cardList = deck.getDeck();
+        List<Card> cardList = deck.getCards();
         Card card2 = cardList.get(0);
         Optional<Card> card = deck.drawCard();
 
@@ -35,7 +35,7 @@ class DeckTest {
     void testAddShouldAddNewCardToBottomOfDeck() {
         Card card = new Card(CardType.ARTILLERY, "VLL");
         deck.add(card);
-        assertEquals(card, deck.getDeck().get(deck.getDeck().size() - 1));
+        assertEquals(card, deck.getCards().get(deck.getCards().size() - 1));
     }
 
     @Test
@@ -46,7 +46,7 @@ class DeckTest {
     @Test
     void testAddWildCardsShouldAddWildCards() {
         deck.addWildcards();
-        List<Card> cardList = deck.getDeck();
+        List<Card> cardList = deck.getCards();
 
         int wildCardsCount = (int) cardList
                 .stream()
@@ -59,11 +59,11 @@ class DeckTest {
 
     @Test
     void testShuffleShouldShuffleDeck() {
-        List<Card> cardListCloned = new ArrayList<>(deck.getDeck());
-        List<Card> cardList = deck.getDeck();
+        List<Card> cardListCloned = new ArrayList<>(deck.getCards());
+        List<Card> cardList = deck.getCards();
         deck.shuffle();
 
-        for (int i = 0; i < deck.getDeck().size(); i++) {
+        for (int i = 0; i < deck.getCards().size(); i++) {
             assertNotSame(cardList.get(0), cardListCloned.get(0));
         }
     }
