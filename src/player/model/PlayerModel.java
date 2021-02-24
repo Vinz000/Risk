@@ -1,8 +1,8 @@
 package player.model;
 
+import common.Constants;
 import deck.Card;
 import deck.Deck;
-import common.Constants;
 import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;

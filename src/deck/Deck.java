@@ -1,9 +1,6 @@
 package deck;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static common.Constants.*;
 
@@ -43,9 +40,7 @@ public class Deck {
     }
 
     public void add(Card card) throws IllegalArgumentException {
-        if (card == null) {
-            throw new IllegalArgumentException("Card cannot be null.");
-        }
+        Objects.requireNonNull(card);
 
         cards.add(card);
     }

@@ -1,10 +1,10 @@
 package game;
 
-import deck.Card;
-import deck.Deck;
 import common.Constants;
 import common.Dice;
 import common.validation.Validators;
+import deck.Card;
+import deck.Deck;
 import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;
