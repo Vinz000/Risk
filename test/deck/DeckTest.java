@@ -21,7 +21,7 @@ class DeckTest {
     }
 
     @Test
-    void testReturnNullIfDrawingFromEmptyDeck() {
+    void testDrawCardReturnNullIfDrawingFromEmptyDeck() {
         while(deck.deckSize() > 0) {
             deck.drawCard();
         }
@@ -32,19 +32,19 @@ class DeckTest {
     }
 
     @Test
-    void testAddingCardToBottomOfDeck() {
+    void testAddShouldAddNewCardToBottomOfDeck() {
         Card card = new Card(CardType.ARTILLERY, "VLL");
         deck.add(card);
         assertEquals(card, deck.getDeck().get(deck.getDeck().size() - 1));
     }
 
     @Test
-    void testThrowsIfAddingNullCard() {
+    void testAddThrowsIfAddingNullCard() {
         assertThrows(IllegalArgumentException.class, () -> deck.add(null));
     }
 
     @Test
-    void testShouldAddWildCards() {
+    void testAddWildCardsShouldAddWildCards() {
         deck.addWildcards();
         List<Card> cardList = deck.getDeck();
 
@@ -58,7 +58,7 @@ class DeckTest {
     }
 
     @Test
-    void testShouldShuffleDeck() {
+    void testShuffleShouldShuffleDeck() {
         List<Card> cardListCloned = new ArrayList<>(deck.getDeck());
         List<Card> cardList = deck.getDeck();
         deck.shuffle();
@@ -69,7 +69,7 @@ class DeckTest {
     }
 
     @Test
-    void testShouldReturnDeckSize() {
+    void testDeckSizeShouldReturnDeckSize() {
         int currentDeckSize = deck.deckSize();
         deck.addWildcards();
         assertEquals(deck.deckSize(), currentDeckSize + 2);

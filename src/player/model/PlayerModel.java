@@ -101,7 +101,7 @@ public class PlayerModel extends Observable {
         Deck deck = Deck.getInstance();
 
         players.forEach(player -> {
-            for (Card card : player.getHand()) {
+            for (Card card : player.getCards()) {
                 String playerCountryName = card.getCountryName();
                 Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
                 nullableCountry.ifPresent(country -> {

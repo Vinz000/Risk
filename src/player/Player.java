@@ -14,14 +14,14 @@ public abstract class Player {
     private final String name;
     private final Color color;
     private final List<Country> ownedCountries = new ArrayList<>();
-    private final List<Card> hand = new ArrayList<>();
+    private final List<Card> cards = new ArrayList<>();
 
     public Player(String name, Color color) throws IllegalArgumentException {
+        assert !name.trim().isEmpty() : "Name cannot be empty";
+
         this.id = UUID.randomUUID().toString();
         this.name = Objects.requireNonNull(name);
         this.color = Objects.requireNonNull(color);
-
-        assert !name.trim().isEmpty() : "Name cannot be empty";
     }
 
     public String getName() {
@@ -47,21 +47,21 @@ public abstract class Player {
         return 0;
     }
 
-    public List<Card> getHand() {
-        return hand;
+    public List<Card> getCards() {
+        return cards;
     }
 
     public void addCard(Card card) {
         Objects.requireNonNull(card);
 
-        hand.add(card);
+        cards.add(card);
     }
 
     // TODO: Change so that it removes specific card
     public Card removeCard() throws IllegalArgumentException {
-        assert getHand().size() > 0 : "Cannot remove from empty hand";
+        assert getCards().size() > 0 : "Cannot remove from empty hand";
 
-        return hand.remove(0);
+        return cards.remove(0);
     }
 
     @Override

@@ -21,7 +21,7 @@ class PlayerTest {
     }
 
     @Test
-    void testShouldCreateNewPlayerObject() {
+    void testPlayerShouldCreateNewPlayerObject() {
         try {
             new PlayerAbstractTest("Test Player", Color.BLACK);
             new PlayerAbstractTest("Test Player 3", Color.SILVER);
@@ -32,38 +32,38 @@ class PlayerTest {
     }
 
     @Test
-    void testThrowsIfPlayerNameIsNull() {
+    void testPlayerThrowsIfPlayerNameIsNull() {
         assertThrows(NullPointerException.class, () -> new PlayerAbstractTest(null, Color.BLACK));
     }
 
     @Test
-    void testThrowsIfColorIsNull() {
+    void testTPlayerhrowsIfColorIsNull() {
         assertThrows(NullPointerException.class, () -> new PlayerAbstractTest("Test Player", null));
     }
 
     @Test
-    void testThrowsIfPlayerNameIsEmpty() {
+    void testPlayerThrowsIfPlayerNameIsEmpty() {
         assertThrows(AssertionError.class, () -> new PlayerAbstractTest("", Color.BLACK));
         assertThrows(AssertionError.class, () -> new PlayerAbstractTest("         ", Color.BLACK));
     }
 
     @Test
-    void testShouldReturnPlayerName() {
+    void testGetNameShouldReturnPlayerName() {
         assertEquals(player.getName(), "Test Player");
     }
 
     @Test
-    void testShouldReturnPlayerColor() {
+    void testGetColorShouldReturnPlayerColor() {
         assertEquals(player.getColor(), Color.BLACK);
     }
 
     @Test
-    void testShouldReturnListOwnedPlayerCountries() {
+    void testGetOwnedCountriesShouldReturnListOwnedPlayerCountries() {
         assertTrue(player.getOwnedCountries().isEmpty());
     }
 
     @Test
-    void testShouldAddCountryToPlayer() {
+    void testAddCountryShouldAddCountryToPlayer() {
         Country testCountry1 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
         player.addCountry(testCountry1);
         assertEquals(player.getOwnedCountries().get(0), testCountry1);
@@ -74,39 +74,39 @@ class PlayerTest {
     }
 
     @Test
-    void testThrowsIfAddingNullCountry() {
+    void testAddCountryThrowsIfAddingNullCountry() {
         assertThrows(NullPointerException.class, () -> player.addCountry(null));
     }
 
     // TODO: Change since method is going to change
     @Test
-    void testShouldReturnReinforcement() {
+    void testGetReinforcementShouldReturnReinforcement() {
         assertEquals(player.getReinforcement(), 0);
     }
 
     @Test
-    void testShouldReturnHand() {
-        List<Card> returnedPlayerCardList = player.getHand();
+    void testGetCardsShouldReturnHand() {
+        List<Card> returnedPlayerCardList = player.getCards();
 
         assertTrue(returnedPlayerCardList.isEmpty());
     }
 
     @Test
-    void testShouldAddCardToHand() {
+    void testAddCardShouldAddCardToHand() {
         Card testCard = new Card(CardType.ARTILLERY, "Test Card");
         player.addCard(testCard);
 
-        assertEquals(player.getHand().get(0), testCard);
+        assertEquals(player.getCards().get(0), testCard);
     }
 
     @Test
-    void testThrowsIfNullCardAdded() {
+    void testAddCountryThrowsIfNullCardAdded() {
         assertThrows(NullPointerException.class, () -> player.addCountry(null));
     }
 
     // TODO: Change (Method is getting modified)
     @Test
-    void testShouldRemoveCardFromHand() {
+    void testRemoveCardShouldRemoveCardFromHand() {
         Card testCard = new Card(CardType.ARTILLERY, "Test Card");
         player.addCard(testCard);
 
@@ -114,18 +114,18 @@ class PlayerTest {
     }
 
     @Test
-    void testThrowsIfRemovingFromEmptyHand() {
+    void testRemoveCardThrowsIfRemovingFromEmptyHand() {
         assertThrows(AssertionError.class, () -> player.removeCard());
     }
 
 
     @Test
-    void testTrueIfSamePlayersCompared() {
+    void testEqualsTrueIfSamePlayersCompared() {
         assertEquals(player, player);
     }
 
     @Test
-    void testFalseIfDifferentPlayersCompared() {
+    void testEqualsFalseIfDifferentPlayersCompared() {
         Player testPlayer2 = new PlayerAbstractTest("Test Player 2", Color.RED);
 
         assertNotEquals(testPlayer2, player);

@@ -14,7 +14,7 @@ class CardTest {
     }
 
     @Test
-    void testShouldCreateNewObject() {
+    void testCardShouldCreateNewObject() {
         try {
             new Card(CardType.ARTILLERY, "testCountry");
             new Card(CardType.CALVARY, "testCountry1");
@@ -26,31 +26,31 @@ class CardTest {
     }
 
     @Test
-    void testThrowsIfCardTypeNull() {
+    void testCardThrowsIfCardTypeNull() {
         assertThrows(NullPointerException.class, () -> {
             new Card(null, "testCountry1");
         });
     }
 
     @Test
-    void testThrowsIfCountryNameNull() {
+    void testCardThrowsIfCountryNameNull() {
         assertThrows(NullPointerException.class, () -> {
             new Card(CardType.ARTILLERY, null);
         });
     }
 
     @Test
-    void testShouldReturnCardType() {
+    void testGetTypeShouldReturnCardType() {
         assertEquals(card.getType(), CardType.ARTILLERY);
     }
 
     @Test
-    void testShouldReturnCountryName() {
+    void testGetCountryNameShouldReturnCountryName() {
         assertEquals(card.getCountryName(), "testCountry");
     }
 
     @Test
-    void testShouldReturnCorrectlyFormattedCard() {
+    void testToStringShouldReturnCorrectlyFormattedCard() {
         assertEquals(card.toString(), "testCountry, ARTILLERY");
     }
 }
