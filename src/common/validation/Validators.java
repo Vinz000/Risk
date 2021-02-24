@@ -3,15 +3,15 @@ package common.validation;
 import map.country.Country;
 import map.model.MapModel;
 import player.Player;
-import player.PlayerModel;
+import player.model.PlayerModel;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * TODO:
- *  - Change so that input must pass all validators
- *  - Make a validator to check input length for playerName (15 characters max)
+ * - Change so that input must pass all validators
+ * - Make a validator to check input length for playerName (15 characters max)
  */
 
 public class Validators {

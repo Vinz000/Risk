@@ -1,29 +1,27 @@
 package player;
 
-import card.Card;
+import deck.Card;
 import javafx.scene.paint.Color;
 import map.country.Country;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-public class Player {
+public abstract class Player {
     private final String id;
     private final String name;
     private final Color color;
     private final List<Country> ownedCountries = new ArrayList<>();
     private final List<Card> hand = new ArrayList<>();
-    private int reinforcement;
 
     public Player(String name, Color color) throws IllegalArgumentException {
-        if (isNull(name) || name.trim().isEmpty() || isNull(color)) {
-            throw new IllegalArgumentException("Illegal parameters");
-        }
-
         this.id = UUID.randomUUID().toString();
-        this.name = name;
-        this.color = color;
+        this.name = Objects.requireNonNull(name);
+        this.color = Objects.requireNonNull(color);
+
+        assert !name.trim().isEmpty() : "Name cannot be empty";
     }
 
     public String getName() {
@@ -35,9 +33,8 @@ public class Player {
     }
 
     public void addCountry(Country country) {
-        if (isNull(country)) {
-            throw new IllegalArgumentException("Country is Null");
-        }
+        Objects.requireNonNull(country);
+
         ownedCountries.add(country);
     }
 
@@ -45,15 +42,9 @@ public class Player {
         return ownedCountries;
     }
 
-    public void updateReinforcement(int armyOffset) {
-        if (reinforcement + armyOffset < 0) {
-            throw new IllegalArgumentException("Reinforcement should never be less than 0");
-        }
-        reinforcement += armyOffset;
-    }
-
+    // TODO: Change Method (Should return calculated reinforcement)
     public int getReinforcement() {
-        return reinforcement;
+        return 0;
     }
 
     public List<Card> getHand() {
@@ -61,21 +52,16 @@ public class Player {
     }
 
     public void addCard(Card card) {
-        if (isNull(card) ) {
-            throw new IllegalArgumentException("Card is null");
-        }
+        Objects.requireNonNull(card);
+
         hand.add(card);
     }
 
-    public Card removeCard() throws IllegalArgumentException{
-        if (hand.size() == 0) {
-            throw new IllegalArgumentException("Cannot remove card");
-        }
-        return hand.remove(0);
-    }
+    // TODO: Change so that it removes specific card
+    public Card removeCard() throws IllegalArgumentException {
+        assert getHand().size() > 0 : "Cannot remove from empty hand";
 
-    private boolean isNull(Object obj) {
-        return obj == null;
+        return hand.remove(0);
     }
 
     @Override

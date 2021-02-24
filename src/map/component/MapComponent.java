@@ -7,7 +7,7 @@ import javafx.scene.shape.Line;
 import map.country.Country;
 import map.country.CountryComponent;
 import map.model.MapModel;
-import player.indicator.PlayerIndicator;
+import player.indicator.PlayerIndicatorComponent;
 
 import java.util.List;
 import java.util.Observable;
@@ -36,9 +36,9 @@ public class MapComponent extends Pane implements Observer, Component {
             countryLinks.forEach(Node::toBack);
         }
 
-        PlayerIndicator playerIndicator = new PlayerIndicator();
+        PlayerIndicatorComponent playerIndicatorComponent = new PlayerIndicatorComponent();
 
-        getChildren().add(playerIndicator);
+        getChildren().add(playerIndicatorComponent);
     }
 
     @Override

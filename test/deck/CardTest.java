@@ -1,4 +1,4 @@
-package card;
+package deck;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,44 +14,43 @@ class CardTest {
     }
 
     @Test
-    void card_CalledNewConstructor_ShouldCreateNewInstance() {
+    void testShouldCreateNewObject() {
         try {
             new Card(CardType.ARTILLERY, "testCountry");
             new Card(CardType.CALVARY, "testCountry1");
             new Card(CardType.SOLDIER, "testCountry2");
             new Card(CardType.WILDCARD, "testCountry3");
         } catch (IllegalArgumentException e) {
-            fail("Should create new instance of card.");
+            fail("Should create new instance of deck.");
         }
     }
 
     @Test
-    void card_NullAs1stParam_ShouldThrowException() {
+    void testThrowsIfCardTypeNull() {
         assertThrows(NullPointerException.class, () -> {
             new Card(null, "testCountry1");
         });
     }
 
     @Test
-    void card_NullAs2ndParam_ShouldThrowException() {
+    void testThrowsIfCountryNameNull() {
         assertThrows(NullPointerException.class, () -> {
             new Card(CardType.ARTILLERY, null);
         });
     }
 
-
     @Test
-    void getType_GetCardType_ShouldReturnCardType() {
+    void testShouldReturnCardType() {
         assertEquals(card.getType(), CardType.ARTILLERY);
     }
 
     @Test
-    void getCountryName_GetCountryName_ShouldReturnCorrectCountryName() {
+    void testShouldReturnCountryName() {
         assertEquals(card.getCountryName(), "testCountry");
     }
 
     @Test
-    void toString_GetObjectAsString_ShouldReturnAppropriateString() {
+    void testShouldReturnCorrectlyFormattedCard() {
         assertEquals(card.toString(), "testCountry, ARTILLERY");
     }
 }

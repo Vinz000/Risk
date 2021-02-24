@@ -1,7 +1,7 @@
 package game;
 
-import card.Card;
-import card.Deck;
+import deck.Card;
+import deck.Deck;
 import common.Constants;
 import common.Dice;
 import common.validation.Validators;
@@ -9,7 +9,7 @@ import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;
 import player.Player;
-import player.PlayerModel;
+import player.model.PlayerModel;
 import shell.model.ShellModel;
 import shell.model.ShellModel.ShellPrompt;
 
@@ -73,6 +73,8 @@ public class GameCore {
             } else {
                 playerModel.updatePlayerIndicator();
             }
+
+            playerModel.showPlayerIndicator();
 
         } while (playerOneDiceSum == playerTwoDiceSum);
 

@@ -87,3 +87,6 @@
     -fx-background-radius: 25;
 }
 
+#player-indicator .label {
+    -fx-text-fill: white;
+}

@@ -3,6 +3,8 @@ package map.country;
 import javafx.geometry.Point2D;
 import player.Player;
 
+import java.util.Objects;
+
 public class Country {
     private final String countryName;
     private final int[] adjCountries;
@@ -12,11 +14,12 @@ public class Country {
     private Player occupier;
 
     public Country(String countryName, int[] adjCountries, int continentID, int[] coords) throws IllegalArgumentException {
-        if (countryName == null || adjCountries == null || continentID < 0 || coords == null) {
-            throw new IllegalArgumentException("Parameters are not valid");
-        }
-        this.countryName = countryName;
-        this.adjCountries = adjCountries;
+        assert continentID >= 0 : "ContinentId cannot be negative, but was " + continentID;
+
+        this.countryName = Objects.requireNonNull(countryName);
+        this.adjCountries = Objects.requireNonNull(adjCountries);
+        Objects.requireNonNull(coords);
+
         this.continentID = continentID;
         this.coords = new Point2D(coords[0], coords[1]);
     }
@@ -53,7 +56,7 @@ public class Country {
     }
 
     public void setOccupier(Player player) {
-        this.occupier = player;
+        this.occupier = Objects.requireNonNull(player);
     }
 
     @Override

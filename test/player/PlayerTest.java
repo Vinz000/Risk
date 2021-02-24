@@ -1,7 +1,7 @@
 package player;
 
-import card.Card;
-import card.CardType;
+import deck.Card;
+import deck.CardType;
 import javafx.scene.paint.Color;
 import map.country.Country;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,53 +17,53 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() {
-        player = new Player("Test Player", Color.BLACK);
+        player = new PlayerAbstractTest("Test Player", Color.BLACK);
     }
 
     @Test
-    void playerCreatingNewPlayerObjectShouldCreateNewPlayerObject() {
+    void testShouldCreateNewPlayerObject() {
         try {
-            new Player("Test Player", Color.BLACK);
-            new Player("Test Player 3", Color.SILVER);
-            new Player("Test Player 5", Color.BLUE);
+            new PlayerAbstractTest("Test Player", Color.BLACK);
+            new PlayerAbstractTest("Test Player 3", Color.SILVER);
+            new PlayerAbstractTest("Test Player 5", Color.BLUE);
         } catch (IllegalArgumentException e) {
             fail("Should create player object without fail");
         }
     }
 
     @Test
-    void playerNullAs1stParamShouldReturnException() {
-        assertThrows(IllegalArgumentException.class, () -> new Player(null, Color.BLACK));
+    void testThrowsIfPlayerNameIsNull() {
+        assertThrows(NullPointerException.class, () -> new PlayerAbstractTest(null, Color.BLACK));
     }
 
     @Test
-    void playerEmptyStringAs1stParamShouldReturnException() {
-        assertThrows(IllegalArgumentException.class, () -> new Player("", Color.BLACK));
-        assertThrows(IllegalArgumentException.class, () -> new Player("         ", Color.BLACK));
+    void testThrowsIfColorIsNull() {
+        assertThrows(NullPointerException.class, () -> new PlayerAbstractTest("Test Player", null));
     }
 
     @Test
-    void playerNullAs2ndParamShouldReturnException() {
-        assertThrows(IllegalArgumentException.class, () -> new Player("Test Player", null));
+    void testThrowsIfPlayerNameIsEmpty() {
+        assertThrows(AssertionError.class, () -> new PlayerAbstractTest("", Color.BLACK));
+        assertThrows(AssertionError.class, () -> new PlayerAbstractTest("         ", Color.BLACK));
     }
 
     @Test
-    void getNameGettingPlayerNameShouldReturnPlayerName() {
+    void testShouldReturnPlayerName() {
         assertEquals(player.getName(), "Test Player");
     }
 
     @Test
-    void getColorGettingPlayerColorShouldReturnPlayerColor() {
+    void testShouldReturnPlayerColor() {
         assertEquals(player.getColor(), Color.BLACK);
     }
 
     @Test
-    void getOwnedCountriesGettingListOfCountriesOccupiedShouldReturnListOfOccupiedCountries() {
+    void testShouldReturnListOwnedPlayerCountries() {
         assertTrue(player.getOwnedCountries().isEmpty());
     }
 
     @Test
-    void addCountryAddingCountryToPlayerShouldAddCountry() {
+    void testShouldAddCountryToPlayer() {
         Country testCountry1 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
         player.addCountry(testCountry1);
         assertEquals(player.getOwnedCountries().get(0), testCountry1);
@@ -74,39 +74,25 @@ class PlayerTest {
     }
 
     @Test
-    void addCountryNullAsParamShouldThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> player.addCard(null));
+    void testThrowsIfAddingNullCountry() {
+        assertThrows(NullPointerException.class, () -> player.addCountry(null));
     }
 
+    // TODO: Change since method is going to change
     @Test
-    void getReinforcementGettingPlayersCurrentAvailableReinforcementShouldReturnAvailableReinforcement() {
+    void testShouldReturnReinforcement() {
         assertEquals(player.getReinforcement(), 0);
     }
 
     @Test
-    void updateReinforcementUpdatingReinforcementShouldUpdateAvailableReinforcement() {
-        player.updateReinforcement(3);
-        assertEquals(player.getReinforcement(), 3);
-        player.updateReinforcement(-2);
-        assertEquals(player.getReinforcement(), 1);
-        player.updateReinforcement(-1);
-        assertEquals(player.getReinforcement(), 0);
-    }
-
-    @Test
-    void updateReinforcementUpdatingReinforceSoItsLessThanZeroShouldThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> player.updateReinforcement(-1));
-    }
-
-    @Test
-    void getHandGettingPlayerHandShouldReturnEmptyListOfCards() {
+    void testShouldReturnHand() {
         List<Card> returnedPlayerCardList = player.getHand();
 
         assertTrue(returnedPlayerCardList.isEmpty());
     }
 
     @Test
-    void addCardAddingCardToPlayerHandShouldAddCardToPlayerHand() {
+    void testShouldAddCardToHand() {
         Card testCard = new Card(CardType.ARTILLERY, "Test Card");
         player.addCard(testCard);
 
@@ -114,12 +100,13 @@ class PlayerTest {
     }
 
     @Test
-    void addCardNullCardAsParamShouldReturnException() {
-        assertThrows(IllegalArgumentException.class, () -> player.addCard(null));
+    void testThrowsIfNullCardAdded() {
+        assertThrows(NullPointerException.class, () -> player.addCountry(null));
     }
 
+    // TODO: Change (Method is getting modified)
     @Test
-    void removeCardRemovingCardFromPlayerHandShouldRemoveCardFromPlayerHand() {
+    void testShouldRemoveCardFromHand() {
         Card testCard = new Card(CardType.ARTILLERY, "Test Card");
         player.addCard(testCard);
 
@@ -127,18 +114,19 @@ class PlayerTest {
     }
 
     @Test
-    void removeCardRemovingCardFromEmptyHandShouldThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> player.removeCard());
+    void testThrowsIfRemovingFromEmptyHand() {
+        assertThrows(AssertionError.class, () -> player.removeCard());
     }
 
+
     @Test
-    void testEqualsTestingIfSamePlayersAreEqualShouldBeEqual() {
+    void testTrueIfSamePlayersCompared() {
         assertEquals(player, player);
     }
 
     @Test
-    void testEqualsTestingIfDifferentPlayersAreEqualShouldReturnFalse() {
-        Player testPlayer2 = new Player("Test Player 2", Color.RED);
+    void testFalseIfDifferentPlayersCompared() {
+        Player testPlayer2 = new PlayerAbstractTest("Test Player 2", Color.RED);
 
         assertNotEquals(testPlayer2, player);
     }

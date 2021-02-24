@@ -1,6 +1,5 @@
-package card;
+package deck;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,32 +9,19 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
-    Deck deck;
-
-    @BeforeEach
-    void setUp() {
-        deck = Deck.getInstance();
-    }
+    Deck deck = Deck.getInstance();
 
     @Test
-    void getDeck_GettingInstanceOfDeck_ShouldGetInstance() {
-        List<Card> cardList = deck.getDeck();
-
-        assertNotNull(cardList);
-    }
-
-    @Test
-    void drawCard_DrawCardFromTopOfDeck_ShouldReturnFirstCard() {
+    void testDeckShouldReturnTopCard() {
         List<Card> cardList = deck.getDeck();
         Card card2 = cardList.get(0);
         Optional<Card> card = deck.drawCard();
 
         card.ifPresent(card1 -> assertEquals(card1, card2));
-
     }
 
     @Test
-    void drawCard_DrawingCardFromEmptyDeck_ShouldReturnNull() {
+    void testReturnNullIfDrawingFromEmptyDeck() {
         while(deck.deckSize() > 0) {
             deck.drawCard();
         }
@@ -46,19 +32,19 @@ class DeckTest {
     }
 
     @Test
-    void add_AddingCardToDeck_ShouldAddToBottomOfDeck() {
+    void testAddingCardToBottomOfDeck() {
         Card card = new Card(CardType.ARTILLERY, "VLL");
         deck.add(card);
         assertEquals(card, deck.getDeck().get(deck.getDeck().size() - 1));
     }
 
     @Test
-    void add_NullAsParam_ShouldReturnException() {
+    void testThrowsIfAddingNullCard() {
         assertThrows(IllegalArgumentException.class, () -> deck.add(null));
     }
 
     @Test
-    void addWildcards_AddWildcardsToDeck_ShouldHaveWildCardsInDeck() {
+    void testShouldAddWildCards() {
         deck.addWildcards();
         List<Card> cardList = deck.getDeck();
 
@@ -72,7 +58,7 @@ class DeckTest {
     }
 
     @Test
-    void shuffle_ShufflingDeck_ShouldShuffleTheDeck() {
+    void testShouldShuffleDeck() {
         List<Card> cardListCloned = new ArrayList<>(deck.getDeck());
         List<Card> cardList = deck.getDeck();
         deck.shuffle();
@@ -83,7 +69,7 @@ class DeckTest {
     }
 
     @Test
-    void deckSize_GettingDeckSize_ShouldReturnAccurateDeckSize() {
+    void testShouldReturnDeckSize() {
         int currentDeckSize = deck.deckSize();
         deck.addWildcards();
         assertEquals(deck.deckSize(), currentDeckSize + 2);

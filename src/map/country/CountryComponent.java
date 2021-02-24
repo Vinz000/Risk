@@ -153,11 +153,8 @@ public class CountryComponent extends StackPane implements Observer, Component {
     }
 
     private void toggleHighlight(boolean enable) {
-        if (enable) {
-            countryMarker.setRadius(COUNTRY_NODE_RADIUS + 2);
-        } else {
-            countryMarker.setRadius(COUNTRY_NODE_RADIUS);
-        }
+        int radiusBonus = enable ? 2 : 0;
+        countryMarker.setRadius(COUNTRY_NODE_RADIUS + radiusBonus);
     }
 
     @Override
@@ -188,7 +185,8 @@ public class CountryComponent extends StackPane implements Observer, Component {
                     setVisible(true);
                     break;
                 case HIGHLIGHT:
-                    toggleHighlight(countryMarker.getRadius() == COUNTRY_NODE_RADIUS);
+                    boolean enable = countryMarker.getRadius() == COUNTRY_NODE_RADIUS;
+                    toggleHighlight(enable);
                     break;
             }
         }

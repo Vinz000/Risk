@@ -12,7 +12,6 @@ public class Constants {
     public static final int INIT_UNITS_PLAYER = 36;
     public static final int INIT_UNITS_NEUTRAL = 24;
     public static final int NUM_MAIN_CARDS = 42;
-    public static final int NUM_MAIN_CARDS_PLUS_WILDCARDS = 44;
     public static final int NUM_INDIVIDUAL_CARDS = 14;
     public static final int NUM_WILDCARDS = 2;
     public static final int INIT_REINFORCEMENT_TURNS = 9;
@@ -79,12 +78,13 @@ public class Constants {
     public static final int SHELL_WIDTH = 250;
     public static final int COUNTRY_NODE_RADIUS = 10;
 
-    public static final int PLAYER_INDICATOR_WIDTH = 175;
-    public static final int PLAYER_INDICATOR_HEIGHT = 45;
-    public static final int PLAYER_INDICATOR_X = 445;
-    public static final int PLAYER_INDICATOR_Y = 500;
-    public static final double PLAYER_COLOR_INDICATOR_RADIUS = 17.5;
-
+    public static final int PLAYER_INDICATOR_WIDTH = 162;
+    public static final int PLAYER_INDICATOR_HEIGHT = 40;
+    public static final int PLAYER_INDICATOR_X = 409;
+    public static final int PLAYER_INDICATOR_Y = 531;
+    public static final double PLAYER_COLOR_INDICATOR_RADIUS = 15;
+    public static final int PLAYER_NAME_Y = 7;
+//  409
 
     public static final int[][] COUNTRY_COORDS = {
             {180, 115},     // 0
@@ -146,9 +146,9 @@ public class Constants {
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
         public static final String GG = "Good game!";
-        public static final String DRAWN = " drew the card ";
-        public static final String TERRITORY = "The card for the territories will now be drawn.";
-        public static final String TERRITORY_OPTION = "Would you like to see the card draw outcome before initialization?";
+        public static final String DRAWN = " drew the deck ";
+        public static final String TERRITORY = "The deck for the territories will now be drawn.";
+        public static final String TERRITORY_OPTION = "Would you like to see the deck draw outcome before initialization?";
     }
 
     public static class ComponentIds {

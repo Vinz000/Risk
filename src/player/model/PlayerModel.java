@@ -1,10 +1,13 @@
-package player;
+package player.model;
 
-import card.Card;
-import card.Deck;
+import deck.Card;
+import deck.Deck;
 import common.Constants;
 import map.country.Country;
 import map.model.MapModel;
+import player.HumanPlayer;
+import player.NeutralPlayer;
+import player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ import static common.Constants.NUM_HUMAN_PLAYERS;
 import static common.Constants.NUM_NEUTRAL_PLAYERS;
 
 public class PlayerModel extends Observable {
+
     private static PlayerModel instance;
     private final List<Player> humanPlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
     private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
@@ -68,8 +72,15 @@ public class PlayerModel extends Observable {
     }
 
     public void updatePlayerIndicator() {
+        PlayerModelArg playerModelArg = new PlayerModelArg(getCurrentHumanPlayer(), PlayerModelUpdateType.CHANGED_PLAYER);
         setChanged();
-        notifyObservers(getCurrentHumanPlayer());
+        notifyObservers(playerModelArg);
+    }
+
+    public void showPlayerIndicator() {
+        PlayerModelArg playerModelArg = new PlayerModelArg(null, PlayerModelUpdateType.VISIBLE);
+        setChanged();
+        notifyObservers(playerModelArg);
     }
 
     public void forEachHumanPlayer(Consumer<Player> callback) {
@@ -108,5 +119,4 @@ public class PlayerModel extends Observable {
         assignInitialCountries(humanPlayers);
         assignInitialCountries(neutralPlayers);
     }
-
 }

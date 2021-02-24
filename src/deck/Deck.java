@@ -1,23 +1,22 @@
-package card;
-
-import common.Constants;
+package deck;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static common.Constants.*;
+
 public class Deck {
     private static Deck instance;
 
-    private final List<Card> deck = new ArrayList<>(Constants.COUNTRY_NAMES.length);
+    private final List<Card> deck = new ArrayList<>(COUNTRY_NAMES.length);
 
     private Deck() {
-        for (int i = 0; i < Constants.NUM_INDIVIDUAL_CARDS; i++) {
-            deck.add(new Card(CardType.SOLDIER, Constants.COUNTRY_NAMES[i]));
-            deck.add(new Card(CardType.CALVARY, Constants.COUNTRY_NAMES[i + 14]));
-            deck.add(new Card(CardType.ARTILLERY, Constants.COUNTRY_NAMES[i + 28]));
-
+        for (int i = 0; i < NUM_INDIVIDUAL_CARDS; i++) {
+            deck.add(new Card(CardType.SOLDIER, COUNTRY_NAMES[i]));
+            deck.add(new Card(CardType.CALVARY, COUNTRY_NAMES[i + 14]));
+            deck.add(new Card(CardType.ARTILLERY, COUNTRY_NAMES[i + 28]));
         }
         Collections.shuffle(deck);
     }
@@ -30,7 +29,7 @@ public class Deck {
     }
 
     public void addWildcards() {
-        for (int l = Constants.NUM_MAIN_CARDS; l < Constants.NUM_MAIN_CARDS_PLUS_WILDCARDS; l++) {
+        for (int i = 0; i < NUM_WILDCARDS; i++) {
             deck.add(new Card(CardType.WILDCARD, "wildcard"));
         }
         Collections.shuffle(deck);

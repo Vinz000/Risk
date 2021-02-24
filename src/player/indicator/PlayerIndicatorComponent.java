@@ -3,21 +3,21 @@ package player.indicator;
 import common.Component;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import player.Player;
-import player.PlayerModel;
+import player.model.PlayerModel;
+import player.model.PlayerModelArg;
 
 import java.util.Observable;
 import java.util.Observer;
 
 import static common.Constants.*;
 
-public class PlayerIndicator extends HBox implements Observer, Component {
-    private final Circle playerColorIndicator = new Circle();
-    private final Label playerNameIndicator = new Label();
+public class PlayerIndicatorComponent extends HBox implements Observer, Component {
+    private final Circle playerColor = new Circle();
+    private final Label playerName = new Label();
 
-    public PlayerIndicator() {
+    public PlayerIndicatorComponent() {
         setCssId();
         observe();
         build();
@@ -25,7 +25,7 @@ public class PlayerIndicator extends HBox implements Observer, Component {
 
     @Override
     public void build() {
-        setSpacing(10);
+        setSpacing(5);
 
         setMinSize(PLAYER_INDICATOR_WIDTH, PLAYER_INDICATOR_HEIGHT);
         setMaxSize(PLAYER_INDICATOR_WIDTH, PLAYER_INDICATOR_HEIGHT);
@@ -33,12 +33,11 @@ public class PlayerIndicator extends HBox implements Observer, Component {
         setTranslateX(PLAYER_INDICATOR_X);
         setTranslateY(PLAYER_INDICATOR_Y);
 
-        playerColorIndicator.setRadius(PLAYER_COLOR_INDICATOR_RADIUS);
+        playerColor.setRadius(PLAYER_COLOR_INDICATOR_RADIUS);
 
-        playerNameIndicator.setTextFill(Color.WHITE);
-        playerNameIndicator.setTranslateY(10);
+        playerName.setTranslateY(PLAYER_NAME_Y);
 
-        getChildren().addAll(playerColorIndicator, playerNameIndicator);
+        getChildren().addAll(playerColor, playerName);
 
         setVisible(false);
     }
@@ -56,13 +55,18 @@ public class PlayerIndicator extends HBox implements Observer, Component {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(!isVisible()) {
-            setVisible(true);
+        PlayerModelArg updateArg = (PlayerModelArg) arg;
+
+        switch (updateArg.updateType) {
+            case VISIBLE:
+                setVisible(true);
+                break;
+            case CHANGED_PLAYER:
+                Player currentPlayer = (Player) updateArg.arg;
+
+                playerColor.setFill(currentPlayer.getColor());
+                playerName.setText(currentPlayer.getName());
+                break;
         }
-
-        Player currentPlayer = (Player) arg;
-
-        playerColorIndicator.setFill(currentPlayer.getColor());
-        playerNameIndicator.setText(currentPlayer.getName());
     }
 }
