@@ -1,11 +1,10 @@
 package game;
 
 import common.Constants;
-import shell.prompt.ShellPromptFactory;
-import shell.prompt.ShellPromptType;
 import shell.model.ShellModel;
+import shell.prompt.ShellPromptFactory;
 
-import static common.Constants.*;
+import static common.Constants.NUM_NEUTRAL_PLAYERS;
 
 public class GameCore {
 
@@ -18,14 +17,16 @@ public class GameCore {
         shellModel.notify(Constants.Notifications.WELCOME);
         shellModel.notify(Constants.Notifications.NAME + "(P1)");
 
-        shellModel.prompt(shellPromptFactory.getPrompt(ShellPromptType.GET_PLAYER_ONE));
-        shellModel.prompt(shellPromptFactory.getPrompt(ShellPromptType.GET_PLAYER_TWO));
-        shellModel.prompt(shellPromptFactory.getPrompt(ShellPromptType.DRAW_TERRITORIES));
-        shellModel.prompt(shellPromptFactory.getPrompt(ShellPromptType.SELECT_FIRST_PLAYER));
+        shellModel.prompt(shellPromptFactory.createPlayerOne());
+        shellModel.prompt(shellPromptFactory.createPlayerTwo());
+        shellModel.prompt(shellPromptFactory.drawTerritories());
+        shellModel.prompt(shellPromptFactory.selectFirstPlayer());
 
         for (int i = 0; i < (NUM_NEUTRAL_PLAYERS + 1) * 9; i++) {
-            shellModel.prompt(shellPromptFactory.getPrompt(ShellPromptType.BEFORE_REINFORCING_COUNTRY));
-            shellModel.prompt(shellPromptFactory.getPrompt(ShellPromptType.REINFORCING_COUNTRY));
+            shellModel.prompt(shellPromptFactory.beforeReinforcingCountry());
+            shellModel.prompt(shellPromptFactory.reinforcingCountry());
         }
+
+        shellModel.prompt(shellPromptFactory.selectFirstPlayer());
     }
 }

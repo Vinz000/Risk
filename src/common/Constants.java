@@ -140,7 +140,7 @@ public class Constants {
     public static class Notifications {
         public static final String WELCOME = "Welcome to Risk -\nBy Team7\n";
         public static final String NAME = "What is your name? ";
-        public static final String DICE_ROLL = "Press enter to begin rolling the dice";
+        public static final String DICE_ROLL = "Press enter to begin rolling the dice.";
         public static final String ROLLED = "has rolled: ";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";

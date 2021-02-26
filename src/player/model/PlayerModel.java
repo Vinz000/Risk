@@ -9,7 +9,6 @@ import player.NeutralPlayer;
 import player.Player;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static common.Constants.NUM_HUMAN_PLAYERS;
 import static common.Constants.NUM_NEUTRAL_PLAYERS;
@@ -18,7 +17,7 @@ public class PlayerModel extends Observable {
 
     /**
      * Order of Players:
-     *  H1 -> N1 -> N2 -> N3 -> N4 -> H2/BOT
+     * H1 -> N1 -> N2 -> N3 -> N4 -> H2/BOT
      */
 
     private static PlayerModel instance;
@@ -82,12 +81,6 @@ public class PlayerModel extends Observable {
         notifyObservers(playerModelArg);
     }
 
-    public void forEachPlayer(Consumer<Player> callback) {
-        for (Player player : players) {
-            callback.accept(player);
-        }
-    }
-
     public void assignInitialCountries() {
 
         MapModel mapModel = MapModel.getInstance();
@@ -95,7 +88,7 @@ public class PlayerModel extends Observable {
 
         players.forEach(player -> {
             List<Card> cards = player.getCards();
-            while(cards.size() > 0) {
+            while (cards.size() > 0) {
                 String playerCountryName = cards.get(0).getCountryName();
                 Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
                 nullableCountry.ifPresent(country -> {
@@ -103,7 +96,7 @@ public class PlayerModel extends Observable {
                     mapModel.updateCountryArmyCount(country, 1);
 
                     player.addCountry(country);
-                    deck.add(player.removeCard());
+                    deck.add(player.removeTopCard());
                 });
             }
         });

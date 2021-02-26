@@ -5,9 +5,9 @@ import common.Constants;
 import common.validation.ValidatorResponse;
 import javafx.event.Event;
 import javafx.scene.control.TextField;
-import shell.prompt.ShellPrompt;
 import shell.model.ShellModel;
 import shell.model.ShellModelArg;
+import shell.prompt.ShellPrompt;
 
 import java.util.Observable;
 import java.util.Observer;

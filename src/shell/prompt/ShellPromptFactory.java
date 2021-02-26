@@ -16,7 +16,7 @@ import shell.model.ShellModel;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import static common.Constants.INIT_COUNTRIES_NEUTRAL;
 import static common.Constants.INIT_COUNTRIES_PLAYER;
@@ -29,132 +29,138 @@ public class ShellPromptFactory {
     public ShellPromptFactory() {
     }
 
-    public ShellPrompt getPrompt(ShellPromptType type) {
-        switch (type) {
-            case GET_PLAYER_ONE:
-                return new ShellPrompt(input -> {
-                    HumanPlayer humanPlayerOne = new HumanPlayer(input, Constants.Colors.PLAYER_1_COLOR);
-                    playerModel.addPlayer(humanPlayerOne);
+    public ShellPrompt createPlayerOne() {
+        return new ShellPrompt(input -> {
+            Player humanPlayerOne = new HumanPlayer(input, Constants.Colors.PLAYER_1_COLOR);
+            playerModel.addPlayer(humanPlayerOne);
 
-                    shellModel.notify("Welcome " + humanPlayerOne.getName());
-                    shellModel.notify(Constants.Notifications.NAME + "(P2)");
+            shellModel.notify("Welcome " + humanPlayerOne.getName());
+            shellModel.notify(Constants.Notifications.NAME + "(P2)");
 
-                    // Create the neutralPlayers
-                    playerModel.createNeutralPlayers();
-                }, Validators.nonEmpty);
-            case GET_PLAYER_TWO:
-                return new ShellPrompt(input -> {
-                    HumanPlayer humanPlayerTwo = new HumanPlayer(input, Constants.Colors.PLAYER_2_COLOR);
-                    playerModel.addPlayer(humanPlayerTwo);
+            // Create the neutralPlayers
+            playerModel.createNeutralPlayers();
+        }, Validators.nonEmpty);
+    }
 
-                    shellModel.notify("Welcome " + humanPlayerTwo.getName() + "\n");
+    public ShellPrompt createPlayerTwo() {
+        return new ShellPrompt(input -> {
+            Player humanPlayerTwo = new HumanPlayer(input, Constants.Colors.PLAYER_2_COLOR);
+            playerModel.addPlayer(humanPlayerTwo);
 
-                    shellModel.notify(Constants.Notifications.TERRITORY);
-                    shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
-                }, Validators.nonEmpty);
-            case DRAW_TERRITORIES:
-                return new ShellPrompt(input -> {
-                    Deck deck = Deck.getInstance();
+            shellModel.notify("Welcome " + humanPlayerTwo.getName() + "\n");
 
-                    final AtomicInteger counter = new AtomicInteger(0);
+            shellModel.notify(Constants.Notifications.TERRITORY);
+            shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
+        }, Validators.nonEmpty);
+    }
 
-                    final boolean showDraw = input.toLowerCase().contains("y");
+    public ShellPrompt drawTerritories() {
+        return new ShellPrompt(input -> {
+            Deck deck = Deck.getInstance();
 
-                    for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
-                        playerModel.forEachPlayer(player -> {
-                            if (counter.getAndIncrement() < INIT_COUNTRIES_NEUTRAL * 6 || player instanceof HumanPlayer) {
-                                Optional<Card> nullableCard = deck.drawCard();
+            final boolean showDraw = input.toLowerCase().contains("y");
 
-                                nullableCard.ifPresent((!showDraw ? player::addCard : drawnCard -> {
-                                    player.addCard(drawnCard);
-                                    String drawnCountryName = drawnCard.getCountryName();
-                                    String playerName = player.getName();
-                                    shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
-                                }));
+            for (int i = 0; i < INIT_COUNTRIES_PLAYER; i++) {
+                boolean neutralsMissingCards = i < INIT_COUNTRIES_NEUTRAL;
+
+                for (Player player : playerModel.getPlayers()) {
+                    if (neutralsMissingCards || player instanceof HumanPlayer) {
+                        Optional<Card> nullableCard = deck.drawCard();
+
+                        nullableCard.ifPresent(drawnCard -> {
+                            player.addCard(drawnCard);
+                            if (showDraw) {
+                                String drawnCountryName = drawnCard.getCountryName();
+                                String playerName = player.getName();
+                                shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
                             }
                         });
                     }
+                }
+            }
 
-                    playerModel.assignInitialCountries();
+            playerModel.assignInitialCountries();
 
-                    deck.addWildcards();
-                    deck.shuffle();
+            deck.addWildcards();
+            deck.shuffle();
 
-                    mapModel.showCountryComponents();
+            mapModel.showCountryComponents();
 
-                    shellModel.notify("\n" + Constants.Notifications.DICE_ROLL);
-                }, Validators.yesNo);
-            case SELECT_FIRST_PLAYER:
-                return new ShellPrompt(input -> {
-                    Dice dice = new Dice();
-                    int playerOneDiceSum;
-                    int playerTwoDiceSum;
+            shellModel.notify("\n" + Constants.Notifications.DICE_ROLL);
+        }, Validators.yesNo);
+    }
 
-                    List<Player> players = playerModel.getPlayers();
+    public ShellPrompt selectFirstPlayer() {
+        return new ShellPrompt(input -> {
+            Dice dice = new Dice();
+            int playerOneDiceSum;
+            int playerTwoDiceSum;
 
-                    do {
-                        playerOneDiceSum = dice.getRollSum(2);
-                        String playerOneDiceNotification = players.get(0).getName() + " "
-                                + Constants.Notifications.ROLLED + dice.printRoll();
+            List<Player> players = playerModel.getPlayers();
 
-                        shellModel.notify(playerOneDiceNotification);
+            Function<Player, String> createRolledNotification = (player) -> player.getName() + " "
+                    + Constants.Notifications.ROLLED + dice.toString();
 
-                        playerTwoDiceSum = dice.getRollSum(2);
-                        String playerTwoDiceNotification = players.get(players.size() - 1).getName() + " "
-                                + Constants.Notifications.ROLLED + dice.printRoll();
+            do {
+                playerOneDiceSum = dice.getRollSum(2);
+                String playerOneRolledNotification = createRolledNotification.apply(players.get(0));
 
-                        shellModel.notify(playerTwoDiceNotification);
+                shellModel.notify(playerOneRolledNotification);
 
-                        if (playerOneDiceSum == playerTwoDiceSum) {
-                            shellModel.notify("\nRolled the same number\nRolling again!");
-                        } else if (playerOneDiceSum < playerTwoDiceSum) {
-                            // player One goes first by default but if player One rolls a lower sum,
-                            // then we change the turn so that the current player is now player Two.
+                playerTwoDiceSum = dice.getRollSum(2);
+                String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1));
 
-                            Collections.swap(players, 0, players.size() - 1);
-                        }
+                shellModel.notify(playerTwoRolledNotification);
 
-                        playerModel.updatePlayerIndicator();
-                        playerModel.showPlayerIndicator();
+                if (playerOneDiceSum == playerTwoDiceSum) {
+                    shellModel.notify("\nRolled the same number\nRolling again!");
+                } else if (playerOneDiceSum < playerTwoDiceSum) {
+                    // player One goes first by default but if player One rolls a lower sum,
+                    // then we change the turn so that the current player is now player Two.
 
-                    } while (playerOneDiceSum == playerTwoDiceSum);
+                    Collections.swap(players, 0, players.size() - 1);
+                }
 
-                    String currentPlayerName = players.get(0).getName();
-                    shellModel.notify(String.format("%s rolled higher, so is going first", currentPlayerName));
-                    shellModel.notify("Please press Enter to continue");
-                }, Validators.alwaysValid);
-            case BEFORE_REINFORCING_COUNTRY:
-                return  new ShellPrompt(input -> {
-                    Player player = playerModel.getCurrentPlayer();
-                    boolean isNeutral = (player instanceof NeutralPlayer);
+                playerModel.updatePlayerIndicator();
+                playerModel.showPlayerIndicator();
 
-                    String message = ((isNeutral ? "Choose country Owned by " : "\nYour Turn ") + player.getName());
-                    shellModel.notify(message);
-                    shellModel.notify("Place down reinforcements.");
+            } while (playerOneDiceSum == playerTwoDiceSum);
 
-                    player.getOwnedCountries().forEach(mapModel::highlightCountry);
-                }, Validators.alwaysValid);
-            case REINFORCING_COUNTRY:
-                // Choosing neutral countries to reinforce
-                return new ShellPrompt(input -> {
-                    Player player = playerModel.getCurrentPlayer();
-                    Optional<Country> country = mapModel.getCountryByName(input);
-                    int reinforcement = player instanceof NeutralPlayer ? 1 : 3;
+            String currentPlayerName = players.get(0).getName();
+            shellModel.notify(String.format("%s rolled higher, so is going first", currentPlayerName));
+            shellModel.notify("Please press Enter to continue");
+        }, Validators.alwaysValid);
+    }
 
-                    country.ifPresent(validCountry -> mapModel.updateCountryArmyCount(validCountry, reinforcement));
+    public ShellPrompt beforeReinforcingCountry() {
+        return new ShellPrompt(input -> {
+            Player player = playerModel.getCurrentPlayer();
+            boolean isNeutral = (player instanceof NeutralPlayer);
 
-                    shellModel.notify("Successfully placed reinforcements.");
+            String prefixMessage = isNeutral ? "Choose country Owned by " : "\nYour Turn ";
+            String message = prefixMessage + player.getName();
 
-                    // Undo highlight
-                    player.getOwnedCountries().forEach(mapModel::highlightCountry);
+            shellModel.notify(message);
+            shellModel.notify("Place down reinforcements.");
 
-                    // Change turn if current neutralPlayer is neutralPlayer4
-                    playerModel.changeTurn();
-                }, Validators.currentPlayerOccupies);
+            player.getOwnedCountries().forEach(mapModel::highlightCountry);
+        }, Validators.alwaysValid);
+    }
 
-            default:
-                // TODO: Implement what to when player wins
-                return new ShellPrompt(input -> System.out.println("Winner winner chicken dinner."), Validators.alwaysValid);
-        }
+    public ShellPrompt reinforcingCountry() {
+        return new ShellPrompt(input -> {
+            Player player = playerModel.getCurrentPlayer();
+            Optional<Country> country = mapModel.getCountryByName(input);
+            int reinforcement = player.getReinforcement();
+
+            country.ifPresent(validCountry -> mapModel.updateCountryArmyCount(validCountry, reinforcement));
+
+            shellModel.notify("Successfully placed reinforcements.");
+
+            // Undo highlight
+            player.getOwnedCountries().forEach(mapModel::highlightCountry);
+
+            playerModel.changeTurn();
+        }, Validators.currentPlayerOccupies);
     }
 }

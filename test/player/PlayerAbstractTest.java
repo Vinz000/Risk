@@ -7,4 +7,9 @@ class PlayerAbstractTest extends Player{
     public PlayerAbstractTest(String name, Color color) throws IllegalArgumentException {
         super(name, color);
     }
+
+    @Override
+    public int getReinforcement() {
+        return 0;
+    }
 }

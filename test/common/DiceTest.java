@@ -39,6 +39,6 @@ class DiceTest {
     void testToStringShouldReturnDiceRollAsFormattedString() {
         List<Integer> dice1 = dice.getNextDice(2);
 
-        assertEquals(dice.printRoll(), String.format("[ %d ] [ %d ] ", dice1.get(0), dice1.get(1)));
+        assertEquals(dice.toString(), String.format("[ %d ] [ %d ] ", dice1.get(0), dice1.get(1)));
     }
 }

@@ -8,4 +8,9 @@ public class NeutralPlayer extends Player {
         super("Neutral player " + name, color);
     }
 
+    @Override
+    public int getReinforcement() {
+        return 1;
+    }
+
 }
