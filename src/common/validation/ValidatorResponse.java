@@ -10,7 +10,11 @@ public class ValidatorResponse {
 
     public String getMessage() {
         String messagePrefix = "✗ Invalid input: ";
-        return messagePrefix + message;
+        boolean addPrefix = message != null && !message.contains(messagePrefix);
+
+        return addPrefix ?
+                messagePrefix + message :
+                message;
     }
 
     public ValidatorResponse(boolean isValid, String message) {
