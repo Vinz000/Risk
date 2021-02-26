@@ -15,6 +15,8 @@ public abstract class Player {
     private final Color color;
     private final List<Country> ownedCountries = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
+    private PlayerTurnBehaviour playerTurnBehaviour;
+
 
     public Player(String name, Color color) throws IllegalArgumentException {
         assert !name.trim().isEmpty() : "Name cannot be empty";

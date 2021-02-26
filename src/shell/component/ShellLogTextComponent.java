@@ -21,8 +21,8 @@ public class ShellLogTextComponent extends Label implements Observer, Component 
     @Override
     public void build() {
         setWrapText(true);
-        setMinWidth(SHELL_WIDTH - 20);
-        setMaxWidth(SHELL_WIDTH - 20);
+        setMinWidth(SHELL_WIDTH - 5);
+        setMaxWidth(SHELL_WIDTH - 5);
     }
 
     @Override

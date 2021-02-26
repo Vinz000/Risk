@@ -11,7 +11,6 @@ public class Constants {
     public static final int INIT_COUNTRIES_NEUTRAL = 6;
     public static final int INIT_UNITS_PLAYER = 36;
     public static final int INIT_UNITS_NEUTRAL = 24;
-    public static final int NUM_MAIN_CARDS = 42;
     public static final int NUM_INDIVIDUAL_CARDS = 14;
     public static final int NUM_WILDCARDS = 2;
     public static final int INIT_REINFORCEMENT_TURNS = 9;

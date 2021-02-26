@@ -1,26 +1,12 @@
 package shell.model;
 
-import common.validation.ValidatorResponse;
+import shell.prompt.ShellPrompt;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Observable;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ShellModel extends Observable {
-
-    public static class ShellPrompt {
-        public final Consumer<String> handler;
-        public final Function<String, ValidatorResponse> validator;
-
-        public ShellPrompt(Consumer<String> handler, Function<String, ValidatorResponse> validator) {
-            this.handler = handler;
-            this.validator = validator;
-
-        }
-
-    }
 
     private static ShellModel instance;
     private final Deque<ShellPrompt> prompts = new LinkedList<>();

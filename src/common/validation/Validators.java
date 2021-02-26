@@ -34,16 +34,8 @@ public class Validators {
 
     public static final Function<String, ValidatorResponse> currentPlayerOccupies = input -> {
         PlayerModel playerModel = PlayerModel.getInstance();
-        Player currentHumanPlayer = playerModel.getCurrentHumanPlayer();
-        String invalidMessage = playerOccupies(input, currentHumanPlayer);
-
-        return new ValidatorResponse(invalidMessage);
-    };
-
-    public static final Function<String, ValidatorResponse> neutralPlayerOccupies = input -> {
-        PlayerModel playerModel = PlayerModel.getInstance();
-        Player firstNeutralPlayer = playerModel.getNeutralPlayers().get(0);
-        String invalidMessage = playerOccupies(input, firstNeutralPlayer);
+        Player currentPlayer = playerModel.getCurrentPlayer();
+        String invalidMessage = playerOccupies(input, currentPlayer);
 
         return new ValidatorResponse(invalidMessage);
     };

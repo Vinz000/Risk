@@ -5,14 +5,10 @@ import deck.Card;
 import deck.Deck;
 import map.country.Country;
 import map.model.MapModel;
-import player.HumanPlayer;
 import player.NeutralPlayer;
 import player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static common.Constants.NUM_HUMAN_PLAYERS;
@@ -20,13 +16,16 @@ import static common.Constants.NUM_NEUTRAL_PLAYERS;
 
 public class PlayerModel extends Observable {
 
+    /**
+     * Order of Players:
+     *  H1 -> N1 -> N2 -> N3 -> N4 -> H2/BOT
+     */
+
     private static PlayerModel instance;
-    private final List<Player> humanPlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
-    private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
+    private final List<Player> players = new ArrayList<>(NUM_HUMAN_PLAYERS + NUM_NEUTRAL_PLAYERS);
     private int currentPlayerIndex = 0;
 
     private PlayerModel() {
-        createNeutralPlayers();
     }
 
     public static synchronized PlayerModel getInstance() {
@@ -37,42 +36,42 @@ public class PlayerModel extends Observable {
         return instance;
     }
 
-    public List<Player> getHumanPlayers() {
-        return humanPlayers;
+    public List<Player> getPlayers() {
+        return players;
     }
 
-    public Player getHumanPlayer(int i) {
-        return humanPlayers.get(i);
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
     }
 
-    public Player getCurrentHumanPlayer() {
-        return getHumanPlayer(currentPlayerIndex);
+    public void addPlayer(Player player) {
+        players.add(player);
     }
 
-    public List<Player> getNeutralPlayers() {
-        return neutralPlayers;
-    }
-
-    public void addHumanPlayer(HumanPlayer humanPlayer) {
-        humanPlayers.add(humanPlayer);
-    }
-
-    private void createNeutralPlayers() {
+    public void createNeutralPlayers() {
         for (int i = 0; i < NUM_NEUTRAL_PLAYERS; i++) {
             Player newPlayer = new NeutralPlayer(String.valueOf(i + 1), Constants.Colors.NEUTRAL_PLAYER);
-            neutralPlayers.add(newPlayer);
+            players.add(newPlayer);
         }
     }
 
+    // TODO: Change turn
     public void changeTurn() {
         currentPlayerIndex++;
-        currentPlayerIndex %= NUM_HUMAN_PLAYERS;
 
-        updatePlayerIndicator();
+        if (currentPlayerIndex == players.size() - 1) {
+            currentPlayerIndex = 0;
+
+            // Swap the last and first players
+            Collections.swap(players, 0, players.size() - 1);
+
+            // Only update playerIndicator when swap happens
+            updatePlayerIndicator();
+        }
     }
 
     public void updatePlayerIndicator() {
-        PlayerModelArg playerModelArg = new PlayerModelArg(getCurrentHumanPlayer(), PlayerModelUpdateType.CHANGED_PLAYER);
+        PlayerModelArg playerModelArg = new PlayerModelArg(getCurrentPlayer(), PlayerModelUpdateType.CHANGED_PLAYER);
         setChanged();
         notifyObservers(playerModelArg);
     }
@@ -83,40 +82,30 @@ public class PlayerModel extends Observable {
         notifyObservers(playerModelArg);
     }
 
-    public void forEachHumanPlayer(Consumer<Player> callback) {
-        for (Player player : humanPlayers) {
+    public void forEachPlayer(Consumer<Player> callback) {
+        for (Player player : players) {
             callback.accept(player);
         }
     }
 
-    public void forEachNeutralPlayer(Consumer<Player> callback) {
-        for (Player player : neutralPlayers) {
-            callback.accept(player);
-        }
-    }
-
-    private void assignInitialCountries(List<Player> players) {
+    public void assignInitialCountries() {
 
         MapModel mapModel = MapModel.getInstance();
         Deck deck = Deck.getInstance();
 
         players.forEach(player -> {
-            for (Card card : player.getCards()) {
-                String playerCountryName = card.getCountryName();
+            List<Card> cards = player.getCards();
+            while(cards.size() > 0) {
+                String playerCountryName = cards.get(0).getCountryName();
                 Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
                 nullableCountry.ifPresent(country -> {
                     mapModel.setCountryOccupier(country, player);
                     mapModel.updateCountryArmyCount(country, 1);
 
                     player.addCountry(country);
-
+                    deck.add(player.removeCard());
                 });
             }
         });
-    }
-
-    public void assignAllInitialCountries() {
-        assignInitialCountries(humanPlayers);
-        assignInitialCountries(neutralPlayers);
     }
 }
