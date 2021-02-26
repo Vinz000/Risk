@@ -43,9 +43,7 @@ public abstract class Player {
     }
 
     // TODO: Change Method (Should return calculated reinforcement)
-    public int getReinforcement() {
-        return 0;
-    }
+    public abstract int getReinforcement();
 
     public List<Card> getCards() {
         return cards;
@@ -58,7 +56,7 @@ public abstract class Player {
     }
 
     // TODO: Change so that it removes specific card
-    public Card removeCard() throws IllegalArgumentException {
+    public Card removeTopCard() throws IllegalArgumentException {
         assert getCards().size() > 0 : "Cannot remove from empty hand";
 
         return cards.remove(0);

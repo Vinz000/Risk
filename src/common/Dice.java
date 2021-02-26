@@ -35,10 +35,32 @@ public class Dice {
         return rolledDice.stream().reduce(0, Integer::sum);
     }
 
-    public String printRoll() {
+    @Override
+    public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        rolledDice.forEach(die -> stringBuilder.append(String.format("[ %d ] ", die)));
+        rolledDice.forEach(die -> {
+
+            switch (die) {
+                case 1:
+                    stringBuilder.append("⚀ ");
+                    break;
+                case 2:
+                    stringBuilder.append("⚁ ");
+                    break;
+                case 3:
+                    stringBuilder.append("⚂ ");
+                    break;
+                case 4:
+                    stringBuilder.append("⚃ ");
+                    break;
+                case 5:
+                    stringBuilder.append("⚄ ");
+                    break;
+                case 6:
+                    stringBuilder.append("⚅ ");
+            }
+        });
 
         return stringBuilder.toString();
     }

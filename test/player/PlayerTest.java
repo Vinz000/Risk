@@ -110,12 +110,12 @@ class PlayerTest {
         Card testCard = new Card(CardType.ARTILLERY, "Test Card");
         player.addCard(testCard);
 
-        assertEquals(player.removeCard(), testCard);
+        assertEquals(player.removeTopCard(), testCard);
     }
 
     @Test
     void testRemoveCardThrowsIfRemovingFromEmptyHand() {
-        assertThrows(AssertionError.class, () -> player.removeCard());
+        assertThrows(AssertionError.class, () -> player.removeTopCard());
     }
 
 

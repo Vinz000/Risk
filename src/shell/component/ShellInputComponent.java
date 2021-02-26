@@ -7,6 +7,7 @@ import javafx.event.Event;
 import javafx.scene.control.TextField;
 import shell.model.ShellModel;
 import shell.model.ShellModelArg;
+import shell.prompt.ShellPrompt;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -23,7 +24,7 @@ public class ShellInputComponent extends TextField implements Observer, Componen
 
         ShellModel shellModel = ShellModel.getInstance();
         String userInput = getText();
-        ShellModel.ShellPrompt nextPrompt = shellModel.nextPrompt();
+        ShellPrompt nextPrompt = shellModel.nextPrompt();
 
         // If there is a value in the queue...
         if (nextPrompt != null) {

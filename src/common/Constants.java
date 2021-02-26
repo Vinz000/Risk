@@ -11,7 +11,6 @@ public class Constants {
     public static final int INIT_COUNTRIES_NEUTRAL = 6;
     public static final int INIT_UNITS_PLAYER = 36;
     public static final int INIT_UNITS_NEUTRAL = 24;
-    public static final int NUM_MAIN_CARDS = 42;
     public static final int NUM_INDIVIDUAL_CARDS = 14;
     public static final int NUM_WILDCARDS = 2;
     public static final int INIT_REINFORCEMENT_TURNS = 9;
@@ -141,7 +140,7 @@ public class Constants {
     public static class Notifications {
         public static final String WELCOME = "Welcome to Risk -\nBy Team7\n";
         public static final String NAME = "What is your name? ";
-        public static final String DICE_ROLL = "Press enter to begin rolling the dice";
+        public static final String DICE_ROLL = "Press enter to begin rolling the dice.";
         public static final String ROLLED = "has rolled: ";
         public static final String MOVE = "it is your turn.";
         public static final String OPTION = "What move would you like to make?";
