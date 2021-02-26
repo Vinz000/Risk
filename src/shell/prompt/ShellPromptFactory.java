@@ -163,4 +163,11 @@ public class ShellPromptFactory {
             playerModel.changeTurn();
         }, Validators.currentPlayerOccupies);
     }
+
+    public ShellPrompt enterGameLoop(Runnable gameLoop) {
+        return new ShellPrompt(input -> {
+            gameLoop.run();
+            shellModel.prompt(enterGameLoop(gameLoop));
+        }, Validators.alwaysValid);
+    }
 }
