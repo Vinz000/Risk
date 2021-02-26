@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static common.Constants.INIT_COUNTRIES_NEUTRAL;
 import static common.Constants.INIT_COUNTRIES_PLAYER;
@@ -162,5 +163,13 @@ public class ShellPromptFactory {
 
             playerModel.changeTurn();
         }, Validators.currentPlayerOccupies);
+    }
+
+    public ShellPrompt enterGameLoop(Supplier<Boolean> gameLoop) {
+        return new ShellPrompt(input -> {
+            boolean continuePlaying = gameLoop.get();
+
+            if (continuePlaying) shellModel.prompt(enterGameLoop(gameLoop));
+        }, Validators.alwaysValid);
     }
 }
