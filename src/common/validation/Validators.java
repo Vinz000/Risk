@@ -48,7 +48,6 @@ public class Validators {
      * @param player      name of player in question
      * @return null if player occupies country else invalid message.
      */
-
     private static String playerOccupies(String countryName, Player player) {
         MapModel mapModel = MapModel.getInstance();
         Optional<Country> inputCountry = mapModel.getCountryByName(countryName);

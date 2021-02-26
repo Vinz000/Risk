@@ -42,7 +42,12 @@ public class GameCore {
     //       (Then delete this comment)
     //       As per the new usual, create the prompts in the
     //       factory and prompt here, just like the GameCore.start method!
-    private static void gameLoop() {
+    private static boolean gameLoop() {
+
+        // Determine whether or not the game
+        // is over, if so, return FALSE. This will exit the game loop.
+        if (isGameOver()) return false;
+
         shellModel.notify("New turn baby");
         shellModel.notify("Please enter something.");
 
@@ -59,5 +64,13 @@ public class GameCore {
 
         shellModel.prompt(first);
         shellModel.prompt(second);
+
+        return true;
+    }
+
+    private static boolean isGameOver() {
+        // TODO: use models etc. to determine whether or
+        //       not the game is over. This currently loops forever.
+        return false;
     }
 }
