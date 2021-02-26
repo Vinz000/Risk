@@ -5,6 +5,7 @@ import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -31,7 +32,6 @@ public class Validators {
         return new ValidatorResponse(isValid, "must be 'yes' or 'no'");
     };
 
-
     public static final Function<String, ValidatorResponse> currentPlayerOccupies = input -> {
         PlayerModel playerModel = PlayerModel.getInstance();
         Player currentPlayer = playerModel.getCurrentPlayer();
@@ -39,6 +39,21 @@ public class Validators {
 
         return new ValidatorResponse(invalidMessage);
     };
+
+    @SafeVarargs
+    public static Function<String, ValidatorResponse> compose(Function<String, ValidatorResponse>... validators) {
+        return Arrays.stream(validators).reduce(Validators.alwaysValid, (acc, cur) -> (input) -> {
+            ValidatorResponse accResponse = acc.apply(input);
+            ValidatorResponse curResponse = cur.apply(input);
+
+            boolean isValid = accResponse.isValid() && curResponse.isValid();
+            String message = accResponse.getMessage() == null ?
+                    curResponse.getMessage() :
+                    accResponse.getMessage();
+
+            return new ValidatorResponse(isValid, message);
+        });
+    }
 
     /**
      * Determines if the given player occupies the country
