@@ -3,6 +3,7 @@ package player.model;
 import common.Constants;
 import deck.Card;
 import deck.Deck;
+import javafx.application.Platform;
 import map.country.Country;
 import map.model.MapModel;
 import player.NeutralPlayer;
@@ -65,7 +66,7 @@ public class PlayerModel extends Observable {
             Collections.swap(players, 0, players.size() - 1);
 
             // Only update playerIndicator when swap happens
-            updatePlayerIndicator();
+            Platform.runLater(this::updatePlayerIndicator);
         }
     }
 

@@ -61,7 +61,7 @@ public class ApplicationLaunchTest extends FxRobot {
             }
 
             primaryStage.show();
-            GameCore.start();
+//            GameCore.start();
         }
     }
 

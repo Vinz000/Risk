@@ -11,6 +11,7 @@ import shell.prompt.ShellPrompt;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.function.Function;
 
 public class ShellInputComponent extends TextField implements Observer, Component {
 
@@ -21,25 +22,9 @@ public class ShellInputComponent extends TextField implements Observer, Componen
     }
 
     private void onEnterPressed(Event event) {
-
         ShellModel shellModel = ShellModel.getInstance();
         String userInput = getText();
-        ShellPrompt nextPrompt = shellModel.nextPrompt();
-
-        // If there is a value in the queue...
-        if (nextPrompt != null) {
-            ValidatorResponse validatorResponse = nextPrompt.validator.apply(userInput);
-            if (validatorResponse.isValid()) {
-                nextPrompt.handler.accept(userInput);
-            } else {
-                shellModel.notify(validatorResponse.getMessage());
-                shellModel.retryPrompt(nextPrompt);
-            }
-        } else {
-            shellModel.notify(Constants.Notifications.GG);
-            setDisable(true);
-        }
-
+        shellModel.handleUserResponse(userInput);
         clear();
     }
 

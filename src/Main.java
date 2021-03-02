@@ -35,6 +35,7 @@ public class Main extends Application {
         primaryStage.show();
 
         // Start
-        GameCore.start();
+        GameCore gameCore = new GameCore();
+        gameCore.start();
     }
 }
