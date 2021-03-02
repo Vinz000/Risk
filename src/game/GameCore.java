@@ -37,32 +37,32 @@ public class GameCore extends Task<Void> {
     @Override
     protected Void call() {
 
-        uiAction(() -> shellModel.notify(Constants.Notifications.WELCOME));
+        shellModel.notify(Constants.Notifications.WELCOME);
         Deck deck = Deck.getInstance();
         Dice dice = new Dice();
 
         /*
         Creating players
          */
-        uiAction(() -> shellModel.notify(Constants.Notifications.NAME + "(P1)"));
+        shellModel.notify(Constants.Notifications.NAME + "(P1)");
         response = shellModel.prompt(Validators.nonEmpty);
         Player humanPlayerOne = new HumanPlayer(response, Constants.Colors.PLAYER_1_COLOR);
         playerModel.addPlayer(humanPlayerOne);
-        uiAction(() -> shellModel.notify("Welcome " + humanPlayerOne.getName()));
+        shellModel.notify("Welcome " + humanPlayerOne.getName());
 
         playerModel.createNeutralPlayers();
 
-        uiAction(() -> shellModel.notify(Constants.Notifications.NAME + "(P2)"));
+        shellModel.notify(Constants.Notifications.NAME + "(P2)");
         response = shellModel.prompt(Validators.nonEmpty);
         Player humanPlayerTwo = new HumanPlayer(response, Constants.Colors.PLAYER_2_COLOR);
         playerModel.addPlayer(humanPlayerTwo);
-        uiAction(() -> shellModel.notify("Welcome " + humanPlayerTwo.getName()));
+        shellModel.notify("Welcome " + humanPlayerTwo.getName());
 
         /*
         Drawing initial territory cards
          */
-        uiAction(() -> shellModel.notify(Constants.Notifications.TERRITORY));
-        uiAction(() -> shellModel.notify(Constants.Notifications.TERRITORY_OPTION));
+        shellModel.notify(Constants.Notifications.TERRITORY);
+        shellModel.notify(Constants.Notifications.TERRITORY_OPTION);
         response = shellModel.prompt(Validators.yesNo);
         boolean showDraw = response.toLowerCase().contains("y");
 
@@ -78,7 +78,7 @@ public class GameCore extends Task<Void> {
                         if (showDraw) {
                             String drawnCountryName = drawnCard.getCountryName();
                             String playerName = player.getName();
-                            uiAction(() -> shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName));
+                            shellModel.notify(playerName + Constants.Notifications.DRAWN + drawnCountryName);
                         }
                     });
                 }
@@ -93,7 +93,7 @@ public class GameCore extends Task<Void> {
         /*
         Roll dice to determine which player chooses countries to reinforce first
          */
-        uiAction(() -> shellModel.notify("\n" + "The dice will now decide who goes first."));
+        shellModel.notify("\n" + "Rolling dice to determine who goes first...");
 
         int playerOneDiceSum;
         int playerTwoDiceSum;
@@ -105,14 +105,14 @@ public class GameCore extends Task<Void> {
         do {
             playerOneDiceSum = dice.getRollSum(2);
             String playerOneRolledNotification = createRolledNotification.apply(players.get(0));
-            uiAction(() -> shellModel.notify(playerOneRolledNotification));
+            shellModel.notify(playerOneRolledNotification);
 
             playerTwoDiceSum = dice.getRollSum(2);
             String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1));
-            uiAction(() -> shellModel.notify(playerTwoRolledNotification));
+            shellModel.notify(playerTwoRolledNotification);
 
             if (playerOneDiceSum == playerTwoDiceSum) {
-                uiAction(() -> shellModel.notify("\nRolled the same number\nRolling again!"));
+                shellModel.notify("\nRolled the same number\nRolling again!");
             } else if (playerOneDiceSum < playerTwoDiceSum) {
                 // player One goes first by default but if player One rolls a lower sum,
                 // then we change the turn so that the current player is now player Two.
@@ -126,7 +126,7 @@ public class GameCore extends Task<Void> {
 
         String currentPlayerName = players.get(0).getName();
         String finalCurrentPlayerName1 = currentPlayerName;
-        uiAction(() -> shellModel.notify(String.format("%s rolled higher, so is going first", finalCurrentPlayerName1)));
+        shellModel.notify(String.format("%s rolled higher, so is going first", finalCurrentPlayerName1));
 
         /*
         Initial reinforcement of countries
@@ -140,8 +140,8 @@ public class GameCore extends Task<Void> {
             String prefixMessage = isNeutral ? "Choose country Owned by " : "\nYour Turn ";
             String message = prefixMessage + player.getName();
 
-            uiAction(() -> shellModel.notify(message));
-            uiAction(() -> shellModel.notify("Place down reinforcements."));
+            shellModel.notify(message);
+            shellModel.notify("Place down reinforcements.");
 
             // Toggle highlight (on)
             for (Country ownedCountry : player.getOwnedCountries()) {
@@ -155,7 +155,7 @@ public class GameCore extends Task<Void> {
 
             country.ifPresent(validCountry -> uiAction(() -> mapModel.updateCountryArmyCount(validCountry, reinforcement)));
 
-            uiAction(() -> shellModel.notify("Successfully placed reinforcements."));
+            shellModel.notify("Successfully placed reinforcements.");
 
             // Toggle highlight (off)
             for (Country ownedCountry : player.getOwnedCountries()) {
@@ -168,21 +168,21 @@ public class GameCore extends Task<Void> {
         /*
         Roll dice to determine which player has the first turn
          */
-        uiAction(() -> shellModel.notify("\n" + "The dice will now decide who goes first."));
+        shellModel.notify("\n" + "Rolling dice to determine who goes first...");
 
         players = playerModel.getPlayers();
 
         do {
             playerOneDiceSum = dice.getRollSum(2);
             String playerOneRolledNotification = createRolledNotification.apply(players.get(0));
-            uiAction(() -> shellModel.notify(playerOneRolledNotification));
+            shellModel.notify(playerOneRolledNotification);
 
             playerTwoDiceSum = dice.getRollSum(2);
             String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1));
-            uiAction(() -> shellModel.notify(playerTwoRolledNotification));
+            shellModel.notify(playerTwoRolledNotification);
 
             if (playerOneDiceSum == playerTwoDiceSum) {
-                uiAction(() -> shellModel.notify("\nRolled the same number\nRolling again!"));
+                shellModel.notify("\nRolled the same number\nRolling again!");
             } else if (playerOneDiceSum < playerTwoDiceSum) {
                 // player One goes first by default but if player One rolls a lower sum,
                 // then we change the turn so that the current player is now player Two.
@@ -196,15 +196,15 @@ public class GameCore extends Task<Void> {
 
         currentPlayerName = players.get(0).getName();
         String finalCurrentPlayerName = currentPlayerName;
-        uiAction(() -> shellModel.notify(String.format("%s rolled higher, so is going first", finalCurrentPlayerName)));
+        shellModel.notify(String.format("%s rolled higher, so is going first", finalCurrentPlayerName));
 
         /*
         Game loop
          */
         while (true) {
-            uiAction(() -> shellModel.notify("Please enter something"));
+            shellModel.notify("Please enter something");
             response = shellModel.prompt(Validators.nonEmpty);
-            uiAction(() -> shellModel.notify("Your response: " + response));
+            shellModel.notify("Your response: " + response);
         }
     }
 

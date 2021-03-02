@@ -2,6 +2,7 @@ package shell.model;
 
 import common.validation.ValidatorResponse;
 import common.validation.Validators;
+import javafx.application.Platform;
 import shell.prompt.ShellPrompt;
 
 import java.util.Deque;
@@ -64,8 +65,11 @@ public class ShellModel extends Observable {
 
     public void notify(String notification) {
         ShellModelArg shellModelArg = new ShellModelArg(notification, ShellModelUpdateType.NOTIFICATION);
-        setChanged();
-        notifyObservers(shellModelArg);
+
+        Platform.runLater(() -> {
+            setChanged();
+            notifyObservers(shellModelArg);
+        });
     }
 
     public void setInputLineText(String text) {
