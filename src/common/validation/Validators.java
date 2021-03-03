@@ -52,19 +52,58 @@ public class Validators {
         return new ValidatorResponse(invalidMessage);
     };
 
+    private static final Function<String, ValidatorResponse> isNumber = input -> {
+        String invalidMessage = null;
+        try {
+            Integer.parseInt(input);
+        } catch (NumberFormatException e){
+            invalidMessage = "Not a number";
+        }
+
+        return new ValidatorResponse(invalidMessage);
+    };
+
+    private static final Function<String, ValidatorResponse> hasEnoughReinforcements = input -> {
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentPlayer = playerModel.getCurrentPlayer();
+        String invalidMessage = null;
+
+        if (Integer.parseInt(input) > currentPlayer.getReinforcements()) {
+            invalidMessage = "Not enough reinforcements";
+        }
+
+        return new ValidatorResponse(invalidMessage);
+    };
+
+    public static final Function<String, ValidatorResponse> canPlaceTroops = input -> compose(input, nonEmpty, isNumber, hasEnoughReinforcements);
+
     @SafeVarargs
-    public static Function<String, ValidatorResponse> compose(Function<String, ValidatorResponse>... validators) {
-        return Arrays.stream(validators).reduce(Validators.alwaysValid, (acc, cur) -> (input) -> {
-            ValidatorResponse accResponse = acc.apply(input);
-            ValidatorResponse curResponse = cur.apply(input);
+    public static ValidatorResponse compose(String input, Function<String, ValidatorResponse>... validators) {
+//        return Arrays.stream(validators).reduce(Validators.alwaysValid, (acc, cur) -> (input) -> {
+//            ValidatorResponse accResponse = acc.apply(input);
+//            ValidatorResponse curResponse = cur.apply(input);
+//
+//            boolean isValid = accResponse.isValid() && curResponse.isValid();
+//            String message = accResponse.getMessage() == null ?
+//                    curResponse.getMessage() :
+//                    accResponse.getMessage();
+//
+//            return new ValidatorResponse(isValid, message);
+//        });
+//
+//
+//        BiFunction<String,List<Function<String,ValidatorResponse>>, ValidatorResponse> isVal =  (input, validators) -> {
+//            if ()
+//        }
 
-            boolean isValid = accResponse.isValid() && curResponse.isValid();
-            String message = accResponse.getMessage() == null ?
-                    curResponse.getMessage() :
-                    accResponse.getMessage();
+        for (Function<String, ValidatorResponse> validator: validators) {
+            ValidatorResponse validatorResponse = validator.apply(input);
+            if (!validatorResponse.isValid()) {
+                return validatorResponse;
+            }
+        }
 
-            return new ValidatorResponse(isValid, message);
-        });
+        return new ValidatorResponse(null);
     }
 
     public static final Function<String, ValidatorResponse> currentPlayerDoesNotOccupy = input -> {
