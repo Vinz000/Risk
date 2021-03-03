@@ -8,8 +8,4 @@ class PlayerAbstractTest extends Player{
         super(name, color);
     }
 
-    @Override
-    public int getReinforcement() {
-        return 0;
-    }
 }

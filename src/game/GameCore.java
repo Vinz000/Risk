@@ -10,12 +10,10 @@ import javafx.concurrent.Task;
 import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;
-import player.NeutralPlayer;
 import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -39,6 +37,43 @@ public class GameCore extends Task<Void> {
 
         shellModel.notify(Constants.Notifications.WELCOME);
         Deck deck = Deck.getInstance();
+
+        getPlayerOne();
+        getPlayerTwo();
+        playerModel.createNeutralPlayers();
+
+        assignInitialCountries();
+
+        chooseFirstPlayer();
+
+//        for (int i = 0; i < INIT_REINFORCEMENT_TURNS * NUM_HUMAN_PLAYERS; i++) {
+//            Player player = playerModel.getCurrentPlayer();
+//
+//            reinforceInitialCountries(player, false);
+//
+//            playerModel.getNeutralPlayers().forEach(neutralPlayer -> reinforceInitialCountries(neutralPlayer, true));
+//
+//            playerModel.changeTurn();
+//        }
+
+        chooseFirstPlayer();
+
+        while (true) {
+            Player currentPlayer = playerModel.getCurrentPlayer();
+
+
+            shellModel.notify("\nYour turn " + currentPlayer.getName());
+
+            reinforceOwnedCountries(currentPlayer);
+
+            // War Loop
+
+            // Fortify Loop
+
+            // Change turn when finished
+            playerModel.changeTurn();
+        }
+    }
 
         /*
         Creating players

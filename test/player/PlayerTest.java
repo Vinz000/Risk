@@ -78,12 +78,6 @@ class PlayerTest {
         assertThrows(NullPointerException.class, () -> player.addCountry(null));
     }
 
-    // TODO: Change since method is going to change
-    @Test
-    void testGetReinforcementShouldReturnReinforcement() {
-        assertEquals(player.getReinforcement(), 0);
-    }
-
     @Test
     void testGetCardsShouldReturnHand() {
         List<Card> returnedPlayerCardList = player.getCards();

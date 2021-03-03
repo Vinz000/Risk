@@ -1,28 +1,31 @@
 package map.model;
 
+import map.Continent;
 import javafx.application.Platform;
 import map.country.Country;
 import player.Player;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static common.Constants.*;
 
 public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
+    private final List<Continent> continents = new ArrayList<>();
     private final List<Country> combatantInfo = new ArrayList<Country>(2);
 
     private MapModel() {
         createCountries();
+        createContinents();
     }
 
     public static synchronized MapModel getInstance() {
         if (instance == null) {
             return instance = new MapModel();
         }
-
         return instance;
     }
 
@@ -31,6 +34,19 @@ public class MapModel extends Observable {
             Country newCountry = new Country(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], COUNTRY_COORDS[i]);
             countries.add(newCountry);
         }
+    }
+
+    private void createContinents() {
+        for (int i = 0; i < NUM_CONTINENTS; i++) {
+            int continentId = i;
+            List<Country> ownedCountries = countries.stream().filter(country -> country.getContinentID() == continentId).collect(Collectors.toList());
+            Continent newContinent = new Continent(CONTINENT_NAMES[continentId], CONTINENT_VALUES[continentId], continentId, ownedCountries);
+            continents.add(newContinent);
+        }
+    }
+
+    public List<Continent> getContinents() {
+        return continents;
     }
 
     public List<Country> getCountries() {

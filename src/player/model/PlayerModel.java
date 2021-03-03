@@ -4,6 +4,7 @@ import common.Constants;
 import deck.Card;
 import deck.Deck;
 import javafx.application.Platform;
+import map.Continent;
 import map.country.Country;
 import map.model.MapModel;
 import player.NeutralPlayer;
@@ -11,18 +12,13 @@ import player.Player;
 
 import java.util.*;
 
-import static common.Constants.NUM_HUMAN_PLAYERS;
-import static common.Constants.NUM_NEUTRAL_PLAYERS;
+import static common.Constants.*;
 
 public class PlayerModel extends Observable {
 
-    /**
-     * Order of Players:
-     * H1 -> N1 -> N2 -> N3 -> N4 -> H2/BOT
-     */
-
     private static PlayerModel instance;
-    private final List<Player> players = new ArrayList<>(NUM_HUMAN_PLAYERS + NUM_NEUTRAL_PLAYERS);
+    private final List<Player> activePlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
+    private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
     private int currentPlayerIndex = 0;
 
     private PlayerModel() {
@@ -36,38 +32,35 @@ public class PlayerModel extends Observable {
         return instance;
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public List<Player> getNeutralPlayers() {
+        return neutralPlayers;
+    }
+
+    public List<Player> getActivePlayers() {
+        return activePlayers;
     }
 
     public Player getCurrentPlayer() {
-        return players.get(currentPlayerIndex);
+        return activePlayers.get(currentPlayerIndex);
     }
 
     public void addPlayer(Player player) {
-        players.add(player);
+        activePlayers.add(player);
     }
 
     public void createNeutralPlayers() {
         for (int i = 0; i < NUM_NEUTRAL_PLAYERS; i++) {
             Player newPlayer = new NeutralPlayer(String.valueOf(i + 1), Constants.Colors.NEUTRAL_PLAYER);
-            players.add(newPlayer);
+            neutralPlayers.add(newPlayer);
         }
     }
 
     // TODO: Change turn
     public void changeTurn() {
         currentPlayerIndex++;
+        currentPlayerIndex %= NUM_HUMAN_PLAYERS;
 
-        if (currentPlayerIndex == players.size() - 1) {
-            currentPlayerIndex = 0;
-
-            // Swap the last and first players
-            Collections.swap(players, 0, players.size() - 1);
-
-            // Only update playerIndicator when swap happens
-            Platform.runLater(this::updatePlayerIndicator);
-        }
+        Platform.runLater(this::updatePlayerIndicator);
     }
 
     public void updatePlayerIndicator() {
@@ -82,24 +75,28 @@ public class PlayerModel extends Observable {
         notifyObservers(playerModelArg);
     }
 
-    public void assignInitialCountries() {
+    public void calculateReinforcements(Player player) {
+        int availableReinforcements = 0;
+
+        availableReinforcements += (player.getOwnedCountries().size() / 3);
 
         MapModel mapModel = MapModel.getInstance();
-        Deck deck = Deck.getInstance();
 
-        players.forEach(player -> {
-            List<Card> cards = player.getCards();
-            while (cards.size() > 0) {
-                String playerCountryName = cards.get(0).getCountryName();
-                Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
-                nullableCountry.ifPresent(country -> {
-                    mapModel.setCountryOccupier(country, player);
-                    mapModel.updateCountryArmyCount(country, 1);
+        for (Continent continent : mapModel.getContinents()) {
+            boolean ownsContinent = continent
+                    .getCountries()
+                    .stream()
+                    .allMatch(country -> country.getOccupier().equals(player));
 
-                    player.addCountry(country);
-                    deck.add(player.removeTopCard());
-                });
+            if (ownsContinent) {
+                availableReinforcements += continent.getBonusReinforcement();
             }
-        });
+        }
+
+        // Available Reinforcements is always a min of 3
+        availableReinforcements = Math.max(availableReinforcements, DEFAULT_REINFORCEMENT);
+
+        player.setReinforcements(availableReinforcements);
     }
+
 }

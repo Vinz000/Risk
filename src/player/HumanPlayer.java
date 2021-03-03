@@ -16,12 +16,6 @@ public class HumanPlayer extends Player {
         return id;
     }
 
-    // TODO: Return reinforcement according to the state of the game
-    @Override
-    public int getReinforcement() {
-        return 3;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return obj instanceof HumanPlayer && ((HumanPlayer) obj).getId().equals(id);
