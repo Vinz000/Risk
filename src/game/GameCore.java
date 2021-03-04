@@ -209,6 +209,10 @@ public class GameCore extends Task<Void> {
         while (true) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
+            if(currentPlayer.getName().toLowerCase().contains("neutral")) {
+                playerModel.changeTurn();
+            }
+
             shellModel.notify("\nYour turn " + currentPlayer.getName());
 
             boolean skipInvasion = skipOrFight(currentPlayer);
@@ -224,11 +228,14 @@ public class GameCore extends Task<Void> {
                         setAttackingTroops(mapModel.getSelectedCountries().get(0));
                         setDefendingTroops(mapModel.getSelectedCountries().get(1));
                         combat();
+                        mapModel.clearSelectedCountries();
                         currentBattle = continueInvasion(currentPlayer);
                     } else {
                         mapModel.getSelectedCountries().get(1).get().setOccupier(currentPlayer);
+                        mapModel.clearSelectedCountries();
                     }
                 }
+                mapModel.clearSelectedCountries();
                 skipInvasion = skipOrFight(currentPlayer);
             }
 
@@ -292,9 +299,7 @@ public class GameCore extends Task<Void> {
 
     private void setAttackingTroops(Optional<Country> attackingCountry) {
         shellModel.notify("How many troops will you attack with?");
-        response = shellModel.prompt(Validators.compose(
-                Validators.hasArmy, Validators.isInt, Validators.threeUnitCheck,
-                Validators.appropriateForce));
+        response = shellModel.prompt(Validators.compose(Validators.threeUnitCheck, Validators.appropriateForce));
 
         int invasionForce = Integer.parseInt(response);
         attackingCountry.get().updateForceCount(invasionForce);
@@ -303,8 +308,7 @@ public class GameCore extends Task<Void> {
 
     private void setDefendingTroops(Optional<Country> defendingCountry) {
         shellModel.notify("How many troops will you defend with?");
-        response = shellModel.prompt(Validators.compose(
-                Validators.hasArmy, Validators.isInt, Validators.twoUnitCheck));
+        response = shellModel.prompt(Validators.compose(Validators.twoUnitCheck));
 
         int defenderForce = Integer.parseInt(response);
         defendingCountry.get().updateForceCount(defenderForce);
@@ -374,6 +378,10 @@ public class GameCore extends Task<Void> {
         attackingCountry.get().updateArmyCount(
                 attackingCountry.get().getArmyCount() + defendingCountry.get().getForceCount());
 
+        defendingCountry.ifPresent(validCountry -> uiAction(() ->
+                mapModel.updateCountryArmyCount(validCountry, validCountry.getArmyCount())));
+        attackingCountry.ifPresent(validCountry -> uiAction(() ->
+                mapModel.updateCountryArmyCount(validCountry, validCountry.getArmyCount())));
         victoryCheck(attackerVictoryPoints, defenderVictoryPoints, attackingCountry, defendingCountry);
     }
 
@@ -398,8 +406,7 @@ public class GameCore extends Task<Void> {
                 + attackingCountry.get().getOccupier().getName());
         defendingCountry.get().setOccupier(attackingCountry.get().getOccupier());
         shellModel.notify("How many units would you like to move to the new country?");
-        response = shellModel.prompt(Validators.compose(
-                Validators.isInt, Validators.hasArmy, Validators.singleUnit));
+        response = shellModel.prompt(Validators.compose(Validators.hasArmy, Validators.singleUnit));
         defendingCountry.get().updateArmyCount(Integer.parseInt(response));
         attackingCountry.get().updateArmyCount(attackingCountry.get().getArmyCount() - Integer.parseInt(response));
     }

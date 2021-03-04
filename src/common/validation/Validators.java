@@ -35,18 +35,6 @@ public class Validators {
         return new ValidatorResponse(isValid, "must be 'yes' or 'no'");
     };
 
-    public static final Function<String, ValidatorResponse> isInt = input -> {
-        boolean isInt = true;
-
-        try {
-            Integer.parseInt(input);
-        }catch (NumberFormatException e) {
-            isInt = false;
-        };
-
-        return new ValidatorResponse(isInt, "Must be an integer");
-    };
-
     public static final Function<String, ValidatorResponse> currentPlayerOccupies = input -> {
         PlayerModel playerModel = PlayerModel.getInstance();
         Player currentPlayer = playerModel.getCurrentPlayer();
@@ -111,10 +99,8 @@ public class Validators {
     public static final Function<String, ValidatorResponse> hasArmy = input -> {
         MapModel mapModel = MapModel.getInstance();
         Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
-        AtomicInteger army = new AtomicInteger(0);
-        attackingCountry.ifPresent(isValid -> army.set(attackingCountry.get().getArmyCount()));
 
-        boolean hasTroops = (Integer.parseInt(String.valueOf(army)) > Integer.parseInt(input));
+        boolean hasTroops = (attackingCountry.get().getArmyCount() > Integer.parseInt(input));
         return new ValidatorResponse(hasTroops, "You do not have enough troops");
     };
 
@@ -133,17 +119,9 @@ public class Validators {
         Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
         int army = attackingCountry.get().getArmyCount();
         int force = Integer.parseInt(input);
-        boolean appropriateForce = false;
+        boolean appropriateForce;
 
-        if(((force == 1) || (force == 2) || (force == 3)) && army > 4) {
-            appropriateForce = true;
-        }
-        else if (((force == 1) || (force == 2)) && (army == 3)) {
-            appropriateForce = true;
-        }
-        else if ((force == 1) && (army == 2)) {
-            appropriateForce = true;
-        }
+        appropriateForce = (force >= 1) && (army >= 2);
         return new ValidatorResponse(appropriateForce, "You did not select an appropriately sized force.");
     };
 
@@ -157,10 +135,10 @@ public class Validators {
 
     public static Function<String, ValidatorResponse> twoUnitCheck = input -> {
         boolean underThreeUnits = true;
-        if (Integer.parseInt(input) > 3) {
+        if (Integer.parseInt(input) > 2) {
             underThreeUnits = false;
         }
-        return new ValidatorResponse(underThreeUnits, "You cannot attack with more than 3 units per battle.");
+        return new ValidatorResponse(underThreeUnits, "You cannot attack with more than 2 units per battle.");
     };
     /**
      * Determines if the given player occupies the country
