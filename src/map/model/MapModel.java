@@ -3,10 +3,7 @@ package map.model;
 import map.country.Country;
 import player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static common.Constants.*;
@@ -14,6 +11,7 @@ import static common.Constants.*;
 public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
+    private final List<Optional<Country>> combatantInfo = new ArrayList<Optional<Country>>(2);
 
     private MapModel() {
         createCountries();
@@ -82,5 +80,18 @@ public class MapModel extends Observable {
         notifyObservers(mapModelArg);
     }
 
+    public List<Optional<Country>> getSelectedCountries() {
+        return combatantInfo;
+    }
+
+    public void addSelectedCountries(Optional<Country> country) {
+        Objects.requireNonNull(country);
+
+        combatantInfo.add(country);
+    }
+
+    public void clearSelectedCountries() {
+        combatantInfo.clear();
+    }
 }
 

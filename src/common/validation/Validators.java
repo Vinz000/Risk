@@ -1,12 +1,15 @@
 package common.validation;
 
+import common.Constants;
 import map.country.Country;
 import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
 
+import javax.xml.validation.Validator;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /**
@@ -32,6 +35,18 @@ public class Validators {
         return new ValidatorResponse(isValid, "must be 'yes' or 'no'");
     };
 
+    public static final Function<String, ValidatorResponse> isInt = input -> {
+        boolean isInt = true;
+
+        try {
+            Integer.parseInt(input);
+        }catch (NumberFormatException e) {
+            isInt = false;
+        };
+
+        return new ValidatorResponse(isInt, "Must be an integer");
+    };
+
     public static final Function<String, ValidatorResponse> currentPlayerOccupies = input -> {
         PlayerModel playerModel = PlayerModel.getInstance();
         Player currentPlayer = playerModel.getCurrentPlayer();
@@ -55,6 +70,98 @@ public class Validators {
         });
     }
 
+    public static final Function<String, ValidatorResponse> currentPlayerDoesNotOccupy = input -> {
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentPlayer = playerModel.getCurrentPlayer();
+        String invalidMessage = playerDoesNotOccupy(input, currentPlayer);
+
+        return new ValidatorResponse(invalidMessage);
+    };
+
+    public static final Function<String, ValidatorResponse> skipOrFight = input -> {
+        boolean isValid = input.equalsIgnoreCase("skip") ||
+                input.toLowerCase().contains("s") ||
+                input.equalsIgnoreCase("fight") ||
+                input.toLowerCase().contains("f");
+        return new ValidatorResponse(isValid, "Input must be 'fight' or 'skip'");
+    };
+
+    public static final Function<String, ValidatorResponse> adjacentCountry = input -> {
+        MapModel mapModel = MapModel.getInstance();
+
+        Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
+        Optional<Country> defendingCountry = mapModel.getCountryByName(input);
+
+        int[] adjacentCountries = Arrays.stream(attackingCountry.get().getAdjCountries()).toArray();
+
+        boolean confirmedAdjacent = false;
+        int adjacentCountry = 0;
+
+        for (int country : adjacentCountries) {
+            adjacentCountry = country;
+
+            if (Constants.COUNTRY_NAMES[adjacentCountry].equals(defendingCountry.get().getCountryName())) {
+                confirmedAdjacent = true;
+            }
+        }
+
+        return new ValidatorResponse(confirmedAdjacent, "Selected country is not adjacent");
+    };
+
+    public static final Function<String, ValidatorResponse> hasArmy = input -> {
+        MapModel mapModel = MapModel.getInstance();
+        Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
+        AtomicInteger army = new AtomicInteger(0);
+        attackingCountry.ifPresent(isValid -> army.set(attackingCountry.get().getArmyCount()));
+
+        boolean hasTroops = (Integer.parseInt(String.valueOf(army)) > Integer.parseInt(input));
+        return new ValidatorResponse(hasTroops, "You do not have enough troops");
+    };
+
+    public static Function<String, ValidatorResponse> singleUnit = input -> {
+        MapModel mapModel = MapModel.getInstance();
+        Optional<Country> attackingCountry = mapModel.getCountryByName(input);
+        boolean sufficientArmy = false;
+        if (attackingCountry.get().getArmyCount() > 1) {
+            sufficientArmy = true;
+        }
+        return new ValidatorResponse(sufficientArmy, "You must have 1 unit leftover.");
+    };
+
+    public static Function<String, ValidatorResponse> appropriateForce = input -> {
+        MapModel mapModel = MapModel.getInstance();
+        Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
+        int army = attackingCountry.get().getArmyCount();
+        int force = Integer.parseInt(input);
+        boolean appropriateForce = false;
+
+        if(((force == 1) || (force == 2) || (force == 3)) && army > 4) {
+            appropriateForce = true;
+        }
+        else if (((force == 1) || (force == 2)) && (army == 3)) {
+            appropriateForce = true;
+        }
+        else if ((force == 1) && (army == 2)) {
+            appropriateForce = true;
+        }
+        return new ValidatorResponse(appropriateForce, "You did not select an appropriately sized force.");
+    };
+
+    public static Function<String, ValidatorResponse> threeUnitCheck = input -> {
+        boolean underFourUnits = true;
+        if (Integer.parseInt(input) > 3) {
+            underFourUnits = false;
+        }
+        return new ValidatorResponse(underFourUnits, "You cannot attack with more than 3 units per battle.");
+    };
+
+    public static Function<String, ValidatorResponse> twoUnitCheck = input -> {
+        boolean underThreeUnits = true;
+        if (Integer.parseInt(input) > 3) {
+            underThreeUnits = false;
+        }
+        return new ValidatorResponse(underThreeUnits, "You cannot attack with more than 3 units per battle.");
+    };
     /**
      * Determines if the given player occupies the country
      * with the given name.
@@ -74,6 +181,25 @@ public class Validators {
 
             if (!countryOccupier.equals(player)) {
                 invalidMessage = String.format("%s does not own %s", player.getName(), country.getCountryName());
+            }
+        } else {
+            invalidMessage = String.format("%s is not a valid country name", countryName);
+        }
+
+        return invalidMessage;
+    }
+
+    private static String playerDoesNotOccupy(String countryName, Player player) {
+        MapModel mapModel = MapModel.getInstance();
+        Optional<Country> inputCountry = mapModel.getCountryByName(countryName);
+        String invalidMessage = null;
+
+        if (inputCountry.isPresent()) {
+            Country country = inputCountry.get();
+            Player countryOccupier = country.getOccupier();
+
+            if (countryOccupier.equals(player)) {
+                invalidMessage = String.format("%s owns %s", player.getName(), country.getCountryName());
             }
         } else {
             invalidMessage = String.format("%s is not a valid country name", countryName);

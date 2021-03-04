@@ -11,6 +11,7 @@ public class Country {
     private final int continentID;
     private final Point2D coords;
     private int armyCount = 0;
+    private int forceCount = 0;
     private Player occupier;
 
     public Country(String countryName, int[] adjCountries, int continentID, int[] coords) throws IllegalArgumentException {
@@ -64,5 +65,16 @@ public class Country {
         return obj instanceof Country &&
                 ((Country) obj).getCountryName().equals(countryName) &&
                 ((Country) obj).getContinentID() == continentID;
+    }
+
+    public int getForceCount() {
+        return forceCount;
+    }
+
+    public void updateForceCount(int forceCount) {
+        if (this.forceCount + forceCount < 0) {
+            throw new IllegalArgumentException("InvasionCount cannot be less than 0.");
+        }
+        this.forceCount += forceCount;
     }
 }

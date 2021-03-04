@@ -1,5 +1,4 @@
 import game.GameComponent;
-import game.GameCore;
 import javafx.application.Application;
 import javafx.beans.InvalidationListener;
 import javafx.scene.Scene;
@@ -13,7 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
-import org.testfx.framework.junit5.ApplicationTest;
+//import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
 import shell.component.ShellInputComponent;
 
@@ -65,6 +64,7 @@ public class ApplicationLaunchTest extends FxRobot {
         }
     }
 
+    /*
     @BeforeEach
     void setUp() throws Exception {
         ApplicationTest.launch(DemoApplication.class);
@@ -100,4 +100,6 @@ public class ApplicationLaunchTest extends FxRobot {
             });
         });
     }
+
+     */
 }
