@@ -11,7 +11,7 @@ import static common.Constants.*;
 public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
-    private final List<Optional<Country>> combatantInfo = new ArrayList<Optional<Country>>(2);
+    private final List<Country> combatantInfo = new ArrayList<Country>(2);
 
     private MapModel() {
         createCountries();
@@ -80,12 +80,11 @@ public class MapModel extends Observable {
         notifyObservers(mapModelArg);
     }
 
-    public List<Optional<Country>> getSelectedCountries() {
+    public List<Country> getSelectedCountries() {
         return combatantInfo;
     }
 
-    public void addSelectedCountries(Optional<Country> country) {
-        Objects.requireNonNull(country);
+    public void addSelectedCountries(Country country) {
 
         combatantInfo.add(country);
     }

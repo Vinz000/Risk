@@ -73,8 +73,19 @@ public class Country {
 
     public void updateForceCount(int forceCount) {
         if (this.forceCount + forceCount < 0) {
-            throw new IllegalArgumentException("InvasionCount cannot be less than 0.");
+            throw new IllegalArgumentException("Force cannot be less than 0.");
         }
         this.forceCount += forceCount;
+    }
+
+    public void emptyForceCount() {
+        this.forceCount = 0;
+    }
+
+    public void destroyedUnit() {
+        if (this.forceCount + forceCount < 0) {
+            throw new IllegalArgumentException("Force cannot be less than 0.");
+        }
+        this.forceCount -= 1;
     }
 }

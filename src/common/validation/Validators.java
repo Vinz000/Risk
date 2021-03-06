@@ -77,30 +77,36 @@ public class Validators {
     public static final Function<String, ValidatorResponse> adjacentCountry = input -> {
         MapModel mapModel = MapModel.getInstance();
 
-        Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
-        Optional<Country> defendingCountry = mapModel.getCountryByName(input);
-
-        int[] adjacentCountries = Arrays.stream(attackingCountry.get().getAdjCountries()).toArray();
-
+        Country attackingCountry = mapModel.getSelectedCountries().get(0);
+        int[] adjacentCountries = Arrays.stream(attackingCountry.getAdjCountries()).toArray();
         boolean confirmedAdjacent = false;
         int adjacentCountry = 0;
 
-        for (int country : adjacentCountries) {
-            adjacentCountry = country;
+        Optional<Country> nullableDefendingCountry = mapModel.getCountryByName(input);
+        //nullableDefendingCountry.ifPresent(defendingCountry -> );
+        if (nullableDefendingCountry.isPresent()) {
 
-            if (Constants.COUNTRY_NAMES[adjacentCountry].equals(defendingCountry.get().getCountryName())) {
-                confirmedAdjacent = true;
+            Country defendingCountry = nullableDefendingCountry.get();
+
+            for (int country : adjacentCountries) {
+                adjacentCountry = country;
+
+                if (Constants.COUNTRY_NAMES[adjacentCountry].equals(defendingCountry.getCountryName())) {
+                    confirmedAdjacent = true;
+                }
             }
+
+            return new ValidatorResponse(confirmedAdjacent, "Selected country is not adjacent");
         }
 
-        return new ValidatorResponse(confirmedAdjacent, "Selected country is not adjacent");
+        return ValidatorResponse.validNoMessage();
     };
 
     public static final Function<String, ValidatorResponse> hasArmy = input -> {
         MapModel mapModel = MapModel.getInstance();
-        Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
+        Country attackingCountry = mapModel.getSelectedCountries().get(0);
 
-        boolean hasTroops = (attackingCountry.get().getArmyCount() > Integer.parseInt(input));
+        boolean hasTroops = (attackingCountry.getArmyCount() > Integer.parseInt(input));
         return new ValidatorResponse(hasTroops, "You do not have enough troops");
     };
 
@@ -116,8 +122,8 @@ public class Validators {
 
     public static Function<String, ValidatorResponse> appropriateForce = input -> {
         MapModel mapModel = MapModel.getInstance();
-        Optional<Country> attackingCountry = mapModel.getSelectedCountries().get(0);
-        int army = attackingCountry.get().getArmyCount();
+        Country attackingCountry = mapModel.getSelectedCountries().get(0);
+        int army = attackingCountry.getArmyCount();
         int force = Integer.parseInt(input);
         boolean appropriateForce;
 
@@ -127,7 +133,15 @@ public class Validators {
 
     public static Function<String, ValidatorResponse> threeUnitCheck = input -> {
         boolean underFourUnits = true;
-        if (Integer.parseInt(input) > 3) {
+        int isNumber;
+
+        try {
+            isNumber = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            return new ValidatorResponse(("Not a number"));
+        }
+
+        if (isNumber > 3) {
             underFourUnits = false;
         }
         return new ValidatorResponse(underFourUnits, "You cannot attack with more than 3 units per battle.");
@@ -135,11 +149,20 @@ public class Validators {
 
     public static Function<String, ValidatorResponse> twoUnitCheck = input -> {
         boolean underThreeUnits = true;
-        if (Integer.parseInt(input) > 2) {
+        int isNumber;
+
+        try {
+            isNumber = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            return new ValidatorResponse(("Not a number"));
+        }
+
+        if (isNumber > 2) {
             underThreeUnits = false;
         }
-        return new ValidatorResponse(underThreeUnits, "You cannot attack with more than 2 units per battle.");
+        return new ValidatorResponse(underThreeUnits, "You cannot defend with more than 2 units per battle.");
     };
+
     /**
      * Determines if the given player occupies the country
      * with the given name.
