@@ -1,42 +1,31 @@
 package common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class Dice {
+public abstract class Dice {
 
-    private final Random die = new Random();
-    private final List<Integer> rolledDice = new ArrayList<>();
+    private static final Random random = new Random();
 
-    public Dice() {
+    public static List<Integer> roll(int diceCount) {
+        assert diceCount > 0 : "diceCount must be greater than zero, but was " + diceCount;
+
+        long seed = System.currentTimeMillis();
+        random.setSeed(seed);
+        return random
+                .ints(diceCount, 1, 7)
+                .boxed()
+                .sorted(Collections.reverseOrder())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Integer> getNextDice(int diceCount) {
-        rollDice(diceCount);
-        return rolledDice;
+    public static int sumDice(List<Integer> rolledDice) {
+        return Objects.requireNonNull(rolledDice)
+                .stream()
+                .reduce(0, Integer::sum);
     }
 
-    private void rollDice(int diceCount) {
-        this.rolledDice.clear();
-
-        for (int i = 0; i < diceCount; i++) {
-            this.rolledDice.add(die.nextInt(6) + 1);
-        }
-
-        // Sort then reverse
-        Collections.sort(this.rolledDice);
-        Collections.reverse(this.rolledDice);
-    }
-
-    public int getRollSum(int diceCount) {
-        rollDice(diceCount);
-        return rolledDice.stream().reduce(0, Integer::sum);
-    }
-
-    @Override
-    public String toString() {
+    public static String toString(List<Integer> rolledDice) {
         StringBuilder stringBuilder = new StringBuilder();
 
         rolledDice.forEach(die -> {

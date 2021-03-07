@@ -18,7 +18,7 @@ import shell.model.ShellModel;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import static common.Constants.*;
 
@@ -39,7 +39,6 @@ public class GameCore extends Task<Void> {
 
         shellModel.notify(Constants.Notifications.WELCOME);
         Deck deck = Deck.getInstance();
-        Dice dice = new Dice();
 
         /*
         Creating players
@@ -99,16 +98,18 @@ public class GameCore extends Task<Void> {
         int playerTwoDiceSum;
         List<Player> players = playerModel.getPlayers();
 
-        Function<Player, String> createRolledNotification = (player) -> player.getName() + " "
-                + Constants.Notifications.ROLLED + dice.toString();
+        BiFunction<Player, List<Integer>, String> createRolledNotification = (player, rolledDice) -> player.getName() + " "
+                + Constants.Notifications.ROLLED + Dice.toString(rolledDice);
 
         do {
-            playerOneDiceSum = dice.getRollSum(2);
-            String playerOneRolledNotification = createRolledNotification.apply(players.get(0));
+            List<Integer> playerOneRolledDice = Dice.roll(2);
+            playerOneDiceSum = Dice.sumDice(playerOneRolledDice);
+            String playerOneRolledNotification = createRolledNotification.apply(players.get(0), playerOneRolledDice);
             shellModel.notify(playerOneRolledNotification);
 
-            playerTwoDiceSum = dice.getRollSum(2);
-            String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1));
+            List<Integer> playerTwoRolledDice = Dice.roll(2);
+            playerTwoDiceSum = Dice.sumDice(playerTwoRolledDice);
+            String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1), playerTwoRolledDice);
             shellModel.notify(playerTwoRolledNotification);
 
             if (playerOneDiceSum == playerTwoDiceSum) {
@@ -173,12 +174,14 @@ public class GameCore extends Task<Void> {
         players = playerModel.getPlayers();
 
         do {
-            playerOneDiceSum = dice.getRollSum(2);
-            String playerOneRolledNotification = createRolledNotification.apply(players.get(0));
+            List<Integer> playerOneRolledDice = Dice.roll(2);
+            playerOneDiceSum = Dice.sumDice(playerOneRolledDice);
+            String playerOneRolledNotification = createRolledNotification.apply(players.get(0), playerOneRolledDice);
             shellModel.notify(playerOneRolledNotification);
 
-            playerTwoDiceSum = dice.getRollSum(2);
-            String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1));
+            List<Integer> playerTwoRolledDice = Dice.roll(2);
+            playerTwoDiceSum = Dice.sumDice(playerTwoRolledDice);
+            String playerTwoRolledNotification = createRolledNotification.apply(players.get(players.size() - 1), playerTwoRolledDice);
             shellModel.notify(playerTwoRolledNotification);
 
             if (playerOneDiceSum == playerTwoDiceSum) {
