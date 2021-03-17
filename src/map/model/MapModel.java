@@ -80,17 +80,25 @@ public class MapModel extends Observable {
         notifyObservers(mapModelArg);
     }
 
-    public List<Country> getSelectedCountries() {
+    public List<Country> getCombatantInfo() {
         return combatantInfo;
     }
 
-    public void addSelectedCountries(Country country) {
+    public void addCombatant(Country country) {
 
         combatantInfo.add(country);
     }
 
-    public void clearSelectedCountries() {
+    public void clearCombatants() {
         combatantInfo.clear();
+    }
+
+    public Country getAttackingCountry() {
+        return combatantInfo.get(0);
+    }
+
+    public Country getDefendingCountry() {
+        return combatantInfo.get(1);
     }
 }
 

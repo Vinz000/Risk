@@ -7,7 +7,6 @@ import deck.Card;
 import deck.Deck;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import jdk.nashorn.internal.objects.NativeArray;
 import map.country.Country;
 import map.model.MapModel;
 import player.HumanPlayer;
@@ -16,14 +15,12 @@ import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
 import static common.Constants.*;
-import static jdk.nashorn.internal.objects.NativeArray.length;
 
 public class GameCore extends Task<Void> {
 
@@ -135,7 +132,7 @@ public class GameCore extends Task<Void> {
         /*
         Initial reinforcement of countries
          */
-        for (int i = 0; i < (NUM_NEUTRAL_PLAYERS + 1) /* * 9*/; i++) {
+        for (int i = 0; i < (NUM_NEUTRAL_PLAYERS + 1) * 9; i++) {
             Player player = playerModel.getCurrentPlayer();
 
             // Before reinforcing
@@ -210,42 +207,42 @@ public class GameCore extends Task<Void> {
         while (true) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
-            boolean skipInvasion = skipOrFight(currentPlayer);
-            boolean currentBattle = false;
-
-            //Player chooses to invade or skip combat
-            while (!skipInvasion) {
+            while (!skipCombat(currentPlayer)) {
                 selectAttackingCountry(currentPlayer);
                 selectDefendingCountry(currentPlayer);
 
-                Country attackingCountry = mapModel.getSelectedCountries().get(0);
-                Country defendingCountry = mapModel.getSelectedCountries().get(1);
+                Country attackingCountry = mapModel.getCombatantInfo().get(0);
+                Country defendingCountry = mapModel.getCombatantInfo().get(1);
 
-                while (!currentBattle) {
+                while (!continueCombat(currentPlayer, defendingCountry)) {
                     setAttackingTroops(attackingCountry);
                     setDefendingTroops(defendingCountry);
                     combat(attackingCountry, defendingCountry);
-                    currentBattle = continueInvasion(currentPlayer);
+                    continueCombat(currentPlayer, defendingCountry);
                 }
 
-                mapModel.clearSelectedCountries();
-                skipInvasion = skipOrFight(currentPlayer);
+                mapModel.clearCombatants();
+                skipCombat(currentPlayer);
             }
             playerModel.changeTurn();
         }
 
     }
 
-    private boolean skipOrFight(Player player) {
+    private boolean skipCombat(Player player) {
         shellModel.notify(player.getName() + " type fight to engage in combat or type skip to end your turn.");
         response = shellModel.prompt(Validators.skipOrFight);
         return response.toLowerCase().contains("s");
     }
 
-    private boolean continueInvasion(Player player) {
-        shellModel.notify(player.getName() + " type fight to continue assault or skip to end");
-        response = shellModel.prompt(Validators.skipOrFight);
-        return response.toLowerCase().contains("s");
+    private boolean continueCombat(Player player, Country defendingCountry) {
+        if(defendingCountry.getOccupier().equals(player)) {
+            return true;
+        } else {
+            shellModel.notify(player.getName() + " type fight to continue assault or skip to end");
+            response = shellModel.prompt(Validators.skipOrFight);
+            return response.toLowerCase().contains("s");
+        }
     }
 
     private void selectAttackingCountry(Player player) {
@@ -258,7 +255,7 @@ public class GameCore extends Task<Void> {
 
         response = shellModel.prompt(Validators.compose(Validators.currentPlayerOccupies, Validators.singleUnit));
         Optional<Country> nullableAttackingCountry = mapModel.getCountryByName(response);
-        nullableAttackingCountry.ifPresent(mapModel::addSelectedCountries);
+        nullableAttackingCountry.ifPresent(mapModel::addCombatant);
 
         // Toggle highlight (off)
         for (Country ownedCountry : player.getOwnedCountries()) {
@@ -270,10 +267,10 @@ public class GameCore extends Task<Void> {
 
         shellModel.notify(player.getName() + " select an adjacent country to invade.");
 
-        //Toggle highlight for adjacent countries (on)
-        int[] adjacentCountries = mapModel.getSelectedCountries().get(0).getAdjCountries();
-        for (int adjacentIndex : adjacentCountries) {
-            Optional<Country> nullableAdjacentCountry = mapModel.getCountryByName(COUNTRY_NAMES[adjacentIndex]);
+        // Toggle highlight for adjacent countries (on)
+        int[] adjacentCountryIndexes = mapModel.getAttackingCountry().getAdjCountries();
+        for (int adjacentCountryIndex : adjacentCountryIndexes) {
+            Optional<Country> nullableAdjacentCountry = mapModel.getCountryByName(COUNTRY_NAMES[adjacentCountryIndex]);
             nullableAdjacentCountry.ifPresent(adjacentCountry -> uiAction(() -> mapModel.highlightCountry(adjacentCountry)));
         }
 
@@ -281,18 +278,20 @@ public class GameCore extends Task<Void> {
                 Validators.currentPlayerDoesNotOccupy));
 
         Optional<Country> nullableDefendingCountry = mapModel.getCountryByName(response);
-        nullableDefendingCountry.ifPresent(mapModel::addSelectedCountries);
+        nullableDefendingCountry.ifPresent(mapModel::addCombatant);
 
-        //Toggle highlight (off)
-        for (int adjacentIndex : adjacentCountries) {
+        // Toggle highlight (off)
+        for (int adjacentIndex : adjacentCountryIndexes) {
             Optional<Country> nullableAdjacentCountry = mapModel.getCountryByName(COUNTRY_NAMES[adjacentIndex]);
             nullableAdjacentCountry.ifPresent(adjacentCountry -> uiAction(() -> mapModel.highlightCountry(adjacentCountry)));
         }
     }
 
     private void setAttackingTroops(Country attackingCountry) {
-        shellModel.notify("How many troops will you attack with?");
-        response = shellModel.prompt(Validators.compose(Validators.threeUnitCheck, Validators.appropriateForce));
+        String attacker = attackingCountry.getOccupier().getName();
+        shellModel.notify(attacker + " how many troops will you attack with?");
+        response = shellModel.prompt(Validators.compose(
+                Validators.threeUnitCheck, Validators.appropriateForce, Validators.isInt));
 
         int invasionForce = Integer.parseInt(response);
         attackingCountry.updateForceCount(invasionForce);
@@ -300,8 +299,9 @@ public class GameCore extends Task<Void> {
     }
 
     private void setDefendingTroops(Country defendingCountry) {
-        shellModel.notify("How many troops will you defend with?");
-        response = shellModel.prompt(Validators.compose(Validators.twoUnitCheck));
+        String defender = defendingCountry.getOccupier().getName();
+        shellModel.notify(defender + " how many troops will you defend with?");
+        response = shellModel.prompt(Validators.compose(Validators.twoUnitCheck, Validators.isInt));
 
         int defenderForce = Integer.parseInt(response);
         defendingCountry.updateForceCount(defenderForce);
@@ -325,27 +325,26 @@ public class GameCore extends Task<Void> {
     private void diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
                                   Country attackingCountry, Country defendingCountry) {
 
+        String attacker = attackingCountry.getOccupier().getName();
+        String defender = defendingCountry.getOccupier().getName();
+
         int attackerVictoryPoints = 0;
         int defenderVictoryPoints = 0;
 
         for (int compare = 0; compare < defenderDice.size(); compare++) {
             if (attackerDice.get(compare) > defenderDice.get(compare)) {
-                shellModel.notify("Attacker won one battle");
-                attackerVictoryPoints ++;
+                shellModel.notify(attacker + " won one battle");
+                attackerVictoryPoints++;
                 defendingCountry.destroyedUnit();
             } else {
-                shellModel.notify("defender won");
+                shellModel.notify(defender + " won one battle");
                 defenderVictoryPoints++;
-                shellModel.notify("Defender won one battle");
-                defenderVictoryPoints ++;
                 attackingCountry.destroyedUnit();
             }
         }
 
         int remainingAttackingForce = attackingCountry.getForceCount();
-        System.out.println(remainingAttackingForce);
         int remainingDefendingForce = defendingCountry.getForceCount();
-        System.out.println(remainingDefendingForce);
         uiAction(() -> mapModel.updateCountryArmyCount(attackingCountry, remainingAttackingForce));
         uiAction(() -> mapModel.updateCountryArmyCount(defendingCountry, remainingDefendingForce));
 
@@ -375,7 +374,7 @@ public class GameCore extends Task<Void> {
                 + attackingCountry.getOccupier().getName());
         uiAction(() -> mapModel.setCountryOccupier(defendingCountry, attackingCountry.getOccupier()));
         shellModel.notify("How many units would you like to move to the new country?");
-        response = shellModel.prompt(Validators.hasArmy);
+        response = shellModel.prompt(Validators.compose(Validators.hasArmy, Validators.isInt));
 
         int force = Integer.parseInt(response);
         uiAction(() -> mapModel.updateCountryArmyCount(defendingCountry, force));
