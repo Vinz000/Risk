@@ -352,6 +352,8 @@ public class GameCore extends Task<Void> {
         victoryChecker(attackerVictoryPoints, defenderVictoryPoints, attackingCountry, defendingCountry);
         attackingCountry.emptyForceCount();
         defendingCountry.emptyForceCount();
+
+        //Comment so i can push to the proper branch ignore this.
     }
 
     private void victoryChecker(int attackerVictoryPoints, int defenderVictoryPoints,
