@@ -53,5 +53,6 @@
     <orderEntry type="library" name="org.loadui:testFx:3.1.2" level="project" />
     <orderEntry type="library" name="org.testfx:testfx-core:4.0.6-alpha" level="project" />
     <orderEntry type="library" name="org.testfx:testfx-junit:4.0.6-alpha" level="project" />
+    <orderEntry type="library" name="org.junit.jupiter:junit-jupiter:5.5.2" level="project" />
   </component>
 </module>

@@ -7,6 +7,7 @@ import player.Player;
 import player.model.PlayerModel;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -86,9 +87,7 @@ public class Validators {
         MapModel mapModel = MapModel.getInstance();
 
         Country attackingCountry = mapModel.getAttackingCountry();
-        int[] adjacentCountries = Arrays.stream(attackingCountry.getAdjCountries()).toArray();
-        boolean isAdjacent = false;
-        int adjacentCountry = 0;
+        int[] adjacentCountries = attackingCountry.getAdjCountries();
 
         Optional<Country> nullableDefendingCountry = mapModel.getCountryByName(input);
 
@@ -96,15 +95,12 @@ public class Validators {
 
             Country defendingCountry = nullableDefendingCountry.get();
 
-            for (int country : adjacentCountries) {
-                adjacentCountry = country;
-
-                if (Constants.COUNTRY_NAMES[adjacentCountry].equals(defendingCountry.getCountryName())) {
-                    isAdjacent = true;
+            for (int adjacentCountryId : adjacentCountries) {
+                if(Constants.COUNTRY_NAMES[adjacentCountryId].equals(defendingCountry.getCountryName())){
+                    ValidatorResponse.invalid(defendingCountry.getCountryName() + " is not adjacent");
                 }
             }
 
-            return new ValidatorResponse(isAdjacent, defendingCountry.getCountryName() + " is not adjacent");
         }
 
         return ValidatorResponse.validNoMessage();
@@ -122,16 +118,13 @@ public class Validators {
     public static Function<String, ValidatorResponse> singleUnit = input -> {
         MapModel mapModel = MapModel.getInstance();
         Optional<Country> attackingCountry = mapModel.getCountryByName(input);
-        boolean sufficientArmy = false;
-        if (attackingCountry.get().getArmyCount() > 1) {
-            sufficientArmy = true;
-        }
+        boolean sufficientArmy = attackingCountry.get().getArmyCount() > 1;
         return new ValidatorResponse(sufficientArmy, "You must have 1 unit leftover.");
     };
 
     public static Function<String, ValidatorResponse> appropriateForce = input -> {
         MapModel mapModel = MapModel.getInstance();
-        Country attackingCountry = mapModel.getCombatantInfo().get(0);
+        Country attackingCountry = mapModel.getAttackingCountry();
         int army = attackingCountry.getArmyCount();
         int force = Integer.parseInt(input);
         boolean appropriateForce;
@@ -165,7 +158,7 @@ public class Validators {
         Country country = inputCountry.get();
         String invalidMessage = null;
 
-        if (!occupationCheck(countryName, player)) {
+        if (!occupationCheck(country, player)) {
             invalidMessage = String.format("%s owns %s", player.getName(), country.getCountryName());
         }
 
@@ -182,7 +175,7 @@ public class Validators {
         Country country = inputCountry.get();
         String invalidMessage = null;
 
-        if (occupationCheck(countryName, player)) {
+        if (occupationCheck(country, player)) {
             invalidMessage = String.format("%s owns %s", player.getName(), country.getCountryName());
         }
 
@@ -193,21 +186,14 @@ public class Validators {
         return invalidMessage;
     }
 
-    private static boolean occupationCheck(String countryName, Player player) {
+    private static boolean occupationCheck(Country country, Player player) {
         boolean playerOccupies;
-        MapModel mapModel = MapModel.getInstance();
-        Optional<Country> inputCountry = mapModel.getCountryByName(countryName);
-        Country country = inputCountry.get();
         Player countryOccupier = country.getOccupier();
         playerOccupies = player.equals(countryOccupier);
         return playerOccupies;
     }
 
     private static boolean validCountry(String countryName) {
-        boolean countryExists = false;
-        for (int i = 0; i < Constants.COUNTRY_NAMES.length; i++) {
-            countryExists = countryName.equals(Constants.CONTINENT_NAMES[i]);
-        }
-        return countryExists;
+        return Arrays.asList(Constants.COUNTRY_NAMES).contains(countryName);
     }
 }

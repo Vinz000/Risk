@@ -211,18 +211,16 @@ public class GameCore extends Task<Void> {
                 selectAttackingCountry(currentPlayer);
                 selectDefendingCountry(currentPlayer);
 
-                Country attackingCountry = mapModel.getCombatantInfo().get(0);
-                Country defendingCountry = mapModel.getCombatantInfo().get(1);
+                Country attackingCountry = mapModel.getAttackingCountry();
+                Country defendingCountry = mapModel.getDefendingCountry();
 
-                while (!continueCombat(currentPlayer, defendingCountry)) {
+                while (!stopCombat(currentPlayer, defendingCountry)) {
                     setAttackingTroops(attackingCountry);
                     setDefendingTroops(defendingCountry);
                     combat(attackingCountry, defendingCountry);
-                    continueCombat(currentPlayer, defendingCountry);
                 }
 
                 mapModel.clearCombatants();
-                skipCombat(currentPlayer);
             }
             playerModel.changeTurn();
         }
@@ -235,7 +233,7 @@ public class GameCore extends Task<Void> {
         return response.toLowerCase().contains("s");
     }
 
-    private boolean continueCombat(Player player, Country defendingCountry) {
+    private boolean stopCombat(Player player, Country defendingCountry) {
         if(defendingCountry.getOccupier().equals(player)) {
             return true;
         } else {
@@ -288,8 +286,8 @@ public class GameCore extends Task<Void> {
     }
 
     private void setAttackingTroops(Country attackingCountry) {
-        String attacker = attackingCountry.getOccupier().getName();
-        shellModel.notify(attacker + " how many troops will you attack with?");
+        String attackingPlayerName = attackingCountry.getOccupier().getName();
+        shellModel.notify(attackingPlayerName + " how many troops will you attack with?");
         response = shellModel.prompt(Validators.compose(
                 Validators.threeUnitCheck, Validators.appropriateForce, Validators.isInt));
 
@@ -299,8 +297,8 @@ public class GameCore extends Task<Void> {
     }
 
     private void setDefendingTroops(Country defendingCountry) {
-        String defender = defendingCountry.getOccupier().getName();
-        shellModel.notify(defender + " how many troops will you defend with?");
+        String defendingPlayerName = defendingCountry.getOccupier().getName();
+        shellModel.notify(defendingPlayerName + " how many troops will you defend with?");
         response = shellModel.prompt(Validators.compose(Validators.twoUnitCheck, Validators.isInt));
 
         int defenderForce = Integer.parseInt(response);
@@ -325,21 +323,35 @@ public class GameCore extends Task<Void> {
     private void diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
                                   Country attackingCountry, Country defendingCountry) {
 
-        String attacker = attackingCountry.getOccupier().getName();
-        String defender = defendingCountry.getOccupier().getName();
+        String attackingPlayerName = attackingCountry.getOccupier().getName();
+        String defendingPlayerName = defendingCountry.getOccupier().getName();
 
         int attackerVictoryPoints = 0;
         int defenderVictoryPoints = 0;
 
-        for (int compare = 0; compare < defenderDice.size(); compare++) {
-            if (attackerDice.get(compare) > defenderDice.get(compare)) {
-                shellModel.notify(attacker + " won one battle");
-                attackerVictoryPoints++;
-                defendingCountry.destroyedUnit();
-            } else {
-                shellModel.notify(defender + " won one battle");
-                defenderVictoryPoints++;
-                attackingCountry.destroyedUnit();
+        if(defenderDice.size() > attackerDice.size()) {
+            for (int compare = 0; compare < defenderDice.size(); compare++) {
+                if (attackerDice.get(compare) > defenderDice.get(compare)) {
+                    shellModel.notify(attackingPlayerName + " won one battle");
+                    attackerVictoryPoints++;
+                    defendingCountry.destroyedUnit();
+                } else {
+                    shellModel.notify(defendingPlayerName + " won one battle");
+                    defenderVictoryPoints++;
+                    attackingCountry.destroyedUnit();
+                }
+            }
+        } else {
+            for (int compare = 0; compare < attackerDice.size(); compare++) {
+                if (attackerDice.get(compare) > defenderDice.get(compare)) {
+                    shellModel.notify(attackingPlayerName + " won one battle");
+                    attackerVictoryPoints++;
+                    defendingCountry.destroyedUnit();
+                } else {
+                    shellModel.notify(defendingPlayerName + " won one battle");
+                    defenderVictoryPoints++;
+                    attackingCountry.destroyedUnit();
+                }
             }
         }
 
