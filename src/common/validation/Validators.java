@@ -96,17 +96,19 @@ public class Validators {
             Country defendingCountry = nullableDefendingCountry.get();
 
             for (int adjacentCountryId : adjacentCountries) {
-                if(Constants.COUNTRY_NAMES[adjacentCountryId].equals(defendingCountry.getCountryName())){
-                    ValidatorResponse.invalid(defendingCountry.getCountryName() + " is not adjacent");
+                String adjacentCountryName = Constants.COUNTRY_NAMES[adjacentCountryId];
+                String defendingCountryName = defendingCountry.getCountryName();
+                if (adjacentCountryName.equals(defendingCountryName)) {
+                    return ValidatorResponse.validNoMessage();
                 }
             }
 
         }
 
-        return ValidatorResponse.validNoMessage();
+        return ValidatorResponse.invalid(input + " is not adjacent to " + attackingCountry.getCountryName());
     };
 
-    public static final Function<String, ValidatorResponse> hasArmy = input -> {
+    public static final Function<String, ValidatorResponse> enoughTroops = input -> {
         MapModel mapModel = MapModel.getInstance();
         Country attackingCountry = mapModel.getAttackingCountry();
 
@@ -117,19 +119,21 @@ public class Validators {
 
     public static Function<String, ValidatorResponse> singleUnit = input -> {
         MapModel mapModel = MapModel.getInstance();
-        Optional<Country> attackingCountry = mapModel.getCountryByName(input);
-        boolean sufficientArmy = attackingCountry.get().getArmyCount() > 1;
-        return new ValidatorResponse(sufficientArmy, "You must have 1 unit leftover.");
+        Optional<Country> nullableAttackingCountry = mapModel.getCountryByName(input);
+        if (nullableAttackingCountry.isPresent()) {
+            Country attackingCountry = nullableAttackingCountry.get();
+            boolean sufficientArmy = attackingCountry.getArmyCount() > 1;
+
+            return new ValidatorResponse(sufficientArmy,
+                    attackingCountry.getCountryName() + " must have at least 1 unit leftover.");
+        }
+
+        return ValidatorResponse.invalid(input + " is not a valid country name.");
     };
 
     public static Function<String, ValidatorResponse> appropriateForce = input -> {
-        MapModel mapModel = MapModel.getInstance();
-        Country attackingCountry = mapModel.getAttackingCountry();
-        int army = attackingCountry.getArmyCount();
         int force = Integer.parseInt(input);
-        boolean appropriateForce;
-
-        appropriateForce = (force >= 1) && (army >= 2);
+        boolean appropriateForce = force >= 1;
         return new ValidatorResponse(appropriateForce, "You did not select an appropriately sized force.");
     };
 
@@ -154,46 +158,35 @@ public class Validators {
      */
     private static String playerOccupies(String countryName, Player player) {
         MapModel mapModel = MapModel.getInstance();
-        Optional<Country> inputCountry = mapModel.getCountryByName(countryName);
-        Country country = inputCountry.get();
-        String invalidMessage = null;
+        Optional<Country> nullableInputCountry = mapModel.getCountryByName(countryName);
 
-        if (!occupationCheck(country, player)) {
-            invalidMessage = String.format("%s owns %s", player.getName(), country.getCountryName());
+        if(nullableInputCountry.isPresent()) {
+            Country country = nullableInputCountry.get();
+
+            if (!country.getOccupier().equals(player)) {
+                return String.format("%s does not own %s", player.getName(), country.getCountryName());
+            }
+            return null;
+        } else {
+            return String.format("%s is not a valid country name", countryName);
         }
 
-        if (!validCountry(countryName)) {
-            invalidMessage = String.format("%s is not a valid country name", countryName);
-        }
-
-        return invalidMessage;
     }
 
     private static String playerDoesNotOccupy(String countryName, Player player) {
         MapModel mapModel = MapModel.getInstance();
-        Optional<Country> inputCountry = mapModel.getCountryByName(countryName);
-        Country country = inputCountry.get();
-        String invalidMessage = null;
+        Optional<Country> nullableInputCountry = mapModel.getCountryByName(countryName);
 
-        if (occupationCheck(country, player)) {
-            invalidMessage = String.format("%s owns %s", player.getName(), country.getCountryName());
+        if(nullableInputCountry.isPresent()) {
+            Country country = nullableInputCountry.get();
+
+            if (country.getOccupier().equals(player)) {
+                return String.format("%s owns %s", player.getName(), country.getCountryName());
+            }
+            return null;
+        } else {
+            return String.format("%s is not a valid country name", countryName);
         }
 
-        if (!validCountry(countryName)) {
-            invalidMessage = String.format("%s is not a valid country name", countryName);
-        }
-
-        return invalidMessage;
-    }
-
-    private static boolean occupationCheck(Country country, Player player) {
-        boolean playerOccupies;
-        Player countryOccupier = country.getOccupier();
-        playerOccupies = player.equals(countryOccupier);
-        return playerOccupies;
-    }
-
-    private static boolean validCountry(String countryName) {
-        return Arrays.asList(Constants.COUNTRY_NAMES).contains(countryName);
     }
 }

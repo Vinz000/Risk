@@ -1,5 +1,6 @@
 package map.model;
 
+import javafx.application.Platform;
 import map.country.Country;
 import player.Player;
 
@@ -74,10 +75,24 @@ public class MapModel extends Observable {
         }
     }
 
-    public void highlightCountry(Country country) {
+    private void highlightCountry(Country country) {
         MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.HIGHLIGHT);
         setChanged();
         notifyObservers(mapModelArg);
+    }
+
+    public void highlightCountries(List<Country> countries) {
+        for (Country country : countries) {
+            Platform.runLater(() -> highlightCountry(country));
+        }
+    }
+
+    public void highlightCountries(int[] countryIds) {
+        for (int countryId : countryIds) {
+            Optional<Country> nullableAdjacentCountry = getCountryByName(COUNTRY_NAMES[countryId]);
+            nullableAdjacentCountry.ifPresent(adjacentCountry ->
+                    Platform.runLater(() -> highlightCountry(adjacentCountry)));
+        }
     }
 
     public List<Country> getCombatantInfo() {

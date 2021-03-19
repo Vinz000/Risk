@@ -46,9 +46,7 @@ public class Country {
     }
 
     public void updateArmyCount(int armyCount) {
-        if (this.armyCount + armyCount < 0) {
-            throw new IllegalArgumentException("ArmyCount cannot be less than 0.");
-        }
+        assert this.armyCount + armyCount < 0: "ArmyCount cannot be less than 0.";
         this.armyCount += armyCount;
     }
 
@@ -72,9 +70,7 @@ public class Country {
     }
 
     public void updateForceCount(int forceCount) {
-        if (this.forceCount + forceCount < 0) {
-            throw new IllegalArgumentException("Force cannot be less than 0.");
-        }
+        assert this.forceCount + forceCount < 0: "Force cannot be less than 0.";
         this.forceCount += forceCount;
     }
 
@@ -83,9 +79,7 @@ public class Country {
     }
 
     public void destroyedUnit() {
-        if (this.forceCount + forceCount < 0) {
-            throw new IllegalArgumentException("Force cannot be less than 0.");
-        }
+        assert this.forceCount - 1 < 0: "Force cannot be less than 0.";
         this.forceCount -= 1;
     }
 }
