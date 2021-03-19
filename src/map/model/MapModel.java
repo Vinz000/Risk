@@ -1,12 +1,10 @@
 package map.model;
 
+import javafx.application.Platform;
 import map.country.Country;
 import player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static common.Constants.*;
@@ -14,6 +12,7 @@ import static common.Constants.*;
 public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
+    private final List<Country> combatantInfo = new ArrayList<Country>(2);
 
     private MapModel() {
         createCountries();
@@ -76,11 +75,45 @@ public class MapModel extends Observable {
         }
     }
 
-    public void highlightCountry(Country country) {
+    private void highlightCountry(Country country) {
         MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.HIGHLIGHT);
         setChanged();
         notifyObservers(mapModelArg);
     }
 
+    public void highlightCountries(List<Country> countries) {
+        for (Country country : countries) {
+            Platform.runLater(() -> highlightCountry(country));
+        }
+    }
+
+    public void highlightCountries(int[] countryIds) {
+        for (int countryId : countryIds) {
+            Optional<Country> nullableAdjacentCountry = getCountryByName(COUNTRY_NAMES[countryId]);
+            nullableAdjacentCountry.ifPresent(adjacentCountry ->
+                    Platform.runLater(() -> highlightCountry(adjacentCountry)));
+        }
+    }
+
+    public List<Country> getCombatantInfo() {
+        return combatantInfo;
+    }
+
+    public void addCombatant(Country country) {
+
+        combatantInfo.add(country);
+    }
+
+    public void clearCombatants() {
+        combatantInfo.clear();
+    }
+
+    public Country getAttackingCountry() {
+        return combatantInfo.get(0);
+    }
+
+    public Country getDefendingCountry() {
+        return combatantInfo.get(1);
+    }
 }
 
