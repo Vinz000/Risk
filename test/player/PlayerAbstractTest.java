@@ -9,6 +9,16 @@ class PlayerAbstractTest extends Player{
     }
 
     @Override
+    public void startTurn() {
+
+    }
+
+    @Override
+    public void startReinforcement() {
+
+    }
+
+    @Override
     public void initReinforce() {
 
     }

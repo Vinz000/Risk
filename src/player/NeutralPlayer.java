@@ -2,6 +2,8 @@ package player;
 
 import game.module.Reinforcing;
 import javafx.scene.paint.Color;
+import shell.model.ShellModel;
+
 import static common.Constants.*;
 
 public class NeutralPlayer extends Player {
@@ -14,6 +16,17 @@ public class NeutralPlayer extends Player {
     public void initReinforce() {
         Reinforcing reinforcing = new Reinforcing();
         reinforcing.reinforceInitialCountries(this, INIT_NEUTRAL_PLAYER_REINFORCEMENTS);
+    }
+
+    @Override
+    public void startTurn() {
+
+    }
+
+    @Override
+    public void startReinforcement() {
+        ShellModel shellModel = ShellModel.getInstance();
+        shellModel.notify("Choose country owned by " + getName());
     }
 
     @Override

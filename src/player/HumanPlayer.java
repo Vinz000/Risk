@@ -5,10 +5,11 @@ import game.module.Reinforcing;
 import javafx.scene.paint.Color;
 import map.country.Country;
 import map.model.MapModel;
+import shell.model.ShellModel;
 
 import java.util.UUID;
 
-import static common.Constants.*;
+import static common.Constants.INIT_HUMAN_PLAYER_REINFORCEMENTS;
 
 public class HumanPlayer extends Player {
     private final String id;
@@ -16,6 +17,17 @@ public class HumanPlayer extends Player {
     public HumanPlayer(String name, Color color) {
         super(name, color);
         this.id = UUID.randomUUID().toString();
+    }
+
+    @Override
+    public void startTurn() {
+        ShellModel shellModel = ShellModel.getInstance();
+        shellModel.notify("Your turn " + getName());
+    }
+
+    @Override
+    public void startReinforcement() {
+        startTurn();
     }
 
     @Override

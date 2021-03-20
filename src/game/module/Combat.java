@@ -62,7 +62,7 @@ public class Combat extends Module{
 
         int invasionForce = Integer.parseInt(response);
         attackingCountry.updateForceCount(invasionForce);
-        uiAction(() -> mapModel.updateCountryArmyCount(attackingCountry, -invasionForce));
+        mapModel.updateCountryArmyCount(attackingCountry, -invasionForce);
     }
 
     public void setDefendingTroops(Country defendingCountry) {
@@ -72,7 +72,7 @@ public class Combat extends Module{
 
         int defenderForce = Integer.parseInt(response);
         defendingCountry.updateForceCount(defenderForce);
-        uiAction(() -> mapModel.updateCountryArmyCount(defendingCountry, -defenderForce));
+        mapModel.updateCountryArmyCount(defendingCountry, -defenderForce);
     }
 
     public void initiateCombat(Country attackingCountry, Country defendingCountry) {
@@ -111,8 +111,8 @@ public class Combat extends Module{
 
         int remainingAttackingForce = attackingCountry.getForceCount();
         int remainingDefendingForce = defendingCountry.getForceCount();
-        uiAction(() -> mapModel.updateCountryArmyCount(attackingCountry, remainingAttackingForce));
-        uiAction(() -> mapModel.updateCountryArmyCount(defendingCountry, remainingDefendingForce));
+        mapModel.updateCountryArmyCount(attackingCountry, remainingAttackingForce);
+        mapModel.updateCountryArmyCount(defendingCountry, remainingDefendingForce);
 
         victoryChecker(attackerVictoryPoints, defenderVictoryPoints, attackingCountry, defendingCountry);
         attackingCountry.emptyForceCount();
@@ -137,14 +137,21 @@ public class Combat extends Module{
     public void countryTakeOver(Country attackingCountry, Country defendingCountry) {
         shellModel.notify(defendingCountry.getCountryName() + " has been taken by "
                 + attackingCountry.getOccupier().getName());
-        uiAction(() -> mapModel.setCountryOccupier(defendingCountry, attackingCountry.getOccupier()));
+        Player defendingPlayer = defendingCountry.getOccupier();
+        Player attackingPlayer = attackingCountry.getOccupier();
+
+        defendingPlayer.removeCountry(defendingCountry);
+        attackingPlayer.addCountry(defendingCountry);
+
+        mapModel.setCountryOccupier(defendingCountry, attackingPlayer);
+
         shellModel.notify("How many units would you like to move to the new country?");
 
         // TODO: Check if there is at least 1 troop left over when moving troops to new country
         response = shellModel.prompt(Validators.validReinforcement);
 
         int force = Integer.parseInt(response);
-        uiAction(() -> mapModel.updateCountryArmyCount(defendingCountry, force));
-        uiAction(() -> mapModel.updateCountryArmyCount(attackingCountry, -force));
+        mapModel.updateCountryArmyCount(defendingCountry, force);
+        mapModel.updateCountryArmyCount(attackingCountry, -force);
     }
 }

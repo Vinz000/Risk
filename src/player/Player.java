@@ -25,11 +25,16 @@ public abstract class Player {
         this.color = Objects.requireNonNull(color);
     }
 
-    public int getReinforcements () {
+    public void removeCountry(Country country) {
+        ownedCountries.remove(country);
+    }
+
+    public int getReinforcements() {
         return reinforcements;
     }
 
     public void setReinforcements(int offsetReinforcements) {
+        assert offsetReinforcements < 0 : "Reinforcement cannot be less than 0";
         reinforcements = offsetReinforcements;
     }
 
@@ -52,9 +57,16 @@ public abstract class Player {
     }
 
     // TODO: Refactor to more meaningful names
+    public abstract void startTurn();
+
+    public abstract void startReinforcement();
+
     public abstract void initReinforce();
+
     public abstract void reinforce();
+
     public abstract void combat();
+
     public abstract void fortify();
 
     public List<Card> getCards() {

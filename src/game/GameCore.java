@@ -4,12 +4,9 @@ import common.Constants;
 import game.module.ClaimTerritories;
 import game.module.SetUp;
 import javafx.concurrent.Task;
-import player.NeutralPlayer;
 import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
-
-import static common.Constants.*;
 
 public class GameCore extends Task<Void> {
 
@@ -33,10 +30,7 @@ public class GameCore extends Task<Void> {
         for (int i = 0; i < 5; i++) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
-            String message = currentPlayer instanceof NeutralPlayer ? "Choose country owned by " : "Your turn ";
-
-            shellModel.notify(message + currentPlayer.getName());
-
+            currentPlayer.startReinforcement();
             currentPlayer.initReinforce();
 
             playerModel.changeTurn();
@@ -47,19 +41,14 @@ public class GameCore extends Task<Void> {
         while (true) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
-            shellModel.notify("\nYour turn " + currentPlayer.getName());
-
+            currentPlayer.startTurn();
             currentPlayer.reinforce();
-
             currentPlayer.combat();
-
             currentPlayer.fortify();
 
             playerModel.changeTurn();
         }
     }
-
-
 
     // Game logic sequence
     public void start() {

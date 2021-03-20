@@ -117,6 +117,13 @@ public class Validators {
         return ValidatorResponse.invalid(input + " is not adjacent to " + attackingCountry.getCountryName());
     };
 
+    public static final Function<String, ValidatorResponse> hasAdjacentOpposingCountry = input -> {
+        MapModel mapModel = MapModel.getInstance();
+        Optional<Country> nullableInputCountry = mapModel.getCountryByName(input);
+
+        
+    };
+
     public static final Function<String, ValidatorResponse> enoughTroops = input -> {
         MapModel mapModel = MapModel.getInstance();
         Country attackingCountry = mapModel.getAttackingCountry();
@@ -198,17 +205,17 @@ public class Validators {
         return invalidMessage;
     }
 
-    public static final Function<String, ValidatorResponse> canPlaceTroops = input -> compose(input, isInt, appropriateForce, hasEnoughReinforcements);
+    public static final Function<String, ValidatorResponse> canPlaceTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, hasEnoughReinforcements);
 
-    public static final Function<String, ValidatorResponse> validAttackingCountry = input -> compose(input, validCountryName,  currentPlayerOccupies, singleUnit);
+    public static final Function<String, ValidatorResponse> validAttackingCountry = input -> compose(input, nonEmpty, validCountryName,  currentPlayerOccupies, singleUnit);
 
-    public static final Function<String, ValidatorResponse> validDefendingCountry = input -> compose(input, validCountryName, currentPlayerDoesNotOccupy, adjacentCountry);
+    public static final Function<String, ValidatorResponse> validDefendingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerDoesNotOccupy, adjacentCountry);
 
-    public static final Function<String, ValidatorResponse> validAttackingTroops = input -> compose(input, isInt, appropriateForce, threeUnitCheck);
+    public static final Function<String, ValidatorResponse> validAttackingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, threeUnitCheck);
 
-    public static final Function<String, ValidatorResponse> validDefendingTroops = input -> compose(input, isInt, appropriateForce, twoUnitCheck);
+    public static final Function<String, ValidatorResponse> validDefendingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, twoUnitCheck);
 
-    public static final Function<String, ValidatorResponse> validReinforcement = input -> compose(input, isInt, appropriateForce, enoughTroops);
+    public static final Function<String, ValidatorResponse> validReinforcement = input -> compose(input, nonEmpty, isInt, appropriateForce, enoughTroops);
 
     @SafeVarargs
     private static ValidatorResponse compose(String input, Function<String, ValidatorResponse>... validators) {
