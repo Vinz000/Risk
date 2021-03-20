@@ -1,8 +1,14 @@
 package player;
 
+import game.module.Combat;
+import game.module.Reinforcing;
 import javafx.scene.paint.Color;
+import map.country.Country;
+import map.model.MapModel;
 
 import java.util.UUID;
+
+import static common.Constants.*;
 
 public class HumanPlayer extends Player {
     private final String id;
@@ -10,6 +16,48 @@ public class HumanPlayer extends Player {
     public HumanPlayer(String name, Color color) {
         super(name, color);
         this.id = UUID.randomUUID().toString();
+    }
+
+    @Override
+    public void initReinforce() {
+        Reinforcing reinforcing = new Reinforcing();
+        reinforcing.reinforceInitialCountries(this, INIT_HUMAN_PLAYER_REINFORCEMENTS);
+    }
+
+    @Override
+    public void reinforce() {
+        Reinforcing reinforcing = new Reinforcing();
+        reinforcing.reinforceOwnedCountries(this);
+    }
+
+    @Override
+    public void combat() {
+        MapModel mapModel = MapModel.getInstance();
+        Combat combat = new Combat();
+        // War Loop
+        while (!combat.skipCombat(this)) {
+            combat.selectAttackingCountry(this);
+            combat.selectDefendingCountry(this);
+
+            Country attackingCountry = mapModel.getAttackingCountry();
+            Country defendingCountry = mapModel.getDefendingCountry();
+
+            do {
+                combat.setAttackingTroops(attackingCountry);
+                combat.setDefendingTroops(defendingCountry);
+                combat.initiateCombat(attackingCountry, defendingCountry);
+
+                if (attackingCountry.getArmyCount() == 1) break;
+            } while (!defendingCountry.getOccupier().equals(this)
+                    && !combat.stopCombat(this));
+
+            mapModel.clearCombatants();
+        }
+    }
+
+    @Override
+    public void fortify() {
+
     }
 
     public String getId() {

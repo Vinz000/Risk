@@ -8,4 +8,24 @@ class PlayerAbstractTest extends Player{
         super(name, color);
     }
 
+    @Override
+    public void initReinforce() {
+
+    }
+
+    @Override
+    public void reinforce() {
+
+    }
+
+    @Override
+    public void combat() {
+
+    }
+
+    @Override
+    public void fortify() {
+
+    }
+
 }

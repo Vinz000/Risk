@@ -1,11 +1,8 @@
 package player.model;
 
 import common.Constants;
-import deck.Card;
-import deck.Deck;
 import javafx.application.Platform;
 import map.Continent;
-import map.country.Country;
 import map.model.MapModel;
 import player.NeutralPlayer;
 import player.Player;
@@ -17,8 +14,7 @@ import static common.Constants.*;
 public class PlayerModel extends Observable {
 
     private static PlayerModel instance;
-    private final List<Player> activePlayers = new ArrayList<>(NUM_HUMAN_PLAYERS);
-    private final List<Player> neutralPlayers = new ArrayList<>(NUM_NEUTRAL_PLAYERS);
+    private final List<Player> players = new ArrayList<>(NUM_PLAYERS);
     private int currentPlayerIndex = 0;
 
     private PlayerModel() {
@@ -32,35 +28,36 @@ public class PlayerModel extends Observable {
         return instance;
     }
 
-    public List<Player> getNeutralPlayers() {
-        return neutralPlayers;
-    }
-
-    public List<Player> getActivePlayers() {
-        return activePlayers;
+    public List<Player> getPlayers() {
+        return players;
     }
 
     public Player getCurrentPlayer() {
-        return activePlayers.get(currentPlayerIndex);
+        return players.get(currentPlayerIndex);
     }
 
     public void addPlayer(Player player) {
-        activePlayers.add(player);
+        players.add(player);
     }
 
     public void createNeutralPlayers() {
         for (int i = 0; i < NUM_NEUTRAL_PLAYERS; i++) {
             Player newPlayer = new NeutralPlayer(String.valueOf(i + 1), Constants.Colors.NEUTRAL_PLAYER);
-            neutralPlayers.add(newPlayer);
+            players.add(newPlayer);
         }
     }
 
     // TODO: Change turn
     public void changeTurn() {
         currentPlayerIndex++;
-        currentPlayerIndex %= NUM_HUMAN_PLAYERS;
 
-        Platform.runLater(this::updatePlayerIndicator);
+        if(currentPlayerIndex == players.size() - 1) {
+            Collections.swap(players, 0, currentPlayerIndex);
+
+            currentPlayerIndex = 0;
+
+            Platform.runLater(this::updatePlayerIndicator);
+        }
     }
 
     public void updatePlayerIndicator() {
@@ -74,6 +71,17 @@ public class PlayerModel extends Observable {
         setChanged();
         notifyObservers(playerModelArg);
     }
+
+    // TODO: Apply this thing
+//    public void playerEliminationCheck(Player player) {
+//        PlayerModel players = playerModel.getInstance();
+//        if (player.getOwnedCountries().isEmpty()) {
+//            if(player is human) {
+//                end game
+//            }
+//            //code to remove that player from the array
+//        }
+//    }
 
     public void calculateReinforcements(Player player) {
         int availableReinforcements = 0;

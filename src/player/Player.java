@@ -51,7 +51,11 @@ public abstract class Player {
         return ownedCountries;
     }
 
-
+    // TODO: Refactor to more meaningful names
+    public abstract void initReinforce();
+    public abstract void reinforce();
+    public abstract void combat();
+    public abstract void fortify();
 
     public List<Card> getCards() {
         return cards;
