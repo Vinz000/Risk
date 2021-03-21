@@ -44,7 +44,8 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void combat() {
+    public boolean combat() {
+        boolean humanPlayerDefeated = false;
         MapModel mapModel = MapModel.getInstance();
         PlayerModel playerModel = PlayerModel.getInstance();
         ShellModel shellModel = ShellModel.getInstance();
@@ -61,7 +62,7 @@ public class HumanPlayer extends Player {
             do {
                 combat.setAttackingTroops(attackingCountry);
                 combat.setDefendingTroops(defendingCountry);
-                combat.initiateCombat(attackingCountry, defendingCountry);
+                humanPlayerDefeated = combat.initiateCombat(attackingCountry, defendingCountry);
 
                 if (attackingCountry.getArmyCount() == 1) break;
             } while (!defendingCountry.getOccupier().equals(this)
@@ -69,7 +70,7 @@ public class HumanPlayer extends Player {
 
             mapModel.clearCombatants();
         }
-
+        return humanPlayerDefeated;
     }
 
     @Override

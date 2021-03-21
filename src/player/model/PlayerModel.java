@@ -46,6 +46,10 @@ public class PlayerModel extends Observable {
         players.add(player);
     }
 
+    public void removePlayer(Player player) {
+        players.remove(player);
+    }
+
     public void createNeutralPlayers() {
         for (int i = 0; i < NUM_NEUTRAL_PLAYERS; i++) {
             Player newPlayer = new NeutralPlayer(String.valueOf(i + 1), Constants.Colors.NEUTRAL_PLAYER);

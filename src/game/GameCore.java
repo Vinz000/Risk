@@ -43,13 +43,14 @@ public class GameCore extends Task<Void> {
 
             currentPlayer.startTurn();
             currentPlayer.reinforce();
-
-            currentPlayer.combat();
-
+            if (currentPlayer.combat()) {
+                break;
+            }
             currentPlayer.fortify();
 
             playerModel.changeTurn();
         }
+        return null;
     }
 
     // Game logic sequence

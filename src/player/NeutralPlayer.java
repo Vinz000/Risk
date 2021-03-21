@@ -35,8 +35,8 @@ public class NeutralPlayer extends Player {
     }
 
     @Override
-    public void combat() {
-
+    public boolean combat() {
+        return false;
     }
 
     @Override

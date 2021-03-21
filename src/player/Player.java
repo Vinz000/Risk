@@ -65,7 +65,7 @@ public abstract class Player {
 
     public abstract void reinforce();
 
-    public abstract void combat();
+    public abstract boolean combat();
 
     public abstract void fortify();
 

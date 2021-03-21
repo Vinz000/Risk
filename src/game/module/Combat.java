@@ -3,7 +3,10 @@ package game.module;
 import common.Dice;
 import common.validation.Validators;
 import map.country.Country;
+import player.NeutralPlayer;
 import player.Player;
+import player.model.PlayerModel;
+import shell.model.ShellModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +77,8 @@ public class Combat extends Module {
         mapModel.updateCountryArmyCount(defendingCountry, -defenderForce);
     }
 
-    public void initiateCombat(Country attackingCountry, Country defendingCountry) {
+    public boolean initiateCombat(Country attackingCountry, Country defendingCountry) {
+        boolean humanPlayerDefeated = false;
         int attackingForce = attackingCountry.getForceCount();
         int defendingForce = defendingCountry.getForceCount();
 
@@ -83,11 +87,14 @@ public class Combat extends Module {
         List<Integer> defenderDice = Dice.roll(defendingForce);
         shellModel.notify(defenderDice.toString());
 
-        diceComparison(attackerDice, defenderDice, attackingCountry, defendingCountry);
+        humanPlayerDefeated = diceComparison(attackerDice, defenderDice, attackingCountry, defendingCountry);
+        return humanPlayerDefeated;
     }
 
-    public void diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
-                               Country attackingCountry, Country defendingCountry) {
+    public boolean diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
+                                  Country attackingCountry, Country defendingCountry) {
+
+        boolean humanPlayerDefeated = false;
 
         String attackingPlayerName = attackingCountry.getOccupier().getName();
         String defendingPlayerName = defendingCountry.getOccupier().getName();
@@ -113,17 +120,20 @@ public class Combat extends Module {
         mapModel.updateCountryArmyCount(attackingCountry, remainingAttackingForce);
         mapModel.updateCountryArmyCount(defendingCountry, remainingDefendingForce);
 
-        victoryChecker(attackerVictoryPoints, defenderVictoryPoints, attackingCountry, defendingCountry);
+        humanPlayerDefeated = victoryChecker(
+                attackerVictoryPoints, defenderVictoryPoints, attackingCountry, defendingCountry);
         attackingCountry.emptyForceCount();
         defendingCountry.emptyForceCount();
+        return humanPlayerDefeated;
     }
 
-    public void victoryChecker(int attackerVictoryPoints, int defenderVictoryPoints,
-                               Country attackingCountry, Country defendingCountry) {
+    public boolean victoryChecker(int attackerVictoryPoints, int defenderVictoryPoints,
+                                  Country attackingCountry, Country defendingCountry) {
 
+        boolean humanPlayerDefeated = false;
         if (attackerVictoryPoints > defenderVictoryPoints) {
             if (defendingCountry.getArmyCount() == 0 && defendingCountry.getForceCount() == 0) {
-                countryTakeOver(attackingCountry, defendingCountry);
+                humanPlayerDefeated = countryTakeOver(attackingCountry, defendingCountry);
             } else {
                 shellModel.notify("Battle won by " + attackingCountry.getOccupier().getName() +
                         " but no land taken.");
@@ -131,9 +141,10 @@ public class Combat extends Module {
         } else {
             shellModel.notify(defendingCountry.getCountryName() + " has been defended successfully.");
         }
+        return humanPlayerDefeated;
     }
 
-    public void countryTakeOver(Country attackingCountry, Country defendingCountry) {
+    public boolean countryTakeOver(Country attackingCountry, Country defendingCountry) {
         shellModel.notify(defendingCountry.getCountryName() + " has been taken by "
                 + attackingCountry.getOccupier().getName());
         Player defendingPlayer = defendingCountry.getOccupier();
@@ -144,6 +155,15 @@ public class Combat extends Module {
 
         mapModel.setCountryOccupier(defendingCountry, attackingPlayer);
 
+        playerEliminationCheck(defendingPlayer);
+
+        if (defendingPlayer instanceof NeutralPlayer) {
+            playerEliminationCheck(defendingPlayer);
+        } else {
+            if (playerEliminationCheck(defendingPlayer)) {
+                return true;
+            }
+        }
         shellModel.notify("How many units would you like to move to the new country?");
 
         // TODO: Check if there is at least 1 troop left over when moving troops to new country
@@ -152,5 +172,17 @@ public class Combat extends Module {
         int force = Integer.parseInt(response);
         mapModel.updateCountryArmyCount(defendingCountry, force);
         mapModel.updateCountryArmyCount(attackingCountry, -force);
+        return false;
+    }
+
+    public boolean playerEliminationCheck(Player player) {
+        boolean playerWasEliminated = false;
+        PlayerModel playerModel = PlayerModel.getInstance();
+        if (player.getOwnedCountries().isEmpty()) {
+            shellModel.notify(player.getName() + " has been eliminated.");
+            playerModel.removePlayer(player);
+            playerWasEliminated = true;
+        }
+        return playerWasEliminated;
     }
 }
