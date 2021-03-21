@@ -15,6 +15,7 @@ public abstract class Player {
     private final Color color;
     private final List<Country> ownedCountries = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
+    private int reinforcements = 0;
 
     public Player(String name, Color color) throws IllegalArgumentException {
         assert !name.trim().isEmpty() : "Name cannot be empty";
@@ -22,6 +23,19 @@ public abstract class Player {
         this.id = UUID.randomUUID().toString();
         this.name = Objects.requireNonNull(name);
         this.color = Objects.requireNonNull(color);
+    }
+
+    public void removeCountry(Country country) {
+        ownedCountries.remove(country);
+    }
+
+    public int getReinforcements() {
+        return reinforcements;
+    }
+
+    public void setReinforcements(int offsetReinforcements) {
+        assert offsetReinforcements < 0 : "Reinforcement cannot be less than 0";
+        reinforcements = offsetReinforcements;
     }
 
     public String getName() {
@@ -42,8 +56,18 @@ public abstract class Player {
         return ownedCountries;
     }
 
-    // TODO: Change Method (Should return calculated reinforcement)
-    public abstract int getReinforcement();
+    // TODO: Refactor to more meaningful names
+    public abstract void startTurn();
+
+    public abstract void startReinforcement();
+
+    public abstract void initReinforce();
+
+    public abstract void reinforce();
+
+    public abstract boolean combat();
+
+    public abstract void fortify();
 
     public List<Card> getCards() {
         return cards;

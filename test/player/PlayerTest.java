@@ -64,11 +64,11 @@ class PlayerTest {
 
     @Test
     void testAddCountryShouldAddCountryToPlayer() {
-        Country testCountry1 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
+        Country testCountry1 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], 0, COUNTRY_COORDS[0]);
         player.addCountry(testCountry1);
         assertEquals(player.getOwnedCountries().get(0), testCountry1);
 
-        Country testCountry2 = new Country(COUNTRY_NAMES[1], ADJACENT[1], CONTINENT_IDS[1], COUNTRY_COORDS[1]);
+        Country testCountry2 = new Country(COUNTRY_NAMES[1], ADJACENT[1], CONTINENT_IDS[1], 1, COUNTRY_COORDS[1]);
         player.addCountry(testCountry2);
         assertEquals(player.getOwnedCountries().get(1), testCountry2);
     }
@@ -76,12 +76,6 @@ class PlayerTest {
     @Test
     void testAddCountryThrowsIfAddingNullCountry() {
         assertThrows(NullPointerException.class, () -> player.addCountry(null));
-    }
-
-    // TODO: Change since method is going to change
-    @Test
-    void testGetReinforcementShouldReturnReinforcement() {
-        assertEquals(player.getReinforcement(), 0);
     }
 
     @Test

@@ -1,28 +1,26 @@
 package player.model;
 
 import common.Constants;
-import deck.Card;
-import deck.Deck;
+import common.validation.Validators;
 import javafx.application.Platform;
+import map.Continent;
 import map.country.Country;
 import map.model.MapModel;
 import player.NeutralPlayer;
 import player.Player;
+import shell.model.ShellModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Observable;
 
-import static common.Constants.NUM_HUMAN_PLAYERS;
-import static common.Constants.NUM_NEUTRAL_PLAYERS;
+import static common.Constants.*;
 
 public class PlayerModel extends Observable {
 
-    /**
-     * Order of Players:
-     * H1 -> N1 -> N2 -> N3 -> N4 -> H2/BOT
-     */
-
     private static PlayerModel instance;
-    private final List<Player> players = new ArrayList<>(NUM_HUMAN_PLAYERS + NUM_NEUTRAL_PLAYERS);
+    private final List<Player> players = new ArrayList<>(NUM_PLAYERS);
     private int currentPlayerIndex = 0;
 
     private PlayerModel() {
@@ -48,6 +46,10 @@ public class PlayerModel extends Observable {
         players.add(player);
     }
 
+    public void removePlayer(Player player) {
+        players.remove(player);
+    }
+
     public void createNeutralPlayers() {
         for (int i = 0; i < NUM_NEUTRAL_PLAYERS; i++) {
             Player newPlayer = new NeutralPlayer(String.valueOf(i + 1), Constants.Colors.NEUTRAL_PLAYER);
@@ -60,12 +62,10 @@ public class PlayerModel extends Observable {
         currentPlayerIndex++;
 
         if (currentPlayerIndex == players.size() - 1) {
+            Collections.swap(players, 0, currentPlayerIndex);
+
             currentPlayerIndex = 0;
 
-            // Swap the last and first players
-            Collections.swap(players, 0, players.size() - 1);
-
-            // Only update playerIndicator when swap happens
             Platform.runLater(this::updatePlayerIndicator);
         }
     }
@@ -82,24 +82,50 @@ public class PlayerModel extends Observable {
         notifyObservers(playerModelArg);
     }
 
-    public void assignInitialCountries() {
+    public void calculateReinforcements(Player player) {
+        int availableReinforcements = 0;
+
+        availableReinforcements += (player.getOwnedCountries().size() / 3);
 
         MapModel mapModel = MapModel.getInstance();
-        Deck deck = Deck.getInstance();
 
-        players.forEach(player -> {
-            List<Card> cards = player.getCards();
-            while (cards.size() > 0) {
-                String playerCountryName = cards.get(0).getCountryName();
-                Optional<Country> nullableCountry = mapModel.getCountryByName(playerCountryName);
-                nullableCountry.ifPresent(country -> {
-                    mapModel.setCountryOccupier(country, player);
-                    mapModel.updateCountryArmyCount(country, 1);
+        for (Continent continent : mapModel.getContinents()) {
+            boolean ownsContinent = continent
+                    .getCountries()
+                    .stream()
+                    .allMatch(country -> country.getOccupier().equals(player));
 
-                    player.addCountry(country);
-                    deck.add(player.removeTopCard());
-                });
+            if (ownsContinent) {
+                availableReinforcements += continent.getBonusReinforcement();
             }
-        });
+        }
+
+        // Available Reinforcements is always a min of 3
+        availableReinforcements = Math.max(availableReinforcements, DEFAULT_REINFORCEMENT);
+
+        player.setReinforcements(availableReinforcements);
     }
+
+    public boolean currentPlayerCanAttack() {
+        Player currentPlayer = getCurrentPlayer();
+        ShellModel shellModel = ShellModel.getInstance();
+
+        boolean canAttack = false;
+
+        for (Country country : currentPlayer.getOwnedCountries()) {
+
+            if (Validators.hasAdjacentOpposingCountry.apply(country.getCountryName()).isValid()
+                    && country.getArmyCount() != 1) {
+                canAttack = true;
+            }
+        }
+
+        // You are not going to like this one bit
+        if (!canAttack) {
+            shellModel.notify("You do not have the appropriate forces to attack with.");
+        }
+
+        return canAttack;
+    }
+
 }

@@ -14,6 +14,9 @@ public class Constants {
     public static final int NUM_INDIVIDUAL_CARDS = 14;
     public static final int NUM_WILDCARDS = 2;
     public static final int INIT_REINFORCEMENT_TURNS = 9;
+    public static final int INIT_HUMAN_PLAYER_REINFORCEMENTS = 3;
+    public static final int INIT_NEUTRAL_PLAYER_REINFORCEMENTS = 1;
+    public static final int DEFAULT_REINFORCEMENT = 3;
 
     public static final String[] COUNTRY_NAMES = {
             "Ontario", "Quebec", "NW Territory", "Alberta", "Greenland", "E United States", "W United States", "Central America", "Alaska",

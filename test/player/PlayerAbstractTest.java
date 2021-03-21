@@ -9,7 +9,33 @@ class PlayerAbstractTest extends Player{
     }
 
     @Override
-    public int getReinforcement() {
-        return 0;
+    public void startTurn() {
+
     }
+
+    @Override
+    public void startReinforcement() {
+
+    }
+
+    @Override
+    public void initReinforce() {
+
+    }
+
+    @Override
+    public void reinforce() {
+
+    }
+
+    @Override
+    public boolean combat() {
+        return false;
+    }
+
+    @Override
+    public void fortify() {
+
+    }
+
 }

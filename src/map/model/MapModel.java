@@ -1,36 +1,55 @@
 package map.model;
 
 import javafx.application.Platform;
+import map.Continent;
 import map.country.Country;
 import player.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static common.Constants.*;
 
 public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
+    private final List<Continent> continents = new ArrayList<>();
     private final List<Country> combatantInfo = new ArrayList<Country>(2);
 
     private MapModel() {
         createCountries();
+        createContinents();
     }
 
     public static synchronized MapModel getInstance() {
         if (instance == null) {
             return instance = new MapModel();
         }
-
         return instance;
     }
 
     private void createCountries() {
         for (int i = 0; i < NUM_COUNTRIES; i++) {
-            Country newCountry = new Country(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], COUNTRY_COORDS[i]);
+            Country newCountry = new Country(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], i, COUNTRY_COORDS[i]);
             countries.add(newCountry);
         }
+    }
+
+    private void createContinents() {
+        for (int i = 0; i < NUM_CONTINENTS; i++) {
+            int continentId = i;
+            List<Country> ownedCountries = countries.stream().filter(country -> country.getContinentID() == continentId).collect(Collectors.toList());
+            Continent newContinent = new Continent(CONTINENT_NAMES[continentId], CONTINENT_VALUES[continentId], continentId, ownedCountries);
+            continents.add(newContinent);
+        }
+    }
+
+    public List<Continent> getContinents() {
+        return continents;
     }
 
     public List<Country> getCountries() {
@@ -50,6 +69,16 @@ public class MapModel extends Observable {
         return countries
                 .stream()
                 .filter(hasSameName)
+                .findFirst();
+    }
+
+    public Optional<Country> getCountryById(int id) {
+
+        Predicate<Country> hasId = country -> country.getId() == id;
+
+        return countries
+                .stream()
+                .filter(hasId)
                 .findFirst();
     }
 
