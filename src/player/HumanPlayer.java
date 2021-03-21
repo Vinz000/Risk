@@ -1,6 +1,7 @@
 package player;
 
 import game.module.Combat;
+import game.module.Fortification;
 import game.module.Reinforcing;
 import javafx.scene.paint.Color;
 import map.country.Country;
@@ -8,6 +9,7 @@ import map.model.MapModel;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static common.Constants.INIT_HUMAN_PLAYER_REINFORCEMENTS;
@@ -75,6 +77,18 @@ public class HumanPlayer extends Player {
 
     @Override
     public void fortify() {
+        Fortification fortification = new Fortification();
+        boolean currentPlayerWantsToFortify = fortification.prompt();
+
+        if (currentPlayerWantsToFortify) {
+            Optional<Country> originCountry = fortification.selectOriginCountry();
+
+            if (originCountry.isPresent()) {
+                int troopsCount = fortification.selectNumberOfTroops(originCountry.get());
+                Optional<Country> destinationCountry = fortification.selectDestinationCountry(originCountry.get());
+                destinationCountry.ifPresent(country -> fortification.moveTroops(originCountry.get(), country, troopsCount));
+            }
+        }
 
     }
 

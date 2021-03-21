@@ -44,6 +44,7 @@ public class GameCore extends Task<Void> {
             currentPlayer.startTurn();
             currentPlayer.reinforce();
             if (currentPlayer.combat()) {
+                shellModel.notify("Game over: " + currentPlayer.getName() + " has won the game.");
                 break;
             }
             currentPlayer.fortify();
