@@ -43,7 +43,9 @@ public class GameCore extends Task<Void> {
 
             currentPlayer.startTurn();
             currentPlayer.reinforce();
+
             currentPlayer.combat();
+
             currentPlayer.fortify();
 
             playerModel.changeTurn();

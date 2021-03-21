@@ -14,8 +14,7 @@ import java.util.Optional;
 import static common.Constants.*;
 
 // TODO: Change response to more meaningful variable name
-public class ClaimTerritories extends Module{
-    String response;
+public class ClaimTerritories extends Module {
 
     public ClaimTerritories() {
     }
@@ -36,7 +35,6 @@ public class ClaimTerritories extends Module{
         mapModel.showCountryComponents();
     }
 
-    // HELPER METHOD
     private void assignPlayersCountries(boolean showDraw, List<Player> players) {
         Deck deck = Deck.getInstance();
 

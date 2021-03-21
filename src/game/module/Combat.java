@@ -8,12 +8,11 @@ import player.Player;
 import java.util.List;
 import java.util.Optional;
 
-public class Combat extends Module{
+public class Combat extends Module {
     // TODO: Change response to more meaningful variable name
     String response;
 
     public Combat() {
-        super();
     }
 
     public boolean skipCombat(Player player) {
@@ -88,7 +87,7 @@ public class Combat extends Module{
     }
 
     public void diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
-                                Country attackingCountry, Country defendingCountry) {
+                               Country attackingCountry, Country defendingCountry) {
 
         String attackingPlayerName = attackingCountry.getOccupier().getName();
         String defendingPlayerName = defendingCountry.getOccupier().getName();
@@ -120,7 +119,7 @@ public class Combat extends Module{
     }
 
     public void victoryChecker(int attackerVictoryPoints, int defenderVictoryPoints,
-                                Country attackingCountry, Country defendingCountry) {
+                               Country attackingCountry, Country defendingCountry) {
 
         if (attackerVictoryPoints > defenderVictoryPoints) {
             if (defendingCountry.getArmyCount() == 0 && defendingCountry.getForceCount() == 0) {

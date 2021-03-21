@@ -9,12 +9,13 @@ public class Country {
     private final String countryName;
     private final int[] adjCountries;
     private final int continentID;
+    private final int id;
     private final Point2D coords;
     private int armyCount = 0;
     private int forceCount = 0;
     private Player occupier;
 
-    public Country(String countryName, int[] adjCountries, int continentID, int[] coords) throws IllegalArgumentException {
+    public Country(String countryName, int[] adjCountries, int continentID, int id, int[] coords) throws IllegalArgumentException {
         assert continentID >= 0 : "ContinentId cannot be negative, but was " + continentID;
 
         this.countryName = Objects.requireNonNull(countryName);
@@ -22,6 +23,7 @@ public class Country {
         Objects.requireNonNull(coords);
 
         this.continentID = continentID;
+        this.id = id;
         this.coords = new Point2D(coords[0], coords[1]);
     }
 
@@ -31,6 +33,10 @@ public class Country {
 
     public String getCountryName() {
         return countryName;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int[] getAdjCountries() {
@@ -46,7 +52,7 @@ public class Country {
     }
 
     public void updateArmyCount(int armyCount) {
-        assert this.armyCount + armyCount >= 0: "ArmyCount cannot be less than 0.";
+        assert this.armyCount + armyCount >= 0 : "ArmyCount cannot be less than 0.";
         this.armyCount += armyCount;
     }
 
@@ -75,7 +81,7 @@ public class Country {
     }
 
     public void updateForceCount(int forceCount) {
-        assert this.forceCount + forceCount >= 0: "Force cannot be less than 0.";
+        assert this.forceCount + forceCount >= 0 : "Force cannot be less than 0.";
         this.forceCount += forceCount;
     }
 
@@ -84,7 +90,7 @@ public class Country {
     }
 
     public void destroyedUnit() {
-        assert this.forceCount - 1 >= 0: "Force cannot be less than 0.";
+        assert this.forceCount - 1 >= 0 : "Force cannot be less than 0.";
         this.forceCount -= 1;
     }
 }

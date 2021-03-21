@@ -10,8 +10,6 @@ public abstract class Dice {
     public static List<Integer> roll(int diceCount) {
         assert diceCount > 0 : "diceCount must be greater than zero, but was " + diceCount;
 
-//        long seed = System.currentTimeMillis();
-//        random.setSeed(seed);
         return random
                 .ints(diceCount, 1, 7)
                 .boxed()

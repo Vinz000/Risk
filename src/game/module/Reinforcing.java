@@ -6,38 +6,38 @@ import player.Player;
 
 import java.util.Optional;
 
-public class Reinforcing extends Module{
+public class Reinforcing extends Module {
     // TODO: Refactor response to a more meaningful variable name
     String response;
-    public Reinforcing(){}
+
+    public Reinforcing() {
+    }
 
     public void reinforceInitialCountries(Player player, int reinforcement) {
-        // Toggle highlight on
-       mapModel.highlightCountries(player.getOwnedCountries());
+
+        mapModel.highlightCountries(player.getOwnedCountries());
 
         shellModel.notify("Place down reinforcements.");
 
-        String response = shellModel.prompt(Validators.currentPlayerOccupies);
+        String response = shellModel.prompt(Validators.validReinforcingCountry);
         Optional<Country> nullableCountry = mapModel.getCountryByName(response);
 
         nullableCountry.ifPresent(country -> uiAction(() -> mapModel.updateCountryArmyCount(country, reinforcement)));
 
         shellModel.notify("Successfully placed reinforcements.");
 
-        // Toggle highlight off
         mapModel.highlightCountries(player.getOwnedCountries());
     }
 
     public void reinforceOwnedCountries(Player player) {
         playerModel.calculateReinforcements(player);
 
-        // Reinforcing loop
         mapModel.highlightCountries(player.getOwnedCountries());
-        while(player.getReinforcements() > 0) {
+        while (player.getReinforcements() > 0) {
             shellModel.notify(String.format("You have %d reinforcements to place.", player.getReinforcements()));
             shellModel.notify("Choose country to reinforce");
 
-            response = shellModel.prompt(Validators.currentPlayerOccupies);
+            response = shellModel.prompt(Validators.validReinforcingCountry);
             Optional<Country> chosenCountry = mapModel.getCountryByName(response);
 
             shellModel.notify("How many army to reinforce by?");

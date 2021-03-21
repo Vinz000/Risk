@@ -4,7 +4,7 @@ import game.module.Reinforcing;
 import javafx.scene.paint.Color;
 import shell.model.ShellModel;
 
-import static common.Constants.*;
+import static common.Constants.INIT_NEUTRAL_PLAYER_REINFORCEMENTS;
 
 public class NeutralPlayer extends Player {
 

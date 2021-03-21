@@ -3,11 +3,9 @@ package shell.model;
 import common.validation.ValidatorResponse;
 import common.validation.Validators;
 import javafx.application.Platform;
-import shell.prompt.ShellPrompt;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Observable;
 import java.util.function.Function;
 

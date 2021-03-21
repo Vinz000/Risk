@@ -5,6 +5,7 @@ import game.module.Reinforcing;
 import javafx.scene.paint.Color;
 import map.country.Country;
 import map.model.MapModel;
+import player.model.PlayerModel;
 import shell.model.ShellModel;
 
 import java.util.UUID;
@@ -45,9 +46,12 @@ public class HumanPlayer extends Player {
     @Override
     public void combat() {
         MapModel mapModel = MapModel.getInstance();
+        PlayerModel playerModel = PlayerModel.getInstance();
+        ShellModel shellModel = ShellModel.getInstance();
         Combat combat = new Combat();
         // War Loop
-        while (!combat.skipCombat(this)) {
+
+        while (playerModel.currentPlayerCanAttack() && !combat.skipCombat(this)) {
             combat.selectAttackingCountry(this);
             combat.selectDefendingCountry(this);
 
@@ -65,6 +69,7 @@ public class HumanPlayer extends Player {
 
             mapModel.clearCombatants();
         }
+
     }
 
     @Override

@@ -7,7 +7,6 @@ import player.HumanPlayer;
 import player.Player;
 
 import static common.Constants.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class CountryTest {
@@ -15,15 +14,15 @@ class CountryTest {
 
     @BeforeEach
     void setUp() {
-        country = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
+        country = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], 0, COUNTRY_COORDS[0]);
     }
 
     @Test
     public void testCountryShouldCreateNewCountryObject() {
         try {
-            new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
-            new Country(COUNTRY_NAMES[2], ADJACENT[2], CONTINENT_IDS[2], COUNTRY_COORDS[2]);
-            new Country(COUNTRY_NAMES[8], ADJACENT[8], CONTINENT_IDS[8], COUNTRY_COORDS[8]);
+            new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], 0, COUNTRY_COORDS[0]);
+            new Country(COUNTRY_NAMES[2], ADJACENT[2], CONTINENT_IDS[2], 2, COUNTRY_COORDS[2]);
+            new Country(COUNTRY_NAMES[8], ADJACENT[8], CONTINENT_IDS[8], 8, COUNTRY_COORDS[8]);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -31,23 +30,23 @@ class CountryTest {
 
     @Test
     public void testCountryThrowsIfCountryNameIsNull() {
-        assertThrows(NullPointerException.class, () -> new Country(null, ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]));
+        assertThrows(NullPointerException.class, () -> new Country(null, ADJACENT[0], CONTINENT_IDS[0], 0, COUNTRY_COORDS[0]));
     }
 
     @Test
     public void testCountryThrowsIfAdjCountriesIsNull() {
-        assertThrows(NullPointerException.class, () -> new Country(COUNTRY_NAMES[2], null, CONTINENT_IDS[2], COUNTRY_COORDS[2]));
+        assertThrows(NullPointerException.class, () -> new Country(COUNTRY_NAMES[2], null, CONTINENT_IDS[2], 2, COUNTRY_COORDS[2]));
     }
 
     @Test
     public void testCountryThrowsIfContinentIdIsNegative() {
-        assertThrows(AssertionError.class, () -> new Country(COUNTRY_NAMES[8], ADJACENT[8], -1, COUNTRY_COORDS[8]));
+        assertThrows(AssertionError.class, () -> new Country(COUNTRY_NAMES[8], ADJACENT[8], -1, 8, COUNTRY_COORDS[8]));
 
     }
 
     @Test
     public void testCountryThrowsIfCoordsIsNull() {
-        assertThrows(NullPointerException.class, () -> new Country(COUNTRY_NAMES[8], ADJACENT[8], CONTINENT_IDS[8], null));
+        assertThrows(NullPointerException.class, () -> new Country(COUNTRY_NAMES[8], ADJACENT[8], CONTINENT_IDS[8], 8, null));
     }
 
     @Test
@@ -110,13 +109,13 @@ class CountryTest {
 
     @Test
     void testEqualsShouldReturnTrueIfSameCountries() {
-        Country country2 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], COUNTRY_COORDS[0]);
+        Country country2 = new Country(COUNTRY_NAMES[0], ADJACENT[0], CONTINENT_IDS[0], 0, COUNTRY_COORDS[0]);
         assertEquals(country, country2);
     }
 
     @Test
     void testEqualsShouldReturnFalseIfDifferentCountries() {
-        Country country3 = new Country(COUNTRY_NAMES[1], ADJACENT[1], CONTINENT_IDS[1], COUNTRY_COORDS[1]);
+        Country country3 = new Country(COUNTRY_NAMES[1], ADJACENT[1], CONTINENT_IDS[1], 1, COUNTRY_COORDS[1]);
         assertNotEquals(country, country3);
     }
 }

@@ -3,23 +3,20 @@ package game.module;
 import common.Constants;
 import common.Dice;
 import common.validation.Validators;
-import deck.Card;
-import deck.Deck;
-import map.country.Country;
 import player.HumanPlayer;
-import player.NeutralPlayer;
 import player.Player;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
-import static common.Constants.*;
+import static common.Constants.Colors;
+import static common.Constants.Notifications;
 
-public class SetUp extends Module{
+public class SetUp extends Module {
 
-    public SetUp() {}
+    public SetUp() {
+    }
 
     public void getPlayerOne() {
         shellModel.notify(Notifications.NAME + "(P1)");

@@ -1,11 +1,14 @@
 package map.model;
 
-import map.Continent;
 import javafx.application.Platform;
+import map.Continent;
 import map.country.Country;
 import player.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -31,7 +34,7 @@ public class MapModel extends Observable {
 
     private void createCountries() {
         for (int i = 0; i < NUM_COUNTRIES; i++) {
-            Country newCountry = new Country(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], COUNTRY_COORDS[i]);
+            Country newCountry = new Country(COUNTRY_NAMES[i], ADJACENT[i], CONTINENT_IDS[i], i, COUNTRY_COORDS[i]);
             countries.add(newCountry);
         }
     }
@@ -66,6 +69,16 @@ public class MapModel extends Observable {
         return countries
                 .stream()
                 .filter(hasSameName)
+                .findFirst();
+    }
+
+    public Optional<Country> getCountryById(int id) {
+
+        Predicate<Country> hasId = country -> country.getId() == id;
+
+        return countries
+                .stream()
+                .filter(hasId)
                 .findFirst();
     }
 

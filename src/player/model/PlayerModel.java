@@ -1,13 +1,19 @@
 package player.model;
 
 import common.Constants;
+import common.validation.Validators;
 import javafx.application.Platform;
 import map.Continent;
+import map.country.Country;
 import map.model.MapModel;
 import player.NeutralPlayer;
 import player.Player;
+import shell.model.ShellModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Observable;
 
 import static common.Constants.*;
 
@@ -51,7 +57,7 @@ public class PlayerModel extends Observable {
     public void changeTurn() {
         currentPlayerIndex++;
 
-        if(currentPlayerIndex == players.size() - 1) {
+        if (currentPlayerIndex == players.size() - 1) {
             Collections.swap(players, 0, currentPlayerIndex);
 
             currentPlayerIndex = 0;
@@ -71,17 +77,6 @@ public class PlayerModel extends Observable {
         setChanged();
         notifyObservers(playerModelArg);
     }
-
-    // TODO: Apply this thing
-//    public void playerEliminationCheck(Player player) {
-//        PlayerModel players = playerModel.getInstance();
-//        if (player.getOwnedCountries().isEmpty()) {
-//            if(player is human) {
-//                end game
-//            }
-//            //code to remove that player from the array
-//        }
-//    }
 
     public void calculateReinforcements(Player player) {
         int availableReinforcements = 0;
@@ -105,6 +100,28 @@ public class PlayerModel extends Observable {
         availableReinforcements = Math.max(availableReinforcements, DEFAULT_REINFORCEMENT);
 
         player.setReinforcements(availableReinforcements);
+    }
+
+    public boolean currentPlayerCanAttack() {
+        Player currentPlayer = getCurrentPlayer();
+        ShellModel shellModel = ShellModel.getInstance();
+
+        boolean canAttack = false;
+
+        for (Country country : currentPlayer.getOwnedCountries()) {
+
+            if (Validators.hasAdjacentOpposingCountry.apply(country.getCountryName()).isValid()
+                    && country.getArmyCount() != 1) {
+                canAttack = true;
+            }
+        }
+
+        // You are not going to like this one bit
+        if (!canAttack) {
+            shellModel.notify("You do not have the appropriate forces to attack with.");
+        }
+
+        return canAttack;
     }
 
 }
