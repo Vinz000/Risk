@@ -6,8 +6,6 @@ import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -238,6 +236,91 @@ public class Validators {
 
         return invalidMessage;
     }
+
+    public static final Function<String, ValidatorResponse> fortificationOriginCountry = rawInput -> compose(rawInput, nonEmpty, currentPlayerOccupies, input -> {
+        MapModel mapModel = MapModel.getInstance();
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentPlayer = playerModel.getCurrentPlayer();
+        Optional<Country> nullableOriginCountry = mapModel.getCountryByName(input);
+
+        if (nullableOriginCountry.isPresent()) {
+            Country originCountry = nullableOriginCountry.get();
+
+            boolean ownsMoreThanZeroAdjacentCountries = false;
+            for (int adjacentCountryIndex : originCountry.getAdjCountries()) {
+                String adjacentCountryName = Constants.COUNTRY_NAMES[adjacentCountryIndex];
+                Optional<Country> nullableAdjacentCountry = mapModel.getCountryByName(adjacentCountryName);
+
+                if (nullableAdjacentCountry.isPresent()) {
+                    Country adjacentCountry = nullableAdjacentCountry.get();
+
+                    if (currentPlayer.equals(adjacentCountry.getOccupier())) {
+                        ownsMoreThanZeroAdjacentCountries = true;
+                        break;
+                    }
+
+                }
+            }
+
+            boolean hasMoreThanOneArmy = originCountry.getArmyCount() > 1;
+
+            if (!ownsMoreThanZeroAdjacentCountries) {
+                return ValidatorResponse.invalid("You do not own an adjacent countries.");
+            } else if (!hasMoreThanOneArmy) {
+                return ValidatorResponse.invalid("Not enough armies in " + originCountry.getCountryName());
+            }
+        }
+
+        return ValidatorResponse.validNoMessage();
+    });
+
+    private static boolean isConnected(Country previous, Country from, Country to, int limit) {
+        if (limit < 0) return false;
+
+        MapModel mapModel = MapModel.getInstance();
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentPlayer = playerModel.getCurrentPlayer();
+        int[] adjacentCountries = from.getAdjCountries();
+
+        for (int adjacentCountryIndex : adjacentCountries) {
+            String adjacentCountryName = Constants.COUNTRY_NAMES[adjacentCountryIndex];
+            Optional<Country> nullableAdjacentCountry = mapModel.getCountryByName(adjacentCountryName);
+
+            if (nullableAdjacentCountry.isPresent()) {
+                Country adjacentCountry = nullableAdjacentCountry.get();
+
+                if (adjacentCountry.getOccupier().equals(currentPlayer) && !previous.equals(adjacentCountry)) {
+                    if (adjacentCountry.equals(to)) return true;
+                    return isConnected(from, adjacentCountry, to, --limit);
+                }
+            } else {
+                // Should never be reached (adjacent country always present)
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static final Function<Country, Function<String, ValidatorResponse>> fortificationDestinationCountry = originCountry -> rawInput -> compose(rawInput, nonEmpty, currentPlayerOccupies, input -> {
+        MapModel mapModel = MapModel.getInstance();
+        Optional<Country> nullableDestinationCountry = mapModel.getCountryByName(input);
+
+        if (nullableDestinationCountry.isPresent()) {
+            Country destinationCountry = nullableDestinationCountry.get();
+
+            boolean connected = isConnected(originCountry, originCountry, destinationCountry, 10);
+
+            if (!connected) return ValidatorResponse.invalid(originCountry.getCountryName() + " is not connected to " + destinationCountry.getCountryName());
+            return ValidatorResponse.validNoMessage();
+        }
+        return ValidatorResponse.validNoMessage();
+    });
+
+    public static final Function<Country, Function<String, ValidatorResponse>> validFortification = originCountry -> rawInput -> compose(rawInput, nonEmpty, isInt, appropriateForce, input -> {
+        int desiredNumberOfTroops = Integer.parseInt(input);
+
+        return new ValidatorResponse(desiredNumberOfTroops < originCountry.getArmyCount(), "Not enough troops in " + originCountry.getCountryName());
+    });
 
     @SafeVarargs
     private static ValidatorResponse compose(String input, Function<String, ValidatorResponse>... validators) {
