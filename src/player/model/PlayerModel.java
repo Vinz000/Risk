@@ -120,7 +120,6 @@ public class PlayerModel extends Observable {
             }
         }
 
-        // You are not going to like this one bit
         if (!canAttack) {
             shellModel.notify("You do not have the appropriate forces to attack with.");
         }

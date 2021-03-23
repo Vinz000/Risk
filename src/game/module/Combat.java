@@ -6,7 +6,6 @@ import map.country.Country;
 import player.NeutralPlayer;
 import player.Player;
 import player.model.PlayerModel;
-import shell.model.ShellModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -78,7 +77,7 @@ public class Combat extends Module {
     }
 
     public boolean initiateCombat(Country attackingCountry, Country defendingCountry) {
-        boolean humanPlayerDefeated = false;
+        boolean humanPlayerDefeated;
         int attackingForce = attackingCountry.getForceCount();
         int defendingForce = defendingCountry.getForceCount();
 
@@ -94,7 +93,7 @@ public class Combat extends Module {
     public boolean diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
                                   Country attackingCountry, Country defendingCountry) {
 
-        boolean humanPlayerDefeated = false;
+        boolean humanPlayerDefeated;
 
         String attackingPlayerName = attackingCountry.getOccupier().getName();
         String defendingPlayerName = defendingCountry.getOccupier().getName();
