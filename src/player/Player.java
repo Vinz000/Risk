@@ -67,10 +67,16 @@ public abstract class Player {
 
     public abstract boolean combat();
 
+    public abstract void cardUsage();
+
     public abstract void fortify();
 
     public List<Card> getCards() {
         return cards;
+    }
+
+    public Card getMostRecentCard(List<Card> cards) {
+        return cards.get(cards.size() - 1);
     }
 
     public void addCard(Card card) {
@@ -79,11 +85,10 @@ public abstract class Player {
         cards.add(card);
     }
 
-    // TODO: Change so that it removes specific card
-    public Card removeTopCard() throws IllegalArgumentException {
+    public void removeCard(Card card) throws IllegalArgumentException {
         assert getCards().size() > 0 : "Cannot remove from empty hand";
 
-        return cards.remove(0);
+        cards.remove(card);
     }
 
     @Override

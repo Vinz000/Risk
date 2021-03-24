@@ -2,6 +2,8 @@ package game.module;
 
 import common.Dice;
 import common.validation.Validators;
+import deck.Card;
+import deck.Deck;
 import map.country.Country;
 import player.NeutralPlayer;
 import player.Player;
@@ -141,6 +143,7 @@ public class Combat extends Module {
     }
 
     public boolean countryTakeOver(Country attackingCountry, Country defendingCountry) {
+
         shellModel.notify(defendingCountry.getCountryName() + " has been taken by "
                 + attackingCountry.getOccupier().getName());
         Player defendingPlayer = defendingCountry.getOccupier();
@@ -168,6 +171,13 @@ public class Combat extends Module {
         int force = Integer.parseInt(response);
         mapModel.updateCountryArmyCount(defendingCountry, force);
         mapModel.updateCountryArmyCount(attackingCountry, -force);
+
+        CardUsage.addCard(attackingPlayer);
+
+        Card drawnCard = attackingPlayer.getMostRecentCard(attackingPlayer.getCards());
+        shellModel.notify("You have earned the card: " +
+                drawnCard.getType().toString() + " " + drawnCard.getCountryName());
+
         return false;
     }
 

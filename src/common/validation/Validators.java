@@ -1,6 +1,8 @@
 package common.validation;
 
 import common.Constants;
+import deck.Card;
+import deck.CardType;
 import map.country.Country;
 import map.model.MapModel;
 import player.Player;
@@ -204,6 +206,118 @@ public class Validators {
         return new ValidatorResponse(validDefendingForce, String.format("You don't have %d army, you only have %d.", defendingForce, defendingCountryArmy));
     };
 
+    public static Validator canSpendCards = input -> {
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentPlayer = playerModel.getCurrentPlayer();
+
+        List<Card> cardsOwned = currentPlayer.getCards();
+        boolean canSpend;
+
+        if (input.toLowerCase().contains("y")) {
+            canSpend = possibleCombinations(cardsOwned);
+            return new ValidatorResponse(canSpend, "You do not have the correct selection of cards.");
+        } else if (input.toLowerCase().contains("n")){
+            return ValidatorResponse.validNoMessage();
+        } else {
+            return ValidatorResponse.invalid("Please enter yes or no.");
+        }
+
+    };
+
+    public static Validator isCard = input -> {
+        boolean isCard = false;
+
+        if (input.toLowerCase().contains("art") || input.toLowerCase().contains("artillery")) {
+            isCard = true;
+        } else if (input.toLowerCase().contains("s") || input.toLowerCase().contains("soldier")) {
+            isCard = true;
+        } else if (input.toLowerCase().contains("c") || input.toLowerCase().contains("calvary")) {
+            isCard = true;
+        } else if (input.toLowerCase().contains("w") || input.toLowerCase().contains("wildcard")) {
+            isCard = true;
+        }
+        return new ValidatorResponse(isCard, input + " not a valid card.");
+    };
+
+    public static Validator cardChoiceCheck = input -> {
+        boolean appropriateInput = false;
+        boolean hasCards = false;
+
+        PlayerModel playerModel = PlayerModel.getInstance();
+        Player currentPlayer = playerModel.getCurrentPlayer();
+
+        List<Card> cardsOwned = currentPlayer.getCards();
+        List<Card> artillery = new ArrayList<>();
+        List<Card> calvary = new ArrayList<>();
+        List<Card> soldier = new ArrayList<>();
+
+        for (Card card : cardsOwned) {
+            if (card.getType() == CardType.ARTILLERY) {
+                artillery.add(card);
+            } else if (card.getType() == CardType.CALVARY) {
+                calvary.add(card);
+            } else if (card.getType() == CardType.SOLDIER) {
+                soldier.add(card);
+            }
+        }
+
+        if (input.toLowerCase().contains("ar")) {
+            appropriateInput = true;
+            hasCards = chosenCombination(artillery);
+        } else if (input.toLowerCase().contains("c")) {
+            appropriateInput = true;
+            hasCards = chosenCombination(calvary);
+        } else if (input.toLowerCase().contains("s")) {
+            appropriateInput = true;
+            hasCards = chosenCombination(soldier);
+        } else if (input.toLowerCase().contains("m")) {
+            appropriateInput = true;
+            hasCards = chosenCombination(cardsOwned);
+        }
+
+        boolean appropriateSelection = appropriateInput && hasCards;
+        return new ValidatorResponse(appropriateSelection, "Please choose a valid option.");
+    };
+
+    private static boolean chosenCombination(List<Card> cardsSelected) {
+        boolean enoughCards = true;
+        if (cardsSelected.size() < 3) {
+            enoughCards = false;
+        }
+        return enoughCards;
+    }
+
+    private static boolean possibleCombinations(List<Card> cardsOwned) {
+        boolean combinationFound = false;
+        List<Card> artillery = new ArrayList<>();
+        List<Card> calvary = new ArrayList<>();
+        List<Card> soldier = new ArrayList<>();
+        List<Card> wildcard = new ArrayList<>();
+
+        for (Card card : cardsOwned) {
+            if (card.getType() == CardType.ARTILLERY) {
+                artillery.add(card);
+            } else if (card.getType() == CardType.CALVARY) {
+                calvary.add(card);
+            } else if (card.getType() == CardType.SOLDIER) {
+                soldier.add(card);
+            } else {
+                wildcard.add(card);
+            }
+        }
+
+        if (artillery.size() >= 1 && calvary.size() >= 1 && soldier.size() >= 1) {
+            combinationFound = true;
+        } else if (cardsOwned.size() >= 3 && wildcard.size() > 1) {
+            combinationFound = true;
+        } else if (artillery.size() >= 3 || calvary.size() >= 3 || soldier.size() >= 3) {
+            combinationFound = true;
+        } else if (wildcard.size() == 2 && (artillery.size() == 1 || calvary.size() == 1 || soldier.size() == 1)) {
+            combinationFound = true;
+        }
+        return combinationFound;
+    }
+
     public static final Validator validPlayerName = input -> compose(input, nonEmpty, is15CharactersMax);
     public static final Validator validReinforcingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerOccupies);
     public static final Validator validAttackingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerOccupies, hasAdjacentOpposingCountry, singleUnit);
@@ -212,6 +326,7 @@ public class Validators {
     public static final Validator validAttackingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, enoughTroops, hasAtLeastOneTroopLeft, threeUnitCheck);
     public static final Validator validDefendingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, defenderCanDefend, twoUnitCheck);
     public static final Validator validDefendingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerDoesNotOccupy, adjacentCountry);
+    public static final Validator validUseOfCards = input -> compose(input, yesNo, nonEmpty, canSpendCards);
 
     /**
      * Determines if the given player occupies the country

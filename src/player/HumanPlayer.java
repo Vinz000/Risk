@@ -1,5 +1,6 @@
 package player;
 
+import game.module.CardUsage;
 import game.module.Combat;
 import game.module.Fortification;
 import game.module.Reinforcing;
@@ -71,6 +72,17 @@ public class HumanPlayer extends Player {
             mapModel.clearCombatants();
         }
         return humanPlayerDefeated;
+    }
+
+    @Override
+    public void cardUsage() {
+        MapModel mapModel = MapModel.getInstance();
+        PlayerModel playerModel = PlayerModel.getInstance();
+        CardUsage cardUsage = new CardUsage();
+        //Card Spending
+
+        cardUsage.seeOwnedCards(playerModel.getCurrentPlayer());
+
     }
 
     @Override
