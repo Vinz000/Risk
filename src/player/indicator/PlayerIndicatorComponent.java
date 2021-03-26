@@ -44,7 +44,7 @@ public class PlayerIndicatorComponent extends HBox implements Observer, Componen
 
     @Override
     public void setCssId() {
-        setId("player-indicator");
+        setId(ComponentIds.PLAYER_INDICATOR);
     }
 
     @Override

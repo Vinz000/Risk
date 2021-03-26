@@ -18,7 +18,7 @@ public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
     private final List<Continent> continents = new ArrayList<>();
-    private final List<Country> combatantInfo = new ArrayList<Country>(2);
+    private final List<Country> combatantInfo = new ArrayList<>(2);
 
     private MapModel() {
         createCountries();

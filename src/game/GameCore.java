@@ -1,5 +1,6 @@
 package game;
 
+import cavalry.model.GoldCavalryModel;
 import common.Constants;
 import game.module.ClaimTerritories;
 import game.module.SetUp;
@@ -11,6 +12,7 @@ import shell.model.ShellModel;
 public class GameCore extends Task<Void> {
 
     private static final ShellModel shellModel = ShellModel.getInstance();
+    private static final GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
     private static final PlayerModel playerModel = PlayerModel.getInstance();
 
     @Override
@@ -38,6 +40,8 @@ public class GameCore extends Task<Void> {
 
         setUp.selectFirstPlayer();
 
+        goldCavalryModel.showGoldCavalry();
+
         while (true) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
@@ -47,6 +51,7 @@ public class GameCore extends Task<Void> {
                 shellModel.notify("Game over: " + currentPlayer.getName() + " has won the game.");
                 break;
             }
+
             currentPlayer.fortify();
 
             playerModel.changeTurn();
