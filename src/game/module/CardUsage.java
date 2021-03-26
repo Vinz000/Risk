@@ -3,9 +3,9 @@ package game.module;
 import common.validation.Validators;
 import deck.Card;
 import deck.CardType;
-import deck.Deck;
 import map.country.Country;
 import player.Player;
+import player.model.PlayerModel;
 import shell.model.ShellModel;
 
 import java.util.*;
@@ -13,27 +13,18 @@ import java.util.*;
 public class CardUsage extends Module {
     String response;
     ShellModel shellModel = ShellModel.getInstance();
-    static Deck deck = Deck.getInstance();
-    List<Card> artillery = new ArrayList<>();
-    List<Card> calvary = new ArrayList<>();
-    List<Card> soldier = new ArrayList<>();
-    List<Card> wildcard = new ArrayList<>();
+    Player currentPlayer = PlayerModel.getInstance().getCurrentPlayer();
+    List<Card> cardsOwned = currentPlayer.getCards();
+    List<Card> artillery = currentPlayer.getArtilleryCards();
+    List<Card> calvary = currentPlayer.getCalvaryCards();
+    List<Card> soldier = currentPlayer.getSoldierCards();
+    List<Card> wildcard = currentPlayer.getWildCards();
 
 
     public CardUsage() {
     }
 
-    public static void addCard(Player player) {
-        deck.shuffle();
-
-        Optional<Card> nullableCard = deck.drawCard();
-        nullableCard.ifPresent(player::addCard);
-    }
-
-    public void seeOwnedCards(Player currentPlayer) {
-
-        List<Card> cardsOwned = currentPlayer.getCards();
-        separateCards(cardsOwned);
+    public void displayCardsOwned() {
 
         if (cardsOwned.size() >= 5) {
             shellModel.notify("You have " + cardsOwned.size() + " cards so you must spend 3.");
@@ -41,7 +32,7 @@ public class CardUsage extends Module {
             shellModel.notify(calvary.size() + ": calvary cards.");
             shellModel.notify(soldier.size() + ": soldier cards.");
             shellModel.notify(wildcard.size() + ": wild cards.");
-            selectCards(currentPlayer);
+            selectCards();
         } else {
             shellModel.notify(currentPlayer.getName() + " you have " + cardsOwned.size() + " cards left.");
             shellModel.notify(artillery.size() + ": artillery cards.");
@@ -49,89 +40,78 @@ public class CardUsage extends Module {
             shellModel.notify(soldier.size() + ": soldier cards.");
             shellModel.notify(wildcard.size() + ": wild cards.");
             shellModel.notify("Would you like to spend cards? Y/N");
-
-            response = shellModel.prompt(Validators.validUseOfCards);
-
-            if (response.toLowerCase().contains("y")) {
-                selectCards(currentPlayer);
-            }
+            chooseToSpendCards();
         }
     }
 
-    public void selectCards(Player currentPlayer) {
+    public void chooseToSpendCards() {
+        response = shellModel.prompt(Validators.validUseOfCards);
+
+        if (response.toLowerCase().contains("y")) {
+            selectCards();
+        }
+    }
+
+    public void selectCards() {
         shellModel.notify("Please choose what card selection you wish to spend: " +
                 "\nArtillery \nCalvary \nSoldier \nMixed");
 
         response = shellModel.prompt(Validators.cardChoiceCheck);
 
-        int cardsToRemove = 3;
+        CardType cardType = CardType.valueOf(response.toLowerCase());
 
-        if (response.toLowerCase().contains("ar")) {
-            for (int i = 0; i < cardsToRemove; i++) {
-                currentPlayer.getCards().remove(artillery.get(i));
-            }
-        } else if (response.toLowerCase().contains("c")) {
-            for (int i = 0; i < cardsToRemove; i++) {
-                currentPlayer.getCards().remove(calvary.get(i));
-            }
-        } else if (response.toLowerCase().contains("s")) {
-            for (int i = 0; i < cardsToRemove; i++) {
-                currentPlayer.getCards().remove(soldier.get(i));
-            }
-        } else {
-            if (wildcard.size() == 1) {
-                cardRemoval(currentPlayer.getCards(), wildcard, 0);
-                if (artillery.size() > 1) {
-                    cardRemoval(currentPlayer.getCards(), artillery, 2);
-                } else if (calvary.size() > 1) {
-                    cardRemoval(currentPlayer.getCards(), calvary, 2);
-                } else if (soldier.size() > 1) {
-                    cardRemoval(currentPlayer.getCards(), soldier, 2);
+        switch (cardType) {
+            case ARTILLERY:
+                removeThreeCards(CardType.ARTILLERY);
+                break;
+            case CALVARY:
+                removeThreeCards(CardType.CALVARY);
+                break;
+            case SOLDIER:
+                removeThreeCards(CardType.SOLDIER);
+                break;
+            default:
+                mixedSpending();
+                break;
+        }
+
+        addTroops(currentPlayer);
+    }
+
+    public void removeOneCard(CardType cardType) {
+        currentPlayer.removeCardsOfType(cardType, 1);
+    }
+
+    public void removeTwoCards(CardType cardType) {
+        currentPlayer.removeCardsOfType(cardType, 2);
+    }
+
+    public void removeThreeCards(CardType cardType) {
+        currentPlayer.removeCardsOfType(cardType, 3);
+    }
+
+    public void mixedSpending() {
+        if (currentPlayer.oneWildCard()) {
+            removeOneCard(CardType.WILDCARD);
+
+            for (CardType mixedCardType : CardType.values()) {
+                List<Card> cards = currentPlayer.getCardsOfType(mixedCardType);
+                if (cards.size() > 1) {
+                    removeTwoCards(mixedCardType);
+                    break;
                 } else {
                     currentPlayer.getCards().remove(0);
                     currentPlayer.getCards().remove(1);
                 }
-            } else if (wildcard.size() == 2) {
-                cardRemoval(currentPlayer.getCards(), wildcard, 2);
-                currentPlayer.getCards().remove(0);
-            } else {
-                if (artillery.size() <= 1 && calvary.size() <= 1 && soldier.size() <= 1) {
-                    cardRemoval(currentPlayer.getCards(), artillery, 0);
-                    cardRemoval(currentPlayer.getCards(), calvary, 0);
-                    cardRemoval(currentPlayer.getCards(), soldier, 0);
-                }
             }
-        }
-
-        addTroops(currentPlayer);
-
-        artillery.clear();
-        calvary.clear();
-        soldier.clear();
-        wildcard.clear();
-    }
-
-    public void cardRemoval(List<Card> cardsOwned, List<Card> card, int index) {
-
-        if (index == 0) {
-            cardsOwned.remove(card.get(index));
+        } else if (currentPlayer.twoWildCards()) {
+            removeTwoCards(CardType.WILDCARD);
+            currentPlayer.getCards().remove(0);
         } else {
-            for (int i = 0; i < index; i++) {
-                cardsOwned.remove(card.get(i));
-            }
-        }
-    }
-
-    public void separateCards(List<Card> cardsOwned) {
-        for (Card card : cardsOwned) {
-            if (card.getType() == CardType.ARTILLERY) {
-                artillery.add(card);
-            } else if (card.getType() == CardType.CALVARY) {
-                calvary.add(card);
-            } else if (card.getType() == CardType.SOLDIER) {
-                soldier.add(card);
-            } else {
-                wildcard.add(card);
+            if (currentPlayer.atLeastOneOfEach()) {
+                removeOneCard(CardType.ARTILLERY);
+                removeOneCard(CardType.CALVARY);
+                removeOneCard(CardType.SOLDIER);
             }
         }
     }
@@ -139,7 +119,6 @@ public class CardUsage extends Module {
     ///TODO:Change to work with golden calvary
     public void addTroops(Player currentPlayer) {
         int goldenCalvaryReinforcements = 2;
-
         mapModel.highlightCountries(currentPlayer.getOwnedCountries());
 
         while (goldenCalvaryReinforcements > 0) {
@@ -150,6 +129,7 @@ public class CardUsage extends Module {
             Optional<Country> chosenCountry = mapModel.getCountryByName(response);
 
             shellModel.notify("How many units would you like to reinforce with?");
+
             ///TODO: Change validator for golden calvary
             response = shellModel.prompt(Validators.alwaysValid);
             int numReinforce = Integer.parseInt(response);

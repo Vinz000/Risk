@@ -1,6 +1,7 @@
 package player;
 
 import deck.Card;
+import deck.CardType;
 import javafx.scene.paint.Color;
 import map.country.Country;
 
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class Player {
     private final String id;
@@ -89,6 +92,63 @@ public abstract class Player {
         assert getCards().size() > 0 : "Cannot remove from empty hand";
 
         cards.remove(card);
+    }
+
+    public List<Card> getCardsOfType(CardType cardType) {
+        Predicate<Card> isCardType = card -> card.getType() == cardType;
+        return cards
+                .stream()
+                .filter(isCardType)
+                .collect(Collectors.toList());
+    }
+
+    public void removeCardsOfType(CardType cardType, int amountToRemove) {
+        Predicate<Card> isCardType = card -> card.getType() == cardType;
+        List<Card> cardsToRemove = cards.stream().filter(isCardType).collect(Collectors.toList());
+
+        for (int i = 0; i < amountToRemove; i++) {
+            cards.remove(cardsToRemove.get(amountToRemove));
+        }
+    }
+
+    public List<Card> getArtilleryCards() {
+        return getCardsOfType(CardType.ARTILLERY);
+    }
+
+    public List<Card> getCalvaryCards() {
+        return getCardsOfType(CardType.CALVARY);
+    }
+
+    public List<Card> getSoldierCards() {
+        return getCardsOfType(CardType.SOLDIER);
+    }
+
+    public List<Card> getWildCards() {
+        return getCardsOfType(CardType.WILDCARD);
+    }
+
+    public boolean atLeastOneOfEach() {
+        return getArtilleryCards().size() > 1 && getSoldierCards().size() > 1 && getCalvaryCards().size() > 1;
+    }
+
+    public boolean atLeastThree() {
+        return getArtilleryCards().size() >= 3 || getCalvaryCards().size() >= 3 || getSoldierCards().size() >= 3;
+    }
+
+    public boolean atLeastOne() {
+        return getArtilleryCards().size() >= 1 || getCalvaryCards().size() >= 1 || getSoldierCards().size() >= 1;
+    }
+
+    public boolean oneWildCard() {
+        return getCards().size() >= 3 && getWildCards().size() == 1;
+    }
+
+    public boolean twoWildCards() {
+        return getWildCards().size() == 2 && atLeastOne();
+    }
+
+    public boolean hasCards() {
+        return cards.size() > 3;
     }
 
     @Override

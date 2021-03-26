@@ -172,8 +172,7 @@ public class Combat extends Module {
         mapModel.updateCountryArmyCount(defendingCountry, force);
         mapModel.updateCountryArmyCount(attackingCountry, -force);
 
-        CardUsage.addCard(attackingPlayer);
-
+        addCard(attackingPlayer);
         Card drawnCard = attackingPlayer.getMostRecentCard(attackingPlayer.getCards());
         shellModel.notify("You have earned the card: " +
                 drawnCard.getType().toString() + " " + drawnCard.getCountryName());
@@ -190,5 +189,13 @@ public class Combat extends Module {
             playerWasEliminated = true;
         }
         return playerWasEliminated;
+    }
+
+    public void addCard(Player player) {
+        Deck deck = Deck.getInstance();
+        deck.shuffle();
+
+        Optional<Card> nullableCard = deck.drawCard();
+        nullableCard.ifPresent(player::addCard);
     }
 }

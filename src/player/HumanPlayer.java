@@ -76,13 +76,8 @@ public class HumanPlayer extends Player {
 
     @Override
     public void cardUsage() {
-        MapModel mapModel = MapModel.getInstance();
-        PlayerModel playerModel = PlayerModel.getInstance();
         CardUsage cardUsage = new CardUsage();
-        //Card Spending
-
-        cardUsage.seeOwnedCards(playerModel.getCurrentPlayer());
-
+        cardUsage.displayCardsOwned();
     }
 
     @Override

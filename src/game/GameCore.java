@@ -51,7 +51,7 @@ public class GameCore extends Task<Void> {
                 shellModel.notify("Game over: " + currentPlayer.getName() + " has won the game.");
                 break;
             }
-            if (currentPlayer.getCards().size() > 0) {
+            if (currentPlayer.hasCards()) {
                 currentPlayer.cardUsage();
             }
 
