@@ -2,7 +2,6 @@ package player.model;
 
 import common.Constants;
 import common.validation.Validators;
-import javafx.application.Platform;
 import map.Continent;
 import map.country.Country;
 import map.model.MapModel;
@@ -113,7 +112,7 @@ public class PlayerModel extends Observable {
 
         Predicate<Country> countryCanAttack = country -> Validators
                 .hasAdjacentOpposingCountry
-                .apply(country.getCountryName())
+                .validate(country.getCountryName())
                 .isValid() && country.getArmyCount() != 1;
 
         boolean canAttack = currentPlayer

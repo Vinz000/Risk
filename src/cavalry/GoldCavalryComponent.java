@@ -2,8 +2,8 @@ package cavalry;
 
 import cavalry.model.GoldCavalryModel;
 import cavalry.model.GoldCavalryModelArg;
-import common.Component;
 
+import common.BaseComponent;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -13,22 +13,18 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import static common.Constants.*;
 
-public class GoldCavalryComponent extends StackPane implements Observer, Component {
+public class GoldCavalryComponent extends StackPane {
     private final Circle goldenCavalryIndicator = new Circle();
     private final Tooltip tooltip = new Tooltip();
     private final Text bonus = new Text(String.valueOf(STARTING_CAVALRY_BONUS));
 
     public GoldCavalryComponent() {
-        setCssId();
-        observe();
-        build();
+        BaseComponent.build(this::build, this::setCssId, this::modelsToObserve, this::update);
     }
 
-    @Override
     public void build() {
         setOnMouseMoved(this::onMouseMoved);
         setOnMouseExited(this::onMouseExited);
@@ -65,18 +61,16 @@ public class GoldCavalryComponent extends StackPane implements Observer, Compone
         tooltip.setAnchorY(tooltipY);
     }
 
-    @Override
     public void setCssId() {
         setId(ComponentIds.GOLD_CAVALRY);
     }
 
-    @Override
-    public void observe() {
-        GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
-        goldCavalryModel.addObserver(this);
+    public Observable[] modelsToObserve() {
+        return new Observable[]{
+                GoldCavalryModel.getInstance()
+        };
     }
 
-    @Override
     public void update(Observable o, Object arg) {
         GoldCavalryModelArg updateArg = (GoldCavalryModelArg) arg;
 
