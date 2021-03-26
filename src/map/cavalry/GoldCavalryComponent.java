@@ -2,7 +2,6 @@ package map.cavalry;
 
 import common.Component;
 
-import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -17,7 +16,7 @@ import static common.Constants.*;
 
 public class GoldCavalryComponent extends StackPane implements Observer, Component {
     private final Circle goldenCavalryIndicator = new Circle();
-    private final Text bonus = new Text();
+    private final Text bonus = new Text("0");
 
     public GoldCavalryComponent() {
         setCssId();
@@ -27,6 +26,7 @@ public class GoldCavalryComponent extends StackPane implements Observer, Compone
 
     private void increaseBonus() {
         int bonusSize = Integer.parseInt(bonus.getText());
+        
         if (bonusSize < MAX_CAVALRY_BONUS) {
             int increment = bonusSize < STARTING_BONUS_LIMIT ? INIT_CAVALRY_BONUS : CAVALRY_BONUS;
 
@@ -44,7 +44,6 @@ public class GoldCavalryComponent extends StackPane implements Observer, Compone
 
     @Override
     public void build() {
-        bonus.setText(String.valueOf(0));
         increaseBonus();
 
         goldenCavalryIndicator.setFill(Paint.valueOf("#06577D"));
@@ -53,7 +52,7 @@ public class GoldCavalryComponent extends StackPane implements Observer, Compone
 
         setTranslateX(GOLD_CAVALRY_X);
         setTranslateY(GOLD_CAVALRY_Y);
-//        setVisible(false);
+        setVisible(false);
 
         goldenCavalryIndicator.setRadius(GOLD_CAVALRY_RADIUS);
 
