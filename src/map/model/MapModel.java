@@ -104,12 +104,6 @@ public class MapModel extends Observable {
         }
     }
 
-    public void showGoldCavalryComponent() {
-        MapModelArg mapModelArg = new MapModelArg(null, MapModelUpdateType.SHOW_GOLD_CAVALRY);
-        setChanged();
-        notifyObservers(mapModelArg);
-    }
-
     private void highlightCountry(Country country) {
         MapModelArg mapModelArg = new MapModelArg(country, MapModelUpdateType.HIGHLIGHT);
         setChanged();

@@ -1,5 +1,7 @@
 package game;
 
+import cavalry.GoldCavalry;
+import cavalry.model.GoldCavalryModel;
 import common.Constants;
 import game.module.ClaimTerritories;
 import game.module.SetUp;
@@ -41,7 +43,8 @@ public class GameCore extends Task<Void> {
         }
 
         setUp.selectFirstPlayer();
-        Platform.runLater(mapModel::showGoldCavalryComponent);
+        GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
+        goldCavalryModel.showGoldCavalry();
 
         while (true) {
             Player currentPlayer = playerModel.getCurrentPlayer();
