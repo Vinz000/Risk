@@ -210,7 +210,7 @@ public class Validators {
     public static final Validator canPlaceTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, hasEnoughReinforcements);
     public static final Validator validReinforcement = input -> compose(input, nonEmpty, isInt, appropriateForce, enoughTroops);
     public static final Validator validAttackingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, enoughTroops, hasAtLeastOneTroopLeft, threeUnitCheck);
-    public static final Validator validDefendingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, defenderCanDefend,twoUnitCheck);
+    public static final Validator validDefendingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, defenderCanDefend, twoUnitCheck);
     public static final Validator validDefendingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerDoesNotOccupy, adjacentCountry);
 
     /**
@@ -331,7 +331,6 @@ public class Validators {
 
             if (!connected)
                 return ValidatorResponse.invalid(originCountry.getCountryName() + " is not connected to " + destinationCountry.getCountryName());
-            return ValidatorResponse.validNoMessage();
         }
         return ValidatorResponse.validNoMessage();
     });
