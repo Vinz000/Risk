@@ -31,9 +31,9 @@ public class GoldCavalryModel extends Observable {
         notifyObservers(goldCavalryModelArg);
     }
 
-    private void updateBonus() {
+    private void incrementBonus() {
 
-        if (bonus < 60) {
+        if (bonus < MAX_CAVALRY_BONUS) {
             int bonusIncrement = bonus < STARTING_BONUS_LIMIT ?
                     INIT_CAVALRY_BONUS_INCREMENT :
                     CAVALRY_BONUS_INCREMENT;
@@ -44,9 +44,9 @@ public class GoldCavalryModel extends Observable {
         }
     }
 
-    public int getBonus() {
+    public int getAndIncrementBonus() {
         int currentBonus = bonus;
-        updateBonus();
+        incrementBonus();
         return currentBonus;
     }
 }

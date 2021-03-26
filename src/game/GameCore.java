@@ -12,7 +12,7 @@ import shell.model.ShellModel;
 public class GameCore extends Task<Void> {
 
     private static final ShellModel shellModel = ShellModel.getInstance();
-    GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
+    private static final GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
     private static final PlayerModel playerModel = PlayerModel.getInstance();
 
     @Override
@@ -29,8 +29,7 @@ public class GameCore extends Task<Void> {
 
         setUp.selectFirstPlayer();
 
-//        2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1)
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1); i++) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
             currentPlayer.startReinforcement();

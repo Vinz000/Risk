@@ -96,6 +96,9 @@ public class Constants {
     public static final int GOLD_CAVALRY_X = 920;
     public static final int GOLD_CAVALRY_Y = 531;
 
+    public static final String GOLD_CAVALRY_FILL = "#06577D";
+    public static final String GOLD_CAVALRY_STROKE = "#F0E68C";
+
     public static final int[][] COUNTRY_COORDS = {
             {180, 115},     // 0
             {248, 123}, //

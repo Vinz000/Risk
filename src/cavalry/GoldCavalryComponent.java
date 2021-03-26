@@ -35,8 +35,8 @@ public class GoldCavalryComponent extends StackPane implements Observer, Compone
 
         tooltip.setText("GOLD CAVALRY COUNT");
 
-        goldenCavalryIndicator.setFill(Paint.valueOf("#06577D"));
-        goldenCavalryIndicator.setStroke(Paint.valueOf("#F0E68C"));
+        goldenCavalryIndicator.setFill(Paint.valueOf(GOLD_CAVALRY_FILL));
+        goldenCavalryIndicator.setStroke(Paint.valueOf(GOLD_CAVALRY_STROKE));
         goldenCavalryIndicator.setStrokeType(StrokeType.INSIDE);
         goldenCavalryIndicator.setStrokeWidth(4);
 
