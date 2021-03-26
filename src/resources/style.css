@@ -18,11 +18,21 @@
     -fx-fill: white;
 }
 
+#gold-cavalry {
+    -fx-background-color: transparent;
+}
+
+#gold-cavalry-text {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-font-size: 18;
+}
+
 #game-root {
     -fx-background-color: -fx-grey-1;
 }
 
-#map-component {
+#map {
     -fx-background-size: 1000 660;
     -fx-background-image: url("gameMap.png");
     -fx-background-position: top -70 left -5;
@@ -32,7 +42,7 @@
     -fx-effect: dropshadow(gaussian, #3B4040, 10, 0, 0, 3);
 }
 
-#shell-component {
+#shell {
     -fx-background-color: transparent;
 }
 
@@ -40,7 +50,7 @@
     -fx-text-fill: white;
 }
 
-#shell-input-component {
+#shell-input {
     -fx-background-color: -fx-grey-2;
     -fx-padding: 5;
     -fx-text-fill: white;
@@ -50,13 +60,17 @@
     -fx-background-radius: 10;
 }
 
-#shell-component {
+#shell {
     -fx-background-color: transparent;
 }
 
-#shell-log-component {
+#shell-log {
     -fx-background: -fx-grey-1;
     -fx-background-color: transparent;
+}
+
+#cavalry .circle {
+    -fx-fill: #06577D;
 }
 
 .scroll-bar:vertical {

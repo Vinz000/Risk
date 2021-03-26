@@ -26,7 +26,6 @@ public class ClaimTerritories extends Module {
         String response = shellModel.prompt(Validators.yesNo);
         boolean showDraw = response.toLowerCase().contains("y");
 
-
         List<Player> players = playerModel.getPlayers();
         assignPlayersCountries(showDraw, players);
 

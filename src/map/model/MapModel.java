@@ -18,7 +18,7 @@ public class MapModel extends Observable {
     private static MapModel instance;
     private final List<Country> countries = new ArrayList<>();
     private final List<Continent> continents = new ArrayList<>();
-    private final List<Country> combatantInfo = new ArrayList<Country>(2);
+    private final List<Country> combatantInfo = new ArrayList<>(2);
 
     private MapModel() {
         createCountries();
@@ -102,6 +102,12 @@ public class MapModel extends Observable {
             setChanged();
             notifyObservers(mapModelArg);
         }
+    }
+
+    public void showGoldCavalryComponent() {
+        MapModelArg mapModelArg = new MapModelArg(null, MapModelUpdateType.SHOW_GOLD_CAVALRY);
+        setChanged();
+        notifyObservers(mapModelArg);
     }
 
     private void highlightCountry(Country country) {

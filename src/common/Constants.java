@@ -17,6 +17,11 @@ public class Constants {
     public static final int INIT_HUMAN_PLAYER_REINFORCEMENTS = 3;
     public static final int INIT_NEUTRAL_PLAYER_REINFORCEMENTS = 1;
     public static final int DEFAULT_REINFORCEMENT = 3;
+    public static final int INIT_CAVALRY_BONUS = 2;
+    public static final int CAVALRY_BONUS = 5;
+    public static final int MAX_CAVALRY_BONUS = 60;
+    // TODO: Better naming for this
+    public static final int STARTING_BONUS_LIMIT = 10;
 
     public static final String[] COUNTRY_NAMES = {
             "Ontario", "Quebec", "NW Territory", "Alberta", "Greenland", "E United States", "W United States", "Central America", "Alaska",
@@ -86,7 +91,10 @@ public class Constants {
     public static final int PLAYER_INDICATOR_Y = 531;
     public static final double PLAYER_COLOR_INDICATOR_RADIUS = 15;
     public static final int PLAYER_NAME_Y = 7;
-//  409
+
+    public static final int GOLD_CAVALRY_RADIUS = 20;
+    public static final int GOLD_CAVALRY_X = 920;
+    public static final int GOLD_CAVALRY_Y = 531;
 
     public static final int[][] COUNTRY_COORDS = {
             {180, 115},     // 0
@@ -154,13 +162,16 @@ public class Constants {
     }
 
     public static class ComponentIds {
-        public static final String MAP = "map-component";
-        public static final String SHELL = "shell-component";
-        public static final String SHELL_INPUT = "shell-input-component";
-        public static final String SHELL_LOG = "shell-log-component";
+        public static final String MAP = "map";
+        public static final String SHELL = "shell";
+        public static final String SHELL_INPUT = "shell-input";
+        public static final String SHELL_LOG = "shell-log";
         public static final String LOG = "log";
         public static final String GAME_ROOT = "game-root";
         public static final String TEXT = "text";
+        public static final String PLAYER_INDICATOR = "player-indicator";
+        public static final String GOLD_CAVALRY = "gold-cavalry";
+        public static final String GOLD_CAVALRY_TEXT = "gold-cavalry-text";
     }
 
     public static class Paths {

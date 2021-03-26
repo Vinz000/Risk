@@ -2,5 +2,6 @@ package player.model;
 
 public enum PlayerModelUpdateType {
     VISIBLE,
-    CHANGED_PLAYER
+    CHANGED_PLAYER,
+    SHOW_GOLD_CAVALRY
 }

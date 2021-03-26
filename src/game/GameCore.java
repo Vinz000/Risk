@@ -3,7 +3,9 @@ package game;
 import common.Constants;
 import game.module.ClaimTerritories;
 import game.module.SetUp;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
@@ -11,6 +13,7 @@ import shell.model.ShellModel;
 public class GameCore extends Task<Void> {
 
     private static final ShellModel shellModel = ShellModel.getInstance();
+    private static final MapModel mapModel = MapModel.getInstance();
     private static final PlayerModel playerModel = PlayerModel.getInstance();
 
     @Override
@@ -27,7 +30,8 @@ public class GameCore extends Task<Void> {
 
         setUp.selectFirstPlayer();
 
-        for (int i = 0; i < 2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1); i++) {
+//        2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1)
+        for (int i = 0; i < 1; i++) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
             currentPlayer.startReinforcement();
@@ -37,6 +41,7 @@ public class GameCore extends Task<Void> {
         }
 
         setUp.selectFirstPlayer();
+        Platform.runLater(mapModel::showGoldCavalryComponent);
 
         while (true) {
             Player currentPlayer = playerModel.getCurrentPlayer();
@@ -47,6 +52,7 @@ public class GameCore extends Task<Void> {
                 shellModel.notify("Game over: " + currentPlayer.getName() + " has won the game.");
                 break;
             }
+
             currentPlayer.fortify();
 
             playerModel.changeTurn();

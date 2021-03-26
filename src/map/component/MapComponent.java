@@ -4,6 +4,7 @@ import common.Component;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import map.cavalry.GoldCavalryComponent;
 import map.country.Country;
 import map.country.CountryComponent;
 import map.model.MapModel;
@@ -38,7 +39,9 @@ public class MapComponent extends Pane implements Observer, Component {
 
         PlayerIndicatorComponent playerIndicatorComponent = new PlayerIndicatorComponent();
 
-        getChildren().add(playerIndicatorComponent);
+        GoldCavalryComponent goldCavalryComponent = new GoldCavalryComponent();
+
+        getChildren().addAll(playerIndicatorComponent, goldCavalryComponent);
     }
 
     @Override
