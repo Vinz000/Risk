@@ -77,7 +77,6 @@ public class Combat extends Module {
     }
 
     public boolean initiateCombat(Country attackingCountry, Country defendingCountry) {
-        boolean humanPlayerDefeated;
         int attackingForce = attackingCountry.getForceCount();
         int defendingForce = defendingCountry.getForceCount();
 
@@ -86,14 +85,12 @@ public class Combat extends Module {
         List<Integer> defenderDice = Dice.roll(defendingForce);
         shellModel.notify(defenderDice.toString());
 
-        humanPlayerDefeated = diceComparison(attackerDice, defenderDice, attackingCountry, defendingCountry);
+        boolean humanPlayerDefeated = diceComparison(attackerDice, defenderDice, attackingCountry, defendingCountry);
         return humanPlayerDefeated;
     }
 
     public boolean diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
                                   Country attackingCountry, Country defendingCountry) {
-
-        boolean humanPlayerDefeated;
 
         String attackingPlayerName = attackingCountry.getOccupier().getName();
         String defendingPlayerName = defendingCountry.getOccupier().getName();
@@ -119,7 +116,7 @@ public class Combat extends Module {
         mapModel.updateCountryArmyCount(attackingCountry, remainingAttackingForce);
         mapModel.updateCountryArmyCount(defendingCountry, remainingDefendingForce);
 
-        humanPlayerDefeated = victoryChecker(
+        boolean humanPlayerDefeated = victoryChecker(
                 attackerVictoryPoints, defenderVictoryPoints, attackingCountry, defendingCountry);
         attackingCountry.emptyForceCount();
         defendingCountry.emptyForceCount();

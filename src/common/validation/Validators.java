@@ -6,7 +6,6 @@ import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
 
-import javax.xml.validation.Validator;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -20,7 +19,7 @@ public class Validators {
 
     public static final Function<String, ValidatorResponse> is15CharactersMax = input -> {
         boolean isValid = input.length() < 15;
-        return new ValidatorResponse(isValid, "Player name cannot be greater than 15 characters");
+        return new ValidatorResponse(isValid, "Cannot be more than 15 characters long");
     };
 
     public static final Function<String, ValidatorResponse> yesNo = input -> {
@@ -148,6 +147,7 @@ public class Validators {
 
         return ValidatorResponse.validNoMessage();
     };
+
     public static Function<String, ValidatorResponse> singleUnit = input -> {
         MapModel mapModel = MapModel.getInstance();
         Optional<Country> nullableAttackingCountry = mapModel.getCountryByName(input);
@@ -200,7 +200,6 @@ public class Validators {
         boolean validDefendingForce = defendingForce <= defendingCountryArmy;
 
         return new ValidatorResponse(validDefendingForce, String.format("You don't have %d army, you only have %d.", defendingForce, defendingCountryArmy));
-
     };
 
     public static final Function<String, ValidatorResponse> validPlayerName = input -> compose(input, nonEmpty, is15CharactersMax);

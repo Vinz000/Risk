@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
+import java.util.function.Predicate;
 
 import static common.Constants.*;
 
@@ -110,15 +111,15 @@ public class PlayerModel extends Observable {
         Player currentPlayer = getCurrentPlayer();
         ShellModel shellModel = ShellModel.getInstance();
 
-        boolean canAttack = false;
+        Predicate<Country> countryCanAttack = country -> Validators
+                .hasAdjacentOpposingCountry
+                .apply(country.getCountryName())
+                .isValid() && country.getArmyCount() != 1;
 
-        for (Country country : currentPlayer.getOwnedCountries()) {
-
-            if (Validators.hasAdjacentOpposingCountry.apply(country.getCountryName()).isValid()
-                    && country.getArmyCount() != 1) {
-                canAttack = true;
-            }
-        }
+        boolean canAttack = currentPlayer
+                .getOwnedCountries()
+                .stream()
+                .anyMatch(countryCanAttack);
 
         if (!canAttack) {
             shellModel.notify("You do not have the appropriate forces to attack with.");
