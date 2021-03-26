@@ -2,7 +2,6 @@ package shell.model;
 
 import common.validation.ValidatorResponse;
 import common.validation.Validators;
-import javafx.application.Platform;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -63,11 +62,8 @@ public class ShellModel extends Observable {
 
     public void notify(String notification) {
         ShellModelArg shellModelArg = new ShellModelArg(notification, ShellModelUpdateType.NOTIFICATION);
-
-        Platform.runLater(() -> {
-            setChanged();
-            notifyObservers(shellModelArg);
-        });
+        setChanged();
+        notifyObservers(shellModelArg);
     }
 
     public void setInputLineText(String text) {

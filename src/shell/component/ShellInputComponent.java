@@ -1,6 +1,6 @@
 package shell.component;
 
-import common.Component;
+import common.BaseComponent;
 import common.Constants;
 import javafx.event.Event;
 import javafx.scene.control.TextField;
@@ -8,14 +8,11 @@ import shell.model.ShellModel;
 import shell.model.ShellModelArg;
 
 import java.util.Observable;
-import java.util.Observer;
 
-public class ShellInputComponent extends TextField implements Observer, Component {
+public class ShellInputComponent extends TextField {
 
     public ShellInputComponent() {
-        setCssId();
-        observe();
-        build();
+        BaseComponent.build(this::build, this::setCssId, this::modelsToObserve, this::update);
     }
 
     private void onEnterPressed(Event event) {
@@ -25,23 +22,20 @@ public class ShellInputComponent extends TextField implements Observer, Componen
         clear();
     }
 
-    @Override
     public void build() {
         setOnAction(this::onEnterPressed);
     }
 
-    @Override
     public void setCssId() {
         setId(Constants.ComponentIds.SHELL_INPUT);
     }
 
-    @Override
-    public void observe() {
-        ShellModel shellModel = ShellModel.getInstance();
-        shellModel.addObserver(this);
+    public Observable[] modelsToObserve() {
+        return new Observable[]{
+                ShellModel.getInstance()
+        };
     }
 
-    @Override
     public void update(Observable o, Object arg) {
         ShellModelArg updateArg = (ShellModelArg) arg;
 

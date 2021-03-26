@@ -1,18 +1,16 @@
 package shell.component;
 
-import common.Component;
+import common.BaseComponent;
 import javafx.scene.control.ScrollPane;
 
 import static common.Constants.*;
 
-public class ShellLogComponent extends ScrollPane implements Component {
+public class ShellLogComponent extends ScrollPane {
 
     public ShellLogComponent() {
-        setCssId();
-        build();
+        BaseComponent.build(this::build, this::setCssId);
     }
 
-    @Override
     public void build() {
         ShellLogTextComponent logTextComponent = new ShellLogTextComponent();
 
@@ -27,12 +25,7 @@ public class ShellLogComponent extends ScrollPane implements Component {
         vvalueProperty().bind(logTextComponent.heightProperty());
     }
 
-    @Override
     public void setCssId() {
         setId(ComponentIds.SHELL_LOG);
-    }
-
-    @Override
-    public void observe() {
     }
 }

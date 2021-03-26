@@ -22,7 +22,7 @@ public class Reinforcing extends Module {
         String response = shellModel.prompt(Validators.validReinforcingCountry);
         Optional<Country> nullableCountry = mapModel.getCountryByName(response);
 
-        nullableCountry.ifPresent(country -> uiAction(() -> mapModel.updateCountryArmyCount(country, reinforcement)));
+        nullableCountry.ifPresent(country -> mapModel.updateCountryArmyCount(country, reinforcement));
 
         shellModel.notify("Successfully placed reinforcements.");
 
@@ -44,7 +44,7 @@ public class Reinforcing extends Module {
             response = shellModel.prompt(Validators.canPlaceTroops);
             int numReinforce = Integer.parseInt(response);
 
-            chosenCountry.ifPresent(validCountry -> uiAction(() -> mapModel.updateCountryArmyCount(validCountry, numReinforce)));
+            chosenCountry.ifPresent(validCountry -> mapModel.updateCountryArmyCount(validCountry, numReinforce));
 
             shellModel.notify("Successfully placed reinforcements.");
 

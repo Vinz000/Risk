@@ -1,6 +1,5 @@
 package map.model;
 
-import javafx.application.Platform;
 import map.Continent;
 import map.country.Country;
 import player.Player;
@@ -111,16 +110,13 @@ public class MapModel extends Observable {
     }
 
     public void highlightCountries(List<Country> countries) {
-        for (Country country : countries) {
-            Platform.runLater(() -> highlightCountry(country));
-        }
+        countries.forEach(this::highlightCountry);
     }
 
     public void highlightCountries(int[] countryIds) {
         for (int countryId : countryIds) {
             Optional<Country> nullableAdjacentCountry = getCountryByName(COUNTRY_NAMES[countryId]);
-            nullableAdjacentCountry.ifPresent(adjacentCountry ->
-                    Platform.runLater(() -> highlightCountry(adjacentCountry)));
+            nullableAdjacentCountry.ifPresent(this::highlightCountry);
         }
     }
 

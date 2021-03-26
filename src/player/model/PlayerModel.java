@@ -67,7 +67,7 @@ public class PlayerModel extends Observable {
 
             currentPlayerIndex = 0;
 
-            Platform.runLater(this::updatePlayerIndicator);
+            updatePlayerIndicator();
         }
     }
 
