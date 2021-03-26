@@ -18,14 +18,6 @@ public enum CardType{
         this.cardTypeString = cardTypeString;
     }
 
-    public static Optional<CardType> fromString(String name) {
-        for (CardType e : values()) {
-            if (e.cardTypeString.contains(name.toLowerCase())) {
-                return Optional.of(e);
-            }
-        }
-        return Optional.empty();
-    }
 
     @Override
     public String toString() {

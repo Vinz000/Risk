@@ -382,7 +382,7 @@ public class Validators {
         return ValidatorResponse.validNoMessage();
     });
 
-    public static final ValidatorBuilder<Country> validFortification = originCountry -> rawInput -> compose(rawInput, nonEmpty, isInt, appropriateForce, input -> {
+    public static final Function<Country, Function<String, ValidatorResponse>> validFortification = originCountry -> rawInput -> compose(rawInput, nonEmpty, isInt, appropriateForce, input -> {
         int desiredNumberOfTroops = Integer.parseInt(input);
 
         return new ValidatorResponse(desiredNumberOfTroops < originCountry.getArmyCount(), "Not enough troops in " + originCountry.getCountryName());
