@@ -1,14 +1,12 @@
 package cavalry.model;
 
-import cavalry.GoldCavalry;
-
 import java.util.Observable;
 
 import static common.Constants.*;
 
 public class GoldCavalryModel extends Observable {
     private static GoldCavalryModel instance;
-    private final GoldCavalry goldCavalry = new GoldCavalry();
+    private int bonus = STARTING_CAVALRY_BONUS;
 
     private GoldCavalryModel() {
     }
@@ -22,7 +20,7 @@ public class GoldCavalryModel extends Observable {
     }
 
     public void showGoldCavalry() {
-        GoldCavalryModelArg goldCavalryModelArg = new GoldCavalryModelArg(null, GoldCavalryModelUpdateType.VISIBLE);
+        GoldCavalryModelArg goldCavalryModelArg = new GoldCavalryModelArg(GoldCavalryModelUpdateType.VISIBLE);
         setChanged();
         notifyObservers(goldCavalryModelArg);
     }
@@ -34,20 +32,20 @@ public class GoldCavalryModel extends Observable {
     }
 
     private void updateBonus() {
-        int bonus = goldCavalry.getBonus();
 
         if (bonus < 60) {
-            int bonusIncrement = bonus < STARTING_BONUS_LIMIT ? INIT_CAVALRY_BONUS : CAVALRY_BONUS;
+            int bonusIncrement = bonus < STARTING_BONUS_LIMIT ?
+                    INIT_CAVALRY_BONUS_INCREMENT :
+                    CAVALRY_BONUS_INCREMENT;
 
             bonus += bonusIncrement;
 
             updateBonusCount(bonus);
-            goldCavalry.setBonus(bonus);
         }
     }
 
     public int getBonus() {
-        int currentBonus = goldCavalry.getBonus();
+        int currentBonus = bonus;
         updateBonus();
         return currentBonus;
     }

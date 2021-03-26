@@ -50,9 +50,7 @@ public class HumanPlayer extends Player {
         boolean humanPlayerDefeated = false;
         MapModel mapModel = MapModel.getInstance();
         PlayerModel playerModel = PlayerModel.getInstance();
-        ShellModel shellModel = ShellModel.getInstance();
         Combat combat = new Combat();
-        // War Loop
 
         while (playerModel.currentPlayerCanAttack() && !combat.skipCombat(this)) {
             combat.selectAttackingCountry(this);

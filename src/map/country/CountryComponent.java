@@ -162,11 +162,7 @@ public class CountryComponent extends StackPane implements Observer, Component {
 
         MapModelArg updateArg = (MapModelArg) arg;
 
-        boolean isThisCountry = false;
-
-        if (updateArg.arg != null) {
-            isThisCountry = updateArg.arg.equals(country);
-        }
+        boolean isThisCountry = updateArg.arg.equals(country);
 
         if (isThisCountry) {
 

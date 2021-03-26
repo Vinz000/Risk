@@ -20,7 +20,7 @@ import static common.Constants.*;
 public class GoldCavalryComponent extends StackPane implements Observer, Component {
     private final Circle goldenCavalryIndicator = new Circle();
     private final Tooltip tooltip = new Tooltip();
-    private final Text bonus = new Text("2");
+    private final Text bonus = new Text(String.valueOf(STARTING_CAVALRY_BONUS));
 
     public GoldCavalryComponent() {
         setCssId();

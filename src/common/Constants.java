@@ -17,10 +17,10 @@ public class Constants {
     public static final int INIT_HUMAN_PLAYER_REINFORCEMENTS = 3;
     public static final int INIT_NEUTRAL_PLAYER_REINFORCEMENTS = 1;
     public static final int DEFAULT_REINFORCEMENT = 3;
-    public static final int INIT_CAVALRY_BONUS = 2;
-    public static final int CAVALRY_BONUS = 5;
+    public static final int INIT_CAVALRY_BONUS_INCREMENT = 2;
+    public static final int CAVALRY_BONUS_INCREMENT = 5;
+    public static final int STARTING_CAVALRY_BONUS = 2;
     public static final int MAX_CAVALRY_BONUS = 60;
-    // TODO: Better naming for this
     public static final int STARTING_BONUS_LIMIT = 10;
 
     public static final String[] COUNTRY_NAMES = {

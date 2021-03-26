@@ -1,13 +1,10 @@
 package game;
 
-import cavalry.GoldCavalry;
 import cavalry.model.GoldCavalryModel;
 import common.Constants;
 import game.module.ClaimTerritories;
 import game.module.SetUp;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
-import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
@@ -15,7 +12,7 @@ import shell.model.ShellModel;
 public class GameCore extends Task<Void> {
 
     private static final ShellModel shellModel = ShellModel.getInstance();
-    private static final MapModel mapModel = MapModel.getInstance();
+    GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
     private static final PlayerModel playerModel = PlayerModel.getInstance();
 
     @Override
@@ -43,7 +40,7 @@ public class GameCore extends Task<Void> {
         }
 
         setUp.selectFirstPlayer();
-        GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
+
         goldCavalryModel.showGoldCavalry();
 
         while (true) {

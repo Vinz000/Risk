@@ -8,4 +8,9 @@ public class GoldCavalryModelArg {
         this.arg = arg;
         this.updateType = updateType;
     }
+
+    public GoldCavalryModelArg(GoldCavalryModelUpdateType updateType) {
+        this.arg = null;
+        this.updateType = updateType;
+    }
 }

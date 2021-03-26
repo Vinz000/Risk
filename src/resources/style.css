@@ -69,10 +69,6 @@
     -fx-background-color: transparent;
 }
 
-#cavalry .circle {
-    -fx-fill: #06577D;
-}
-
 .scroll-bar:vertical {
     -fx-background-color: transparent;
 }
