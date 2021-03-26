@@ -20,7 +20,7 @@ public class SetUp extends Module {
 
     public void getPlayerOne() {
         shellModel.notify(Notifications.NAME + "(P1)");
-        String playerName = shellModel.prompt(Validators.nonEmpty);
+        String playerName = shellModel.prompt(Validators.validPlayerName);
         Player humanPlayerOne = new HumanPlayer(playerName, Colors.PLAYER_1_COLOR);
         playerModel.addPlayer(humanPlayerOne);
 
@@ -30,7 +30,7 @@ public class SetUp extends Module {
 
     public void getPlayerTwo() {
         shellModel.notify(Constants.Notifications.NAME + "(P2)");
-        String name = shellModel.prompt(Validators.nonEmpty);
+        String name = shellModel.prompt(Validators.validPlayerName);
         Player humanPlayerTwo = new HumanPlayer(name, Constants.Colors.PLAYER_2_COLOR);
         playerModel.addPlayer(humanPlayerTwo);
         shellModel.notify("Welcome " + humanPlayerTwo.getName());

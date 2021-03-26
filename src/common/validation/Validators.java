@@ -18,6 +18,11 @@ public class Validators {
         return new ValidatorResponse(isValid, "cannot be empty");
     };
 
+    public static final Function<String, ValidatorResponse> is15CharactersMax = input -> {
+        boolean isValid = input.length() < 15;
+        return new ValidatorResponse(isValid, "Player name cannot be greater than 15 characters");
+    };
+
     public static final Function<String, ValidatorResponse> yesNo = input -> {
         boolean isValid = input.equalsIgnoreCase("yes") ||
                 input.toLowerCase().equals("y") ||
@@ -198,6 +203,7 @@ public class Validators {
 
     };
 
+    public static final Function<String, ValidatorResponse> validPlayerName = input -> compose(input, nonEmpty, is15CharactersMax);
     public static final Function<String, ValidatorResponse> validReinforcingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerOccupies);
     public static final Function<String, ValidatorResponse> validAttackingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerOccupies, hasAdjacentOpposingCountry, singleUnit);
     public static final Function<String, ValidatorResponse> canPlaceTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, hasEnoughReinforcements);
