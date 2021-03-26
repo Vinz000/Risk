@@ -9,18 +9,17 @@ import player.model.PlayerModel;
 import java.util.Optional;
 import java.util.function.Function;
 
-/**
- * TODO:
- * - Change so that input must pass all validators
- * - Make a validator to check input length for playerName (15 characters max)
- */
-
 public class Validators {
     public static final Function<String, ValidatorResponse> alwaysValid = input -> ValidatorResponse.validNoMessage();
 
     public static final Function<String, ValidatorResponse> nonEmpty = input -> {
         boolean isValid = !input.isEmpty();
         return new ValidatorResponse(isValid, "cannot be empty");
+    };
+
+    public static final Function<String, ValidatorResponse> is15CharactersMax = input -> {
+        boolean isValid = input.length() < 15;
+        return new ValidatorResponse(isValid, "Cannot be more than 15 characters long");
     };
 
     public static final Function<String, ValidatorResponse> yesNo = input -> {
@@ -40,6 +39,7 @@ public class Validators {
             return ValidatorResponse.invalid("Must be an integer");
         }
     };
+
     public static final Function<String, ValidatorResponse> currentPlayerOccupies = input -> {
         PlayerModel playerModel = PlayerModel.getInstance();
         Player currentPlayer = playerModel.getCurrentPlayer();
@@ -47,6 +47,7 @@ public class Validators {
 
         return new ValidatorResponse(invalidMessage);
     };
+
     public static final Function<String, ValidatorResponse> currentPlayerDoesNotOccupy = input -> {
         PlayerModel playerModel = PlayerModel.getInstance();
         Player currentPlayer = playerModel.getCurrentPlayer();
@@ -54,6 +55,7 @@ public class Validators {
 
         return new ValidatorResponse(invalidMessage);
     };
+
     public static final Function<String, ValidatorResponse> skipOrFight = input -> {
         boolean isValid = input.equalsIgnoreCase("skip") ||
                 input.toLowerCase().contains("s") ||
@@ -61,6 +63,7 @@ public class Validators {
                 input.toLowerCase().contains("f");
         return new ValidatorResponse(isValid, "Input must be 'fight' or 'skip'");
     };
+
     public static final Function<String, ValidatorResponse> adjacentCountry = input -> {
         MapModel mapModel = MapModel.getInstance();
 
@@ -144,6 +147,7 @@ public class Validators {
 
         return ValidatorResponse.validNoMessage();
     };
+
     public static Function<String, ValidatorResponse> singleUnit = input -> {
         MapModel mapModel = MapModel.getInstance();
         Optional<Country> nullableAttackingCountry = mapModel.getCountryByName(input);
@@ -188,12 +192,23 @@ public class Validators {
         return new ValidatorResponse(hasAtLeastOneTroopLeft, "You need to keep at least one troop back.");
     };
 
+    public static Function<String, ValidatorResponse> defenderCanDefend = input -> {
+        MapModel mapModel = MapModel.getInstance();
+        int defendingForce = Integer.parseInt(input);
+        int defendingCountryArmy = mapModel.getDefendingCountry().getArmyCount();
+
+        boolean validDefendingForce = defendingForce <= defendingCountryArmy;
+
+        return new ValidatorResponse(validDefendingForce, String.format("You don't have %d army, you only have %d.", defendingForce, defendingCountryArmy));
+    };
+
+    public static final Function<String, ValidatorResponse> validPlayerName = input -> compose(input, nonEmpty, is15CharactersMax);
     public static final Function<String, ValidatorResponse> validReinforcingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerOccupies);
     public static final Function<String, ValidatorResponse> validAttackingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerOccupies, hasAdjacentOpposingCountry, singleUnit);
     public static final Function<String, ValidatorResponse> canPlaceTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, hasEnoughReinforcements);
     public static final Function<String, ValidatorResponse> validReinforcement = input -> compose(input, nonEmpty, isInt, appropriateForce, enoughTroops);
-    public static final Function<String, ValidatorResponse> validAttackingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, hasAtLeastOneTroopLeft, threeUnitCheck);
-    public static final Function<String, ValidatorResponse> validDefendingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, twoUnitCheck);
+    public static final Function<String, ValidatorResponse> validAttackingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, enoughTroops, hasAtLeastOneTroopLeft, threeUnitCheck);
+    public static final Function<String, ValidatorResponse> validDefendingTroops = input -> compose(input, nonEmpty, isInt, appropriateForce, defenderCanDefend,twoUnitCheck);
     public static final Function<String, ValidatorResponse> validDefendingCountry = input -> compose(input, nonEmpty, validCountryName, currentPlayerDoesNotOccupy, adjacentCountry);
 
     /**
