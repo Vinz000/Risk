@@ -65,8 +65,8 @@ public class SetUp extends Module {
                 Collections.swap(players, 0, players.size() - 1);
             }
 
-            uiAction(playerModel::updatePlayerIndicator);
-            uiAction(playerModel::showPlayerIndicator);
+            playerModel.updatePlayerIndicator();
+            playerModel.showPlayerIndicator();
 
         } while (playerOneDiceSum == playerTwoDiceSum);
 

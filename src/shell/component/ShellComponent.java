@@ -1,33 +1,24 @@
 package shell.component;
 
-import common.Component;
+import common.BaseComponent;
 import javafx.scene.layout.VBox;
 
 import static common.Constants.ComponentIds;
 
-public class ShellComponent extends VBox implements Component {
+public class ShellComponent extends VBox {
 
     public ShellComponent() {
-        setCssId();
-        build();
+        BaseComponent.build(this::build, this::setCssId);
     }
 
-    @Override
     public void build() {
         ShellInputComponent inputComponent = new ShellInputComponent();
         ShellLogComponent logComponent = new ShellLogComponent();
-
         setSpacing(10);
-
         getChildren().addAll(logComponent, inputComponent);
     }
 
-    @Override
     public void setCssId() {
         setId(ComponentIds.SHELL);
-    }
-
-    @Override
-    public void observe() {
     }
 }

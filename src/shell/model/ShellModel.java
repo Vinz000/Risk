@@ -1,19 +1,18 @@
 package shell.model;
 
+import common.validation.Validator;
 import common.validation.ValidatorResponse;
 import common.validation.Validators;
-import javafx.application.Platform;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Observable;
-import java.util.function.Function;
 
 public class ShellModel extends Observable {
 
     private static ShellModel instance;
     private final Deque<String> prompts = new LinkedList<>();
-    private Function<String, ValidatorResponse> currentValidator = Validators.alwaysValid;
+    private Validator currentValidator = Validators.alwaysValid;
 
     private ShellModel() {
     }
@@ -26,11 +25,11 @@ public class ShellModel extends Observable {
         return instance;
     }
 
-    public void setCurrentValidator(Function<String, ValidatorResponse> validator) {
+    public void setCurrentValidator(Validator validator) {
         currentValidator = validator;
     }
 
-    public String prompt(Function<String, ValidatorResponse> validator) {
+    public String prompt(Validator validator) {
 
         setCurrentValidator(validator);
 
@@ -49,7 +48,7 @@ public class ShellModel extends Observable {
     }
 
     public void handleUserResponse(String userInput) {
-        ValidatorResponse validatorResponse = currentValidator.apply(userInput);
+        ValidatorResponse validatorResponse = currentValidator.validate(userInput);
 
         if (validatorResponse.isValid()) {
             synchronized (prompts) {
@@ -63,11 +62,8 @@ public class ShellModel extends Observable {
 
     public void notify(String notification) {
         ShellModelArg shellModelArg = new ShellModelArg(notification, ShellModelUpdateType.NOTIFICATION);
-
-        Platform.runLater(() -> {
-            setChanged();
-            notifyObservers(shellModelArg);
-        });
+        setChanged();
+        notifyObservers(shellModelArg);
     }
 
     public void setInputLineText(String text) {

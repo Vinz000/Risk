@@ -1,6 +1,6 @@
 package game;
 
-import common.Component;
+import common.BaseComponent;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import map.component.MapComponent;
@@ -8,16 +8,13 @@ import shell.component.ShellComponent;
 
 import static common.Constants.ComponentIds;
 
-public class GameComponent extends BorderPane implements Component {
+public class GameComponent extends BorderPane {
 
     public GameComponent() {
-        setCssId();
-        build();
+        BaseComponent.build(this::build, this::setCssId);
     }
 
-    @Override
     public void build() {
-
         // Create top-level components
         MapComponent mapComponent = new MapComponent();
         ShellComponent shellComponent = new ShellComponent();
@@ -29,13 +26,7 @@ public class GameComponent extends BorderPane implements Component {
         setMargin(mapComponent, new Insets(10, 0, 10, 10));
     }
 
-    @Override
     public void setCssId() {
         setId(ComponentIds.GAME_ROOT);
     }
-
-    @Override
-    public void observe() {
-    }
-
 }

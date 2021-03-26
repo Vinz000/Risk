@@ -4,7 +4,6 @@ import common.validation.Validators;
 import map.country.Country;
 import player.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ public class Fortification extends Module {
         boolean canFortify = false;
         for (Country playerOwnedCountry : playerModel.getCurrentPlayer().getOwnedCountries()) {
             boolean canFortifyThisCountry = Validators.fortificationOriginCountry
-                    .apply(playerOwnedCountry.getCountryName()).isValid();
+                    .validate(playerOwnedCountry.getCountryName()).isValid();
 
             if (canFortifyThisCountry) {
                 canFortify = true;
@@ -57,7 +56,7 @@ public class Fortification extends Module {
         shellModel.notify("Which country will you move troops to?");
         Player currentPlayer = playerModel.getCurrentPlayer();
         mapModel.highlightCountries(currentPlayer.getOwnedCountries());
-        String response = shellModel.prompt(Validators.fortificationDestinationCountry.apply(from));
+        String response = shellModel.prompt(Validators.fortificationDestinationCountry.build(from));
         mapModel.highlightCountries(currentPlayer.getOwnedCountries());
 
         return mapModel.getCountryByName(response);
@@ -65,7 +64,7 @@ public class Fortification extends Module {
 
     public int selectNumberOfTroops(Country from) {
         shellModel.notify("How many troops will you move?");
-        String response = shellModel.prompt(Validators.validFortification.apply(from));
+        String response = shellModel.prompt(Validators.validFortification.build(from));
 
         return Integer.parseInt(response);
     }

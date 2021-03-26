@@ -1,6 +1,6 @@
 package map.country;
 
-import common.Component;
+import common.BaseComponent;
 import common.Constants;
 import javafx.scene.Cursor;
 import javafx.scene.control.Tooltip;
@@ -20,11 +20,10 @@ import shell.model.ShellModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
 import static common.Constants.*;
 
-public class CountryComponent extends StackPane implements Observer, Component {
+public class CountryComponent extends StackPane {
     private final Country country;
     private final Text armyCount = new Text();
     private final Circle countryMarker = new Circle();
@@ -34,11 +33,9 @@ public class CountryComponent extends StackPane implements Observer, Component {
     public CountryComponent(Country country) {
         this.country = country;
 
-        observe();
-        build();
+        BaseComponent.build(this::build, this::modelsToObserve, this::update);
     }
 
-    @Override
     public void build() {
         createLinks();
 
@@ -63,14 +60,10 @@ public class CountryComponent extends StackPane implements Observer, Component {
         setVisible(false);
     }
 
-    @Override
-    public void setCssId() {
-    }
-
-    @Override
-    public void observe() {
-        MapModel mapModel = MapModel.getInstance();
-        mapModel.addObserver(this);
+    public Observable[] modelsToObserve() {
+        return new Observable[]{
+                MapModel.getInstance()
+        };
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {
@@ -157,7 +150,6 @@ public class CountryComponent extends StackPane implements Observer, Component {
         countryMarker.setRadius(COUNTRY_NODE_RADIUS + radiusBonus);
     }
 
-    @Override
     public void update(Observable o, Object arg) {
 
         MapModelArg updateArg = (MapModelArg) arg;

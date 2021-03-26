@@ -1,6 +1,6 @@
 package player.indicator;
 
-import common.Component;
+import common.BaseComponent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
@@ -9,21 +9,17 @@ import player.model.PlayerModel;
 import player.model.PlayerModelArg;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import static common.Constants.*;
 
-public class PlayerIndicatorComponent extends HBox implements Observer, Component {
+public class PlayerIndicatorComponent extends HBox {
     private final Circle playerColor = new Circle();
     private final Label playerName = new Label();
 
     public PlayerIndicatorComponent() {
-        setCssId();
-        observe();
-        build();
+        BaseComponent.build(this::build, this::setCssId, this::modelsToObserve, this::update);
     }
 
-    @Override
     public void build() {
         setSpacing(5);
 
@@ -42,18 +38,16 @@ public class PlayerIndicatorComponent extends HBox implements Observer, Componen
         setVisible(false);
     }
 
-    @Override
     public void setCssId() {
         setId(ComponentIds.PLAYER_INDICATOR);
     }
 
-    @Override
-    public void observe() {
-        PlayerModel playerModel = PlayerModel.getInstance();
-        playerModel.addObserver(this);
+    public Observable[] modelsToObserve() {
+        return new Observable[]{
+                PlayerModel.getInstance()
+        };
     }
 
-    @Override
     public void update(Observable o, Object arg) {
         PlayerModelArg updateArg = (PlayerModelArg) arg;
 

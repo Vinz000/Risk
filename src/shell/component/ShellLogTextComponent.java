@@ -1,42 +1,36 @@
 package shell.component;
 
-import common.Component;
+import common.BaseComponent;
 import common.Constants;
 import javafx.scene.control.Label;
 import shell.model.ShellModel;
 import shell.model.ShellModelArg;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import static common.Constants.SHELL_WIDTH;
 
-public class ShellLogTextComponent extends Label implements Observer, Component {
+public class ShellLogTextComponent extends Label {
     public ShellLogTextComponent() {
-        setCssId();
-        observe();
-        build();
+        BaseComponent.build(this::build, this::setCssId, this::modelsToObservable, this::update);
     }
 
-    @Override
     public void build() {
         setWrapText(true);
         setMinWidth(SHELL_WIDTH - 5);
         setMaxWidth(SHELL_WIDTH - 5);
     }
 
-    @Override
     public void setCssId() {
         setId(Constants.ComponentIds.LOG);
     }
 
-    @Override
-    public void observe() {
-        ShellModel shellModel = ShellModel.getInstance();
-        shellModel.addObserver(this);
+    public Observable[] modelsToObservable() {
+        return new Observable[]{
+                ShellModel.getInstance()
+        };
     }
 
-    @Override
     public void update(Observable o, Object arg) {
         ShellModelArg updateArg = (ShellModelArg) arg;
 
