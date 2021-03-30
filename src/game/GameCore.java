@@ -29,7 +29,8 @@ public class GameCore extends Task<Void> {
 
         setUp.selectFirstPlayer();
 
-        for (int i = 0; i < 2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1); i++) {
+ //       2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1)
+        for (int i = 0; i < 5; i++) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
             currentPlayer.startReinforcement();
@@ -46,8 +47,8 @@ public class GameCore extends Task<Void> {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
             currentPlayer.startTurn();
-            currentPlayer.reinforce();
-            if (currentPlayer.combat()) {
+           currentPlayer.reinforce();
+           if (currentPlayer.combat()) {
                 shellModel.notify("Game over: " + currentPlayer.getName() + " has won the game.");
                 break;
             }
@@ -55,7 +56,7 @@ public class GameCore extends Task<Void> {
                 currentPlayer.cardUsage();
             }
 
-            currentPlayer.fortify();
+           currentPlayer.fortify();
 
             playerModel.changeTurn();
         }

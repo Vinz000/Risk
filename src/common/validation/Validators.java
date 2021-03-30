@@ -2,15 +2,17 @@ package common.validation;
 
 import common.Constants;
 import deck.Card;
+import deck.CardSet;
+import deck.CardType;
 import map.country.Country;
 import map.model.MapModel;
 import player.Player;
 import player.model.PlayerModel;
+import shell.model.ShellModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 
 public class Validators {
@@ -213,9 +215,9 @@ public class Validators {
         boolean canSpend;
 
         if (input.toLowerCase().contains("y")) {
-            canSpend = validCombinations(currentPlayer);
+            canSpend = validCombinations(currentPlayer.getCards());
             return new ValidatorResponse(canSpend, "You do not have the correct selection of cards.");
-        } else if (input.toLowerCase().contains("n")){
+        } else if (input.toLowerCase().contains("n")) {
             return ValidatorResponse.validNoMessage();
         } else {
             return ValidatorResponse.invalid("Please enter yes or no.");
@@ -223,58 +225,29 @@ public class Validators {
 
     };
 
-    public static Validator isCard = input -> {
-        boolean isCard = false;
-
-        if (input.toLowerCase().contains("art") || input.toLowerCase().contains("artillery")) {
-            isCard = true;
-        } else if (input.toLowerCase().contains("s") || input.toLowerCase().contains("soldier")) {
-            isCard = true;
-        } else if (input.toLowerCase().contains("c") || input.toLowerCase().contains("calvary")) {
-            isCard = true;
-        } else if (input.toLowerCase().contains("w") || input.toLowerCase().contains("wildcard")) {
-            isCard = true;
-        }
-        return new ValidatorResponse(isCard, input + " not a valid card.");
-    };
-
     public static Validator cardChoiceCheck = input -> {
-        boolean appropriateInput = true;
-        boolean hasCards = false;
-
         PlayerModel playerModel = PlayerModel.getInstance();
         Player currentPlayer = playerModel.getCurrentPlayer();
 
         List<Card> cardsOwned = currentPlayer.getCards();
-        List<Card> artillery = currentPlayer.getArtilleryCards();
-        List<Card> calvary = currentPlayer.getCalvaryCards();
-        List<Card> soldier = currentPlayer.getSoldierCards();
 
-        if (input.toLowerCase().contains("ar")) {
-            hasCards = selectedEnoughCards(artillery);
-        } else if (input.toLowerCase().contains("c")) {
-            hasCards = selectedEnoughCards(calvary);
-        } else if (input.toLowerCase().contains("s")) {
-            hasCards = selectedEnoughCards(soldier);
-        } else if (input.toLowerCase().contains("m")) {
-            hasCards = selectedEnoughCards(cardsOwned);
-        } else {
-            appropriateInput = false;
+        Optional<CardSet> nullableCardSet = CardSet.fromString(input);
+        if (nullableCardSet.isPresent()) {
+            CardSet cardSet = nullableCardSet.get();
+            System.out.println(cardsOwned.toString());
+            return new ValidatorResponse(cardSet.logic.test(cardsOwned), "Please choose a valid option.");
         }
 
-        boolean appropriateSelection = appropriateInput && hasCards;
-        return new ValidatorResponse(appropriateSelection, "Please choose a valid option.");
+        return ValidatorResponse.invalid("Invalid");
     };
 
-    private static boolean selectedEnoughCards(List<Card> cardsSelected) {
-        return cardsSelected.size() >= 3;
-    }
-
-    private static boolean validCombinations(Player currentPlayer) {
-        return currentPlayer.atLeastOneOfEach() ||
-                currentPlayer.atLeastThree() ||
-                currentPlayer.oneWildCard() ||
-                currentPlayer.twoWildCards();
+    private static boolean validCombinations(List<Card> cards) {
+        return CardSet.atLeastOneOfEach().test(cards) ||
+                CardSet.atLeastThreeOfType(CardType.ARTILLERY).test(cards) ||
+                CardSet.atLeastThreeOfType(CardType.SOLDIER).test(cards) ||
+                CardSet.atLeastThreeOfType(CardType.CALVARY).test(cards) ||
+                CardSet.oneWildCard().test(cards) ||
+                CardSet.twoWildCards().test(cards);
     }
 
     public static final Validator validPlayerName = input -> compose(input, nonEmpty, is15CharactersMax);

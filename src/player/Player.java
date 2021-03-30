@@ -107,7 +107,7 @@ public abstract class Player {
         List<Card> cardsToRemove = cards.stream().filter(isCardType).collect(Collectors.toList());
 
         for (int i = 0; i < amountToRemove; i++) {
-            cards.remove(cardsToRemove.get(amountToRemove));
+            cards.remove(cardsToRemove.get(i));
         }
     }
 
@@ -127,28 +127,8 @@ public abstract class Player {
         return getCardsOfType(CardType.WILDCARD);
     }
 
-    public boolean atLeastOneOfEach() {
-        return getArtilleryCards().size() > 1 && getSoldierCards().size() > 1 && getCalvaryCards().size() > 1;
-    }
-
-    public boolean atLeastThree() {
-        return getArtilleryCards().size() >= 3 || getCalvaryCards().size() >= 3 || getSoldierCards().size() >= 3;
-    }
-
-    public boolean atLeastOne() {
-        return getArtilleryCards().size() >= 1 || getCalvaryCards().size() >= 1 || getSoldierCards().size() >= 1;
-    }
-
-    public boolean oneWildCard() {
-        return getCards().size() >= 3 && getWildCards().size() == 1;
-    }
-
-    public boolean twoWildCards() {
-        return getWildCards().size() == 2 && atLeastOne();
-    }
-
     public boolean hasCards() {
-        return cards.size() > 3;
+        return cards.size() >= 3;
     }
 
     @Override

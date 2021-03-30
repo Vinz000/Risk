@@ -43,6 +43,6 @@ public class BaseComponent implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Platform.runLater(() -> nullableOnUpdate.ifPresent(onUpdate -> onUpdate.run(o, arg)));
+        nullableOnUpdate.ifPresent(onUpdate -> Platform.runLater(() -> onUpdate.run(o, arg)));
     }
 }
