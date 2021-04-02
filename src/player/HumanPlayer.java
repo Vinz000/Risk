@@ -42,6 +42,9 @@ public class HumanPlayer extends Player {
 
     @Override
     public void reinforce() {
+        PlayerModel playerModel = PlayerModel.getInstance();
+        playerModel.calculateReinforcements(this);
+
         Reinforcing reinforcing = new Reinforcing();
         reinforcing.reinforceOwnedCountries(this);
     }

@@ -234,7 +234,6 @@ public class Validators {
         Optional<CardSet> nullableCardSet = CardSet.fromString(input);
         if (nullableCardSet.isPresent()) {
             CardSet cardSet = nullableCardSet.get();
-            System.out.println(cardsOwned.toString());
             return new ValidatorResponse(cardSet.logic.test(cardsOwned), "Please choose a valid option.");
         }
 
@@ -382,7 +381,7 @@ public class Validators {
         return ValidatorResponse.validNoMessage();
     });
 
-    public static final Function<Country, Function<String, ValidatorResponse>> validFortification = originCountry -> rawInput -> compose(rawInput, nonEmpty, isInt, appropriateForce, input -> {
+    public static final ValidatorBuilder<Country> validFortification = originCountry -> rawInput -> compose(rawInput, nonEmpty, isInt, appropriateForce, input -> {
         int desiredNumberOfTroops = Integer.parseInt(input);
 
         return new ValidatorResponse(desiredNumberOfTroops < originCountry.getArmyCount(), "Not enough troops in " + originCountry.getCountryName());

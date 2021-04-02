@@ -5,7 +5,6 @@ import common.validation.Validators;
 import deck.Card;
 import deck.CardSet;
 import deck.CardType;
-import map.country.Country;
 import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
@@ -129,28 +128,10 @@ public class CardUsage extends Module {
     public void addTroops(Player currentPlayer) {
         GoldCavalryModel goldCavalryModel = GoldCavalryModel.getInstance();
         int goldenCalvaryReinforcements = goldCavalryModel.getAndIncrementBonus();
-        mapModel.highlightCountries(currentPlayer.getOwnedCountries());
 
-        ///TODO: VINCENT PLEASE MAKE THIS GENERIC
-        while (goldenCalvaryReinforcements > 0) {
-            shellModel.notify(String.format("You have %d reinforcements to place.", goldenCalvaryReinforcements));
-            shellModel.notify("Choose country to reinforce");
+        currentPlayer.setReinforcements(goldenCalvaryReinforcements);
 
-            response = shellModel.prompt(Validators.validReinforcingCountry);
-            Optional<Country> chosenCountry = mapModel.getCountryByName(response);
-
-            shellModel.notify("How many units would you like to reinforce with?");
-
-            response = shellModel.prompt(Validators.alwaysValid);
-            int numReinforce = Integer.parseInt(response);
-
-            chosenCountry.ifPresent(validCountry -> mapModel.updateCountryArmyCount(validCountry, numReinforce));
-
-            shellModel.notify("Successfully placed reinforcements.");
-
-            goldenCalvaryReinforcements -= numReinforce;
-        }
-        mapModel.highlightCountries(currentPlayer.getOwnedCountries());
+        Reinforcing reinforcing = new Reinforcing();
+        reinforcing.reinforceOwnedCountries(currentPlayer);
     }
-
 }

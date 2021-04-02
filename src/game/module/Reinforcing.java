@@ -30,7 +30,6 @@ public class Reinforcing extends Module {
     }
 
     public void reinforceOwnedCountries(Player player) {
-        playerModel.calculateReinforcements(player);
 
         mapModel.highlightCountries(player.getOwnedCountries());
         while (player.getReinforcements() > 0) {

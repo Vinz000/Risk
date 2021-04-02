@@ -28,9 +28,8 @@ public class GameCore extends Task<Void> {
         claimTerritories.assignInitialCountries();
 
         setUp.selectFirstPlayer();
-
- //       2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1)
-        for (int i = 0; i < 5; i++) {
+        
+        for (int i = 0; i < 2 * Constants.INIT_REINFORCEMENT_TURNS * (Constants.NUM_PLAYERS - 1); i++) {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
             currentPlayer.startReinforcement();
