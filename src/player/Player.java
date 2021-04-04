@@ -70,7 +70,7 @@ public abstract class Player {
 
     public abstract boolean combat();
 
-    public abstract void cardUsage();
+    public abstract boolean cardUsage();
 
     public abstract void fortify();
 

@@ -5,6 +5,7 @@ import common.validation.Validators;
 import deck.Card;
 import deck.Deck;
 import map.country.Country;
+import player.HumanPlayer;
 import player.NeutralPlayer;
 import player.Player;
 import player.model.PlayerModel;
@@ -152,15 +153,8 @@ public class Combat extends Module {
 
         mapModel.setCountryOccupier(defendingCountry, attackingPlayer);
 
-        playerEliminationCheck(defendingPlayer);
+        if (playerEliminationCheck(defendingPlayer) && defendingPlayer instanceof HumanPlayer) return true;
 
-        if (defendingPlayer instanceof NeutralPlayer) {
-            playerEliminationCheck(defendingPlayer);
-        } else {
-            if (playerEliminationCheck(defendingPlayer)) {
-                return true;
-            }
-        }
         shellModel.notify("How many units would you like to move to the new country?");
 
         response = shellModel.prompt(Validators.validReinforcement);
