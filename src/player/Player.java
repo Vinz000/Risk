@@ -4,6 +4,7 @@ import deck.Card;
 import deck.CardType;
 import javafx.scene.paint.Color;
 import map.country.Country;
+import shell.model.ShellModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +37,9 @@ public abstract class Player {
         return reinforcements;
     }
 
-    public void setReinforcements(int offsetReinforcements) {
-        assert offsetReinforcements < 0 : "Reinforcement cannot be less than 0";
-        reinforcements = offsetReinforcements;
+    public void setReinforcements(int setReinforcements) {
+        assert setReinforcements < 0 : "Reinforcement cannot be less than 0";
+        reinforcements = setReinforcements;
     }
 
     public String getName() {
@@ -59,7 +60,6 @@ public abstract class Player {
         return ownedCountries;
     }
 
-    // TODO: Refactor to more meaningful names
     public abstract void startTurn();
 
     public abstract void startReinforcement();
@@ -78,7 +78,7 @@ public abstract class Player {
         return cards;
     }
 
-    public Card getMostRecentCard(List<Card> cards) {
+    public Card getMostRecentCard() {
         return cards.get(cards.size() - 1);
     }
 
@@ -86,6 +86,10 @@ public abstract class Player {
         Objects.requireNonNull(card);
 
         cards.add(card);
+    }
+
+    public void removeAllCards(List<Card> cardsToRemove) {
+        cardsToRemove.forEach(cards::remove);
     }
 
     public void removeCard(Card card) throws IllegalArgumentException {
@@ -102,33 +106,13 @@ public abstract class Player {
                 .collect(Collectors.toList());
     }
 
-    public void removeCardsOfType(CardType cardType, int amountToRemove) {
-        Predicate<Card> isCardType = card -> card.getType() == cardType;
-        List<Card> cardsToRemove = cards.stream().filter(isCardType).collect(Collectors.toList());
-
-        for (int i = 0; i < amountToRemove; i++) {
-            cards.remove(cardsToRemove.get(i));
+    public void displayCards() {
+        ShellModel shellModel = ShellModel.getInstance();
+        for (CardType cardType : CardType.values()) {
+            List<Card> cardsOfType = getCardsOfType(cardType);
+            String cardMessage = String.format("%d: %s cards.", cardsOfType.size(), cardType.toString());
+            shellModel.notify(cardMessage);
         }
-    }
-
-    public List<Card> getArtilleryCards() {
-        return getCardsOfType(CardType.ARTILLERY);
-    }
-
-    public List<Card> getCalvaryCards() {
-        return getCardsOfType(CardType.CALVARY);
-    }
-
-    public List<Card> getSoldierCards() {
-        return getCardsOfType(CardType.SOLDIER);
-    }
-
-    public List<Card> getWildCards() {
-        return getCardsOfType(CardType.WILDCARD);
-    }
-
-    public boolean hasCards() {
-        return cards.size() >= 3;
     }
 
     @Override

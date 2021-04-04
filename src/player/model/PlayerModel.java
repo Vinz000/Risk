@@ -57,7 +57,6 @@ public class PlayerModel extends Observable {
         }
     }
 
-    // TODO: Change turn
     public void changeTurn() {
         currentPlayerIndex++;
 
@@ -88,6 +87,9 @@ public class PlayerModel extends Observable {
         availableReinforcements += (player.getOwnedCountries().size() / 3);
 
         MapModel mapModel = MapModel.getInstance();
+        ShellModel shellModel = ShellModel.getInstance();
+
+        availableReinforcements = Math.max(availableReinforcements, DEFAULT_REINFORCEMENT);
 
         for (Continent continent : mapModel.getContinents()) {
             boolean ownsContinent = continent
@@ -96,14 +98,14 @@ public class PlayerModel extends Observable {
                     .allMatch(country -> country.getOccupier().equals(player));
 
             if (ownsContinent) {
+                shellModel.notify(player.getName() + " owns" + continent.getName() + " so player gets " + continent.getBonusReinforcement());
                 availableReinforcements += continent.getBonusReinforcement();
             }
         }
 
-        // Available Reinforcements is always a min of 3
-        availableReinforcements = Math.max(availableReinforcements, DEFAULT_REINFORCEMENT);
+        int currentReinforcements = player.getReinforcements();
 
-        player.setReinforcements(availableReinforcements);
+        player.setReinforcements(currentReinforcements + availableReinforcements);
     }
 
     public boolean currentPlayerCanAttack() {

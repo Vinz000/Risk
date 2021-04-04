@@ -1,10 +1,10 @@
 package map.component;
 
+import cavalry.GoldCavalryComponent;
 import common.BaseComponent;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import cavalry.GoldCavalryComponent;
 import map.country.Country;
 import map.country.CountryComponent;
 import map.model.MapModel;

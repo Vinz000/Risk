@@ -7,7 +7,6 @@ import player.Player;
 import java.util.Optional;
 
 public class Reinforcing extends Module {
-    // TODO: Refactor response to a more meaningful variable name
     String response;
 
     public Reinforcing() {
@@ -30,7 +29,6 @@ public class Reinforcing extends Module {
     }
 
     public void reinforceOwnedCountries(Player player) {
-
         mapModel.highlightCountries(player.getOwnedCountries());
         while (player.getReinforcements() > 0) {
             shellModel.notify(String.format("You have %d reinforcements to place.", player.getReinforcements()));

@@ -45,7 +45,7 @@ class DeckTest {
 
     @Test
     void testAddWildCardsShouldAddWildCards() {
-        deck.addWildcards();
+        deck.addWildCards();
         List<Card> cardList = deck.getCards();
 
         int wildCardsCount = (int) cardList
@@ -71,7 +71,7 @@ class DeckTest {
     @Test
     void testDeckSizeShouldReturnDeckSize() {
         int currentDeckSize = deck.deckSize();
-        deck.addWildcards();
+        deck.addWildCards();
         assertEquals(deck.deckSize(), currentDeckSize + 2);
     }
 }

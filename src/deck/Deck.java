@@ -25,7 +25,7 @@ public class Deck {
         return instance;
     }
 
-    public void addWildcards() {
+    public void addWildCards() {
         for (int i = 0; i < NUM_WILDCARDS; i++) {
             cards.add(new Card(CardType.WILDCARD, "wildcard"));
         }

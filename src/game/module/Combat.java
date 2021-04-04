@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class Combat extends Module {
-    // TODO: Change response to more meaningful variable name
     String response;
 
     public Combat() {
@@ -87,8 +86,7 @@ public class Combat extends Module {
         List<Integer> defenderDice = Dice.roll(defendingForce);
         shellModel.notify(defenderDice.toString());
 
-        boolean humanPlayerDefeated = diceComparison(attackerDice, defenderDice, attackingCountry, defendingCountry);
-        return humanPlayerDefeated;
+        return diceComparison(attackerDice, defenderDice, attackingCountry, defendingCountry);
     }
 
     public boolean diceComparison(List<Integer> attackerDice, List<Integer> defenderDice,
@@ -165,15 +163,14 @@ public class Combat extends Module {
         }
         shellModel.notify("How many units would you like to move to the new country?");
 
-        // TODO: Check if there is at least 1 troop left over when moving troops to new country
         response = shellModel.prompt(Validators.validReinforcement);
 
         int force = Integer.parseInt(response);
         mapModel.updateCountryArmyCount(defendingCountry, force);
         mapModel.updateCountryArmyCount(attackingCountry, -force);
 
-        addCard(attackingPlayer);
-        Card drawnCard = attackingPlayer.getMostRecentCard(attackingPlayer.getCards());
+        givePlayerCard(attackingPlayer);
+        Card drawnCard = attackingPlayer.getMostRecentCard();
         shellModel.notify("You have earned the card: " +
                 drawnCard.getType().toString() + " " + drawnCard.getCountryName());
 
@@ -191,7 +188,7 @@ public class Combat extends Module {
         return playerWasEliminated;
     }
 
-    public void addCard(Player player) {
+    public void givePlayerCard(Player player) {
         Deck deck = Deck.getInstance();
         deck.shuffle();
 

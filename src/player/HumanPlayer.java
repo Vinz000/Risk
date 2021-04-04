@@ -81,6 +81,13 @@ public class HumanPlayer extends Player {
     public void cardUsage() {
         CardUsage cardUsage = new CardUsage();
         cardUsage.displayCardsOwned();
+        boolean moreThanFourCards = getCards().size() >= 5;
+
+        if (moreThanFourCards) {
+            cardUsage.selectCards();
+        } else {
+            cardUsage.chooseToSpendCards();
+        }
     }
 
     @Override
