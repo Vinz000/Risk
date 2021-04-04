@@ -51,7 +51,6 @@ public class HumanPlayer extends Player {
 
     @Override
     public boolean combat() {
-        boolean humanPlayerDefeated = false;
         MapModel mapModel = MapModel.getInstance();
         PlayerModel playerModel = PlayerModel.getInstance();
         Combat combat = new Combat();
@@ -66,7 +65,7 @@ public class HumanPlayer extends Player {
             do {
                 combat.setAttackingTroops(attackingCountry);
                 combat.setDefendingTroops(defendingCountry);
-                humanPlayerDefeated = combat.initiateCombat(attackingCountry, defendingCountry);
+                if (combat.initiateCombat(attackingCountry, defendingCountry)) return true;
 
                 if (attackingCountry.getArmyCount() == 1) break;
             } while (!defendingCountry.getOccupier().equals(this)
@@ -74,11 +73,12 @@ public class HumanPlayer extends Player {
 
             mapModel.clearCombatants();
         }
-        return humanPlayerDefeated;
+
+        return false;
     }
 
     @Override
-    public void cardUsage() {
+    public boolean cardUsage() {
         CardUsage cardUsage = new CardUsage();
         cardUsage.displayCardsOwned();
         boolean moreThanFourCards = getCards().size() >= 5;
@@ -86,8 +86,10 @@ public class HumanPlayer extends Player {
         if (moreThanFourCards) {
             cardUsage.selectCards();
         } else {
-            cardUsage.chooseToSpendCards();
+            return cardUsage.chooseToSpendCards();
         }
+
+        return true;
     }
 
     @Override

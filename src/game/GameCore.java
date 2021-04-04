@@ -51,8 +51,10 @@ public class GameCore extends Task<Void> {
 
             currentPlayer.startTurn();
             List<Card> cards = currentPlayer.getCards();
-            while (cards.size() >= 3 && Validators.validCombinations(cards)) {
-                currentPlayer.cardUsage();
+
+            boolean willTrade = true;
+            while (cards.size() >= 3 && Validators.validCombinations(cards) && willTrade) {
+                willTrade = currentPlayer.cardUsage();
             }
 
             currentPlayer.reinforce();

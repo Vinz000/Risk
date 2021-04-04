@@ -29,12 +29,15 @@ public class CardUsage extends Module {
         currentPlayer.displayCards();
     }
 
-    public void chooseToSpendCards() {
+    public boolean chooseToSpendCards() {
         shellModel.notify("Would you like to spend cards? Y/N");
         response = shellModel.prompt(Validators.yesNo);
-        if (response.toLowerCase().contains("y")) {
+        boolean isYes = response.toLowerCase().contains("y");
+        if (isYes) {
             selectCards();
         }
+
+        return isYes;
     }
 
     public void selectCards() {

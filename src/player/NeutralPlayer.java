@@ -40,8 +40,8 @@ public class NeutralPlayer extends Player {
     }
 
     @Override
-    public void cardUsage() {
-
+    public boolean cardUsage() {
+        return false;
     }
 
     @Override

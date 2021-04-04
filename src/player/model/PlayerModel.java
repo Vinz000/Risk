@@ -98,7 +98,8 @@ public class PlayerModel extends Observable {
                     .allMatch(country -> country.getOccupier().equals(player));
 
             if (ownsContinent) {
-                shellModel.notify(player.getName() + " owns" + continent.getName() + " so player gets " + continent.getBonusReinforcement());
+                String prettyContinentName = continent.getName().replace("_", ". ");
+                shellModel.notify(player.getName() + " owns " + prettyContinentName + " so player gets " + continent.getBonusReinforcement());
                 availableReinforcements += continent.getBonusReinforcement();
             }
         }
