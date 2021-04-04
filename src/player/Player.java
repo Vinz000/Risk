@@ -1,13 +1,17 @@
 package player;
 
 import deck.Card;
+import deck.CardType;
 import javafx.scene.paint.Color;
 import map.country.Country;
+import shell.model.ShellModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class Player {
     private final String id;
@@ -33,9 +37,9 @@ public abstract class Player {
         return reinforcements;
     }
 
-    public void setReinforcements(int offsetReinforcements) {
-        assert offsetReinforcements < 0 : "Reinforcement cannot be less than 0";
-        reinforcements = offsetReinforcements;
+    public void setReinforcements(int setReinforcements) {
+        assert setReinforcements < 0 : "Reinforcement cannot be less than 0";
+        reinforcements = setReinforcements;
     }
 
     public String getName() {
@@ -56,7 +60,6 @@ public abstract class Player {
         return ownedCountries;
     }
 
-    // TODO: Refactor to more meaningful names
     public abstract void startTurn();
 
     public abstract void startReinforcement();
@@ -67,10 +70,16 @@ public abstract class Player {
 
     public abstract boolean combat();
 
+    public abstract void cardUsage();
+
     public abstract void fortify();
 
     public List<Card> getCards() {
         return cards;
+    }
+
+    public Card getMostRecentCard() {
+        return cards.get(cards.size() - 1);
     }
 
     public void addCard(Card card) {
@@ -79,11 +88,31 @@ public abstract class Player {
         cards.add(card);
     }
 
-    // TODO: Change so that it removes specific card
-    public Card removeTopCard() throws IllegalArgumentException {
+    public void removeAllCards(List<Card> cardsToRemove) {
+        cardsToRemove.forEach(cards::remove);
+    }
+
+    public void removeCard(Card card) throws IllegalArgumentException {
         assert getCards().size() > 0 : "Cannot remove from empty hand";
 
-        return cards.remove(0);
+        cards.remove(card);
+    }
+
+    public List<Card> getCardsOfType(CardType cardType) {
+        Predicate<Card> isCardType = card -> card.getType() == cardType;
+        return cards
+                .stream()
+                .filter(isCardType)
+                .collect(Collectors.toList());
+    }
+
+    public void displayCards() {
+        ShellModel shellModel = ShellModel.getInstance();
+        for (CardType cardType : CardType.values()) {
+            List<Card> cardsOfType = getCardsOfType(cardType);
+            String cardMessage = String.format("%d: %s cards.", cardsOfType.size(), cardType.toString());
+            shellModel.notify(cardMessage);
+        }
     }
 
     @Override

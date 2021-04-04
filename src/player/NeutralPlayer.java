@@ -40,6 +40,11 @@ public class NeutralPlayer extends Player {
     }
 
     @Override
+    public void cardUsage() {
+
+    }
+
+    @Override
     public void fortify() {
 
     }

@@ -2,12 +2,16 @@ package game;
 
 import cavalry.model.GoldCavalryModel;
 import common.Constants;
+import common.validation.Validators;
+import deck.Card;
 import game.module.ClaimTerritories;
 import game.module.SetUp;
 import javafx.concurrent.Task;
 import player.Player;
 import player.model.PlayerModel;
 import shell.model.ShellModel;
+
+import java.util.List;
 
 public class GameCore extends Task<Void> {
 
@@ -46,7 +50,13 @@ public class GameCore extends Task<Void> {
             Player currentPlayer = playerModel.getCurrentPlayer();
 
             currentPlayer.startTurn();
+            List<Card> cards = currentPlayer.getCards();
+            while (cards.size() >= 3 && Validators.validCombinations(cards)) {
+                currentPlayer.cardUsage();
+            }
+
             currentPlayer.reinforce();
+
             if (currentPlayer.combat()) {
                 shellModel.notify("Game over: " + currentPlayer.getName() + " has won the game.");
                 break;
@@ -56,11 +66,14 @@ public class GameCore extends Task<Void> {
 
             playerModel.changeTurn();
         }
+
         return null;
     }
 
     // Game logic sequence
     public void start() {
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> System.out.println("Caught " + e));
+
         Thread gameThread = new Thread(this);
         gameThread.setDaemon(true);
         gameThread.start();

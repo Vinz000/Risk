@@ -30,7 +30,8 @@ public class BaseComponent implements Observer {
     }
 
     public static BaseComponent build(Runnable buildComponent, Supplier<Observable[]> modelsToObserve, ObserverCallback onUpdate) {
-        return new BaseComponent(buildComponent, () -> {}, modelsToObserve, onUpdate);
+        return new BaseComponent(buildComponent, () -> {
+        }, modelsToObserve, onUpdate);
     }
 
     public static BaseComponent build(Runnable buildComponent, Runnable setCssId) {
@@ -38,11 +39,12 @@ public class BaseComponent implements Observer {
     }
 
     public static BaseComponent build(Runnable buildComponent) {
-        return new BaseComponent(buildComponent, () -> {}, () -> new Observable[0], null);
+        return new BaseComponent(buildComponent, () -> {
+        }, () -> new Observable[0], null);
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        Platform.runLater(() -> nullableOnUpdate.ifPresent(onUpdate -> onUpdate.run(o, arg)));
+        nullableOnUpdate.ifPresent(onUpdate -> Platform.runLater(() -> onUpdate.run(o, arg)));
     }
 }

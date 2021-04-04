@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import static common.Constants.*;
 
-// TODO: Change response to more meaningful variable name
 public class ClaimTerritories extends Module {
 
     public ClaimTerritories() {
@@ -29,7 +28,7 @@ public class ClaimTerritories extends Module {
         List<Player> players = playerModel.getPlayers();
         assignPlayersCountries(showDraw, players);
 
-        deck.addWildcards();
+        deck.addWildCards();
         deck.shuffle();
         mapModel.showCountryComponents();
     }

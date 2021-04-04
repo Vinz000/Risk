@@ -1,5 +1,6 @@
 package player;
 
+import game.module.CardUsage;
 import game.module.Combat;
 import game.module.Fortification;
 import game.module.Reinforcing;
@@ -41,6 +42,9 @@ public class HumanPlayer extends Player {
 
     @Override
     public void reinforce() {
+        PlayerModel playerModel = PlayerModel.getInstance();
+        playerModel.calculateReinforcements(this);
+
         Reinforcing reinforcing = new Reinforcing();
         reinforcing.reinforceOwnedCountries(this);
     }
@@ -71,6 +75,19 @@ public class HumanPlayer extends Player {
             mapModel.clearCombatants();
         }
         return humanPlayerDefeated;
+    }
+
+    @Override
+    public void cardUsage() {
+        CardUsage cardUsage = new CardUsage();
+        cardUsage.displayCardsOwned();
+        boolean moreThanFourCards = getCards().size() >= 5;
+
+        if (moreThanFourCards) {
+            cardUsage.selectCards();
+        } else {
+            cardUsage.chooseToSpendCards();
+        }
     }
 
     @Override

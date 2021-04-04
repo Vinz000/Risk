@@ -2,7 +2,6 @@ package cavalry;
 
 import cavalry.model.GoldCavalryModel;
 import cavalry.model.GoldCavalryModelArg;
-
 import common.BaseComponent;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -83,6 +82,6 @@ public class GoldCavalryComponent extends StackPane {
                 break;
         }
 
-     }
+    }
 
 }
