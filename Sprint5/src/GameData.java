@@ -1,3 +1,4 @@
+package src;
 
 public final class GameData {
 
