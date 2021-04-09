@@ -15,7 +15,6 @@ public class Team7 implements Bot {
     }
 
     public String getName() {
-
         try {
             playFallenKingdom();
         } catch (Exception e) {
@@ -36,9 +35,8 @@ public class Team7 implements Bot {
     }
 
     private AudioInputStream getAudioInputStream() throws IOException, UnsupportedAudioFileException {
-
         // Manually created direct-download link, hosted on Google Drive.
-        String path = "https://drive.google.com/uc?id=1Bq8Mh4a_gGEVGeDqF-uT_gFJdi9x2_mQ&export=download";
+        String path = "https://drive.google.com/uc?export=download&id=1ct7MUbOHmYv-N_GlNFfIvwsNtUxwj6ac";
         URL url = new URL(path);
 
         return AudioSystem.getAudioInputStream(url);
