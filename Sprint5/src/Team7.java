@@ -84,15 +84,17 @@ public class Team7 implements Bot {
         List<Integer> ownedCountriesIds = Team7HelperFunctions.getOwnedCountryIds();
         List<Integer> inputCommandList = Team7HelperFunctions.checkForSingleArmyCountry(ownedCountriesIds);
 
-        if (inputCommandList.contains(-1)) {
+        boolean noSingleArmyExists = inputCommandList.contains(-1);
+        if (noSingleArmyExists) {
             inputCommandList.clear();
             inputCommandList = Team7HelperFunctions.continentSpecificAttack(ownedCountriesIds);
-            if (inputCommandList.contains(-1)) {
+            boolean attackNotAllowed = inputCommandList.contains(-1);
+            if (attackNotAllowed) {
                 command = "skip";
                 return command;
             }
         }
-        command = inputCommandList.toString();
+        command = Team7HelperFunctions.convertToCommand(inputCommandList);
         return command;
     }
 
@@ -104,11 +106,10 @@ public class Team7 implements Bot {
 
     public String getMoveIn(int attackCountryId) {
         String command;
-        if (Team7HelperFunctions.anyEnemyNeighbours(attackCountryId)) {
-            command = String.valueOf((board.getNumUnits(attackCountryId) - 3));
-        } else {
-            command = String.valueOf(board.getNumUnits(attackCountryId) - 1);
-        }
+        int numChosen = Team7HelperFunctions.anyEnemyNeighbours(attackCountryId) ?
+                3 :
+                1;
+        command = String.valueOf(board.getNumUnits(attackCountryId) - numChosen);
         return (command);
     }
 
