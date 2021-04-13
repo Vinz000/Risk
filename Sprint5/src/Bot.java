@@ -2,13 +2,20 @@ package src;
 
 public interface Bot {
 
-		public String getName ();
-		public String getReinforcement ();	
-		public String getPlacement (int forPlayer);
-		public String getCardExchange ();
-		public String getBattle ();
-		public String getDefence (int countryId);
-		public String getMoveIn (int attackCountryId);
-		public String getFortify ();
+    String getName();
+
+    String getReinforcement();
+
+    String getPlacement(int forPlayer);
+
+    String getCardExchange();
+
+    String getBattle();
+
+    String getDefence(int countryId);
+
+    String getMoveIn(int attackCountryId);
+
+    String getFortify();
 
 }
