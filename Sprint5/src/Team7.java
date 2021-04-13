@@ -16,7 +16,7 @@ public class Team7 implements Bot {
 
     public String getName() {
         try {
-            playFallenKingdom();
+            playBattleCry();
         } catch (Exception e) {
             // Catch all exceptions here, if our bot failed
             // because of this it would be *tragic*.
@@ -26,7 +26,7 @@ public class Team7 implements Bot {
         return "Team7";
     }
 
-    private void playFallenKingdom() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
+    private void playBattleCry() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
         AudioInputStream audioInputStream = getAudioInputStream();
         Clip clip = AudioSystem.getClip();
         clip.open(audioInputStream);
