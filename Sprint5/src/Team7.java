@@ -3,6 +3,8 @@ package src;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Team7 implements Bot {
 
@@ -73,23 +75,41 @@ public class Team7 implements Bot {
     }
 
     public String getBattle() {
-        String command = "";
-        // put your code here
-        command = "skip";
-        return (command);
+        String command;
+        if (player.getBattleLoss() == 3) {
+            command = "skip";
+            return command;
+        }
+
+        List<Integer> ownedCountriesIds = Team7HelperFunctions.getOwnedCountryIds();
+        List<Integer> inputCommandList = Team7HelperFunctions.checkForSingleArmyCountry(ownedCountriesIds);
+
+        boolean noSingleArmyExists = inputCommandList.contains(-1);
+        if (noSingleArmyExists) {
+            inputCommandList.clear();
+            inputCommandList = Team7HelperFunctions.continentSpecificAttack(ownedCountriesIds);
+            boolean attackNotAllowed = inputCommandList.contains(-1);
+            if (attackNotAllowed) {
+                command = "skip";
+                return command;
+            }
+        }
+        command = Team7HelperFunctions.convertToCommand(inputCommandList);
+        return command;
     }
 
     public String getDefence(int countryId) {
-        String command = "";
-        // put your code here
-        command = "1";
-        return (command);
+        String command;
+        command = String.valueOf(Team7HelperFunctions.chooseDefendingArmySize(countryId));
+        return command;
     }
 
     public String getMoveIn(int attackCountryId) {
-        String command = "";
-        // put your code here
-        command = "0";
+        String command;
+        int numChosen = Team7HelperFunctions.anyEnemyNeighbours(attackCountryId) ?
+                3 :
+                1;
+        command = String.valueOf(board.getNumUnits(attackCountryId) - numChosen);
         return (command);
     }
 
