@@ -12,11 +12,14 @@ public class Team7HelperFunctions {
 
     private static BoardAPI board;
     private static PlayerAPI player;
+    private static int otherPlayerId;
 
     Team7HelperFunctions(BoardAPI inBoard, PlayerAPI inPlayer) {
         board = inBoard;
         player = inPlayer;
+        otherPlayerId = inPlayer.getId() == 0 ? 1 : 0;
     }
+
 
     public static String convertToCommand(List<Integer> inputList) {
         StringBuilder command = new StringBuilder();
@@ -68,7 +71,10 @@ public class Team7HelperFunctions {
 
     public static int singleArmyCount(int[] adjacentCountryIds) {
         for (int adjacentCountryId : adjacentCountryIds) {
-            if (board.getNumUnits(adjacentCountryId) == 1 && board.getOccupier(adjacentCountryId) != player.getId()) {
+            boolean hasOneUnit = board.getNumUnits(adjacentCountryId) == 1;
+            boolean notPlayer = board.getOccupier(adjacentCountryId) != player.getId();
+            boolean isEnemyPlayer = board.getOccupier(adjacentCountryId) == otherPlayerId;
+            if (hasOneUnit && notPlayer && isEnemyPlayer) {
                 return adjacentCountryId;
             }
         }
@@ -97,12 +103,12 @@ public class Team7HelperFunctions {
         return lowestCountryId;
     }
 
-    public static int leastEnemyAdjacentCountries(List<Integer> ownedCountriesIds) {
-        int countryId = 0;
+    public static int leastEnemyAndNeutralAdjacentCountries(List<Integer> ownedCountriesIds) {
+        int countryId = -1;
         int leastEnemyAdjacentCount = Integer.MAX_VALUE;
 
         for (Integer ownedCountriesId : ownedCountriesIds) {
-            int enemyCount = enemyCountryCount(GameData.ADJACENT[ownedCountriesId]);
+            int enemyCount = totalEnemyCountryCount(GameData.ADJACENT[ownedCountriesId]);
             if (enemyCount < leastEnemyAdjacentCount) {
                 countryId = ownedCountriesId;
                 leastEnemyAdjacentCount = enemyCount;
@@ -111,13 +117,50 @@ public class Team7HelperFunctions {
         return countryId;
     }
 
+    public static int leastEnemyAdjacentCountries(List<Integer> ownedCountriesIds) {
+        int countryId = 0;
+        int leastEnemyAdjacentCount = Integer.MAX_VALUE;
+
+        for (Integer ownedCountriesId : ownedCountriesIds) {
+            if (enemyCountryPresent(GameData.ADJACENT[ownedCountriesId])) {
+                int enemyCount = enemyPlayerCount(GameData.ADJACENT[ownedCountriesId]);
+                if (enemyCount < leastEnemyAdjacentCount) {
+                    countryId = ownedCountriesId;
+                    leastEnemyAdjacentCount = enemyCount;
+                }
+            }
+        }
+        return countryId;
+    }
+
+    public static boolean enemyCountryPresent(int[] ownedCountriesIds) {
+        int enemyCount = 0;
+        for (Integer ownedCountriesId : ownedCountriesIds) {
+            if (board.getOccupier(ownedCountriesId) == otherPlayerId) {
+                enemyCount = enemyPlayerCount(GameData.ADJACENT[ownedCountriesId]);
+            }
+        }
+        return enemyCount > 0;
+    }
+
     public static int leastEnemyAdjacentCountries(int[] continent) {
         List<Integer> ownedCountriesIds = Arrays.stream(continent).boxed().collect(Collectors.toList());
         return leastEnemyAdjacentCountries(ownedCountriesIds);
     }
 
-    public static int enemyCountryCount(int[] countryIds) {
+    public static int leastEnemyAndNeutralAdjacentCountries(int[] continent) {
+        List<Integer> ownedCountriesId = Arrays.stream(continent).boxed().collect(Collectors.toList());
+        return leastEnemyAndNeutralAdjacentCountries(ownedCountriesId);
+    }
+
+    public static int totalEnemyCountryCount(int[] countryIds) {
         IntPredicate isEnemyCountryId = countryId -> board.getOccupier(countryId) != player.getId();
+        return (int) Arrays.stream(countryIds).filter(isEnemyCountryId).count();
+    }
+
+    public static int enemyPlayerCount(int[] countryIds) {
+        IntPredicate isEnemyCountryId = countryId -> board.getOccupier(countryId) != player.getId() &&
+                board.getOccupier(countryId) == otherPlayerId;
         return (int) Arrays.stream(countryIds).filter(isEnemyCountryId).count();
     }
 
@@ -132,6 +175,9 @@ public class Team7HelperFunctions {
         } else {
             int[] continent = CONTINENT_COUNTRIES[chosenContinent];
             chosenAttackingCountry = leastEnemyAdjacentCountries(continent);
+            if (chosenAttackingCountry == -1) {
+                chosenAttackingCountry = leastEnemyAndNeutralAdjacentCountries(continent);
+            }
         }
         chosenDefendingCountry = invasionDecision(chosenAttackingCountry);
         combatInput.add(chosenAttackingCountry);
