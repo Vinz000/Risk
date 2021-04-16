@@ -3,11 +3,9 @@ package src;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -255,26 +253,23 @@ public class Team7HelperFunctions {
     }
 
     public String getValidCardCombination() {
-        int[] insigniaIds = getInsigniaIds();
+        List<Integer> insigniaIds = getInsigniaIds();
 
-        return IntStream.range(0, insigniaIds.length - 3)
-                .mapToObj(i -> new int[]{insigniaIds[i], insigniaIds[i + 1], insigniaIds[i + 2]})
+        return IntStream.range(0, insigniaIds.size() - 3)
+                .mapToObj(i -> new int[]{insigniaIds.get(i), insigniaIds.get(i + 1), insigniaIds.get(i + 3)})
                 .filter(Deck::isASet)
                 .findFirst()
                 .map(this::insigniaIdsToStringCommand)
                 .orElse("skip");
-
     }
 
-    private int[] getInsigniaIds() {
+    private List<Integer> getInsigniaIds() {
         List<Card> cards = player.getCards();
-        int[] insigniaIds = new int[cards.size()];
 
-        for (int i = 0; i < cards.size() - 1; i++) {
-            insigniaIds[i] = cards.get(i).getInsigniaId();
-        }
-
-        return insigniaIds;
+        return cards
+                .stream()
+                .map(Card::getInsigniaId)
+                .collect(Collectors.toList());
     }
 
     private String insigniaIdsToStringCommand(int[] insigniaIds) {
@@ -330,20 +325,21 @@ public class Team7HelperFunctions {
 
     private List<Integer> orderMostImportantCountriesInContinent(int continent) {
 
-        List<Integer> countriesInContinent = Arrays.stream(CONTINENT_COUNTRIES[continent]).boxed().collect(Collectors.toList());
-
+        List<Integer> countriesInContinent = Arrays
+                .stream(CONTINENT_COUNTRIES[continent])
+                .boxed()
+                .collect(Collectors.toList());
         Comparator<Integer> howManySurroundingEnemies = this::compareSurroundingEnemies;
-
         countriesInContinent.sort(howManySurroundingEnemies);
 
         return countriesInContinent;
     }
 
     private int compareSurroundingEnemies(Integer country1, Integer country2) {
-        int country1SurroundingEnemies = numSurroundingCountriesByPlayer(country1, otherPlayerId);
-        int country2SurroundingEnemies = numSurroundingCountriesByPlayer(country2, otherPlayerId);
+        Integer country1SurroundingEnemies = numSurroundingCountriesByPlayer(country1, otherPlayerId);
+        Integer country2SurroundingEnemies = numSurroundingCountriesByPlayer(country2, otherPlayerId);
 
-        return Integer.compare(country1SurroundingEnemies, country2SurroundingEnemies);
+        return country1SurroundingEnemies.compareTo(country2SurroundingEnemies);
     }
 
     public List<Integer> countriesInOrderOfImportance(List<Integer> continents) {
@@ -402,16 +398,41 @@ public class Team7HelperFunctions {
     }
 
     public boolean isGoldenCavalryAtleast10() {
-        if (estimatedGoldenCavalrySize >= 10) return true;
+        return estimatedGoldenCavalrySize >= 10;
+    }
 
+    public void updateEstimatedGoldenCavalrySize() {
         if (numCardsOtherPlayerHas > 5) {
             increaseGoldenCavalrySize();
             numCardsOtherPlayerHas -= 3;
         }
 
         numCardsOtherPlayerHas += getNumOfCountriesEnemyHasTakenOver();
+    }
 
-        return false;
+    public int rateCountry(int countryId) {
+        int rating = 0;
+
+        rating -= 75 * numSurroundingCountriesByPlayer(countryId, player.getId());
+
+        Predicate<Integer> continentContainsCountry = continent -> continentContainsCountry(continent, countryId);
+
+        List<Integer> opponentCountries = getAlmostConqueredContinentIds(otherPlayerId);
+        int opponentRating = opponentCountries
+                .stream()
+                .anyMatch(continentContainsCountry) ? 1000 : 50;
+
+        rating += opponentRating * numSurroundingCountriesByPlayer(countryId, otherPlayerId);
+
+        return rating;
+    }
+
+    public int compareRatings(int countryId1, int countryId2) {
+
+        Integer country1Rating = rateCountry(countryId1);
+        Integer country2Rating = rateCountry(countryId2);
+
+        return country1Rating.compareTo(country2Rating);
     }
 
     public enum ContinentRanking {

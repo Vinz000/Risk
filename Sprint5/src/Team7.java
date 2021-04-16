@@ -54,35 +54,17 @@ public class Team7 implements Bot {
 
     public String getPlacement(int forPlayer) {
         List<Integer> ownedCountries = helperFunctions.getOwnedCountryIds(forPlayer);
-        List<Integer> otherPlayerAlmostCompletedContinents = helperFunctions.getAlmostConqueredContinentIds(otherPlayerId);
+        ownedCountries.sort(helperFunctions::compareRatings);
 
-        int countryRating = Integer.MIN_VALUE;
-        int countryIdThatNeedsToBeReinforcedASAP = ownedCountries.get(0);
-
-        for (Integer country : ownedCountries) {
-            int rating = 0;
-
-            rating -= 75 * helperFunctions.numSurroundingCountriesByPlayer(country, player.getId());
-
-            Predicate<Integer> continentContainsCountry = continent -> helperFunctions.continentContainsCountry(continent, country);
-
-            int opponentRating = otherPlayerAlmostCompletedContinents
-                    .stream()
-                    .anyMatch(continentContainsCountry) ? 1000 : 50;
-
-            rating += opponentRating * helperFunctions.numSurroundingCountriesByPlayer(country, otherPlayerId);
-
-            if (rating > countryRating) {
-                countryRating = rating;
-                countryIdThatNeedsToBeReinforcedASAP = country;
-            }
-        }
-
-        return helperFunctions.formatCommandForReinforcing(countryIdThatNeedsToBeReinforcedASAP, 1);
+        return helperFunctions.formatCommandForReinforcing(ownedCountries.get(0), 1);
     }
 
     public String getCardExchange() {
-        return player.isForcedExchange() || helperFunctions.isGoldenCavalryAtleast10() ?
+
+        boolean isCavalrySizeAtleast10 = helperFunctions.isGoldenCavalryAtleast10();
+        if (!isCavalrySizeAtleast10) helperFunctions.updateEstimatedGoldenCavalrySize();
+
+        return player.isForcedExchange() || isCavalrySizeAtleast10 ?
                 helperFunctions.getValidCardCombination() :
                 "skip";
     }
