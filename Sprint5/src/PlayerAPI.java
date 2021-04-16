@@ -1,18 +1,27 @@
 package src;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public interface PlayerAPI {
-	
-	public boolean isCardsAvailable (int[] cardInsigniaIds);
-	public boolean isForcedExchange ();
-	public boolean isOptionalExchange ();
-	public int getId ();
-	public String getName ();
-	public int getNumUnits ();
-	public ArrayList<Integer> getDice ();
-	public int getDie (int dieId);
-	public int getBattleLoss ();
-	public ArrayList<Card> getCards ();
-			
+
+    boolean isCardsAvailable(int[] cardInsigniaIds);
+
+    boolean isForcedExchange();
+
+    boolean isOptionalExchange();
+
+    int getId();
+
+    String getName();
+
+    int getNumUnits();
+
+    ArrayList<Integer> getDice();
+
+    int getDie(int dieId);
+
+    int getBattleLoss();
+
+    ArrayList<Card> getCards();
+
 }
