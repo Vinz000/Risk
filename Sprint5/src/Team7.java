@@ -1,22 +1,23 @@
 package src;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Team7 implements Bot {
 
     private final BoardAPI board;
     private final PlayerAPI player;
-    private final int otherPlayerId;
     private final Team7HelperFunctions helperFunctions;
+    private final int otherPlayerId;
 
     Team7(BoardAPI inBoard, PlayerAPI inPlayer) {
         board = inBoard;
         player = inPlayer;
 
         otherPlayerId = player.getId() == 0 ? 1 : 0;
-
         helperFunctions = new Team7HelperFunctions(board, player, otherPlayerId);
     }
 
@@ -61,10 +62,10 @@ public class Team7 implements Bot {
 
     public String getCardExchange() {
 
-        boolean isCavalrySizeAtleast10 = helperFunctions.isGoldenCavalryAtleast10();
-        if (!isCavalrySizeAtleast10) helperFunctions.updateEstimatedGoldenCavalrySize();
+        boolean isCavalrySizeAtLeast10 = helperFunctions.isGoldenCavalryAtleast10();
+        if (!isCavalrySizeAtLeast10) helperFunctions.updateEstimatedGoldenCavalrySize();
 
-        return player.isForcedExchange() || isCavalrySizeAtleast10 ?
+        return player.isForcedExchange() || isCavalrySizeAtLeast10 ?
                 helperFunctions.getValidCardCombination() :
                 "skip";
     }
@@ -109,9 +110,49 @@ public class Team7 implements Bot {
     }
 
     public String getFortify() {
-        String command = "";
-        // put code here
-        command = "skip";
-        return (command);
+
+        List<Integer> originCountryOptions = helperFunctions.getInitialOriginCountryOptions();
+        List<Integer> destinationCountryOptions = helperFunctions.getDestinationCountryOptions(originCountryOptions);
+
+        Comparator<Integer> descendingAdjacentEnemyCount = (countryIdOne, countryIdTwo) -> {
+            Integer countryOneAdjacentEnemyCount = helperFunctions.numSurroundingCountriesByPlayer(countryIdOne, otherPlayerId);
+            Integer countryTwoAdjacentEnemyCount = helperFunctions.numSurroundingCountriesByPlayer(countryIdTwo, otherPlayerId);
+
+            return countryOneAdjacentEnemyCount.compareTo(countryTwoAdjacentEnemyCount);
+        };
+        destinationCountryOptions.sort(descendingAdjacentEnemyCount);
+        if (destinationCountryOptions.size() == 0) {
+            return "skip";
+        }
+        int destinationCountry = destinationCountryOptions.get(0);
+
+        Predicate<Integer> connectedToDestination = countryId -> board.isConnected(destinationCountry, countryId);
+        originCountryOptions = originCountryOptions
+                .stream()
+                .filter(connectedToDestination)
+                .collect(Collectors.toList());
+
+        Comparator<Integer> descendingUnitCount = (countryIdOne, countryIdTwo) -> {
+            Integer countryOneNumUnits = board.getNumUnits(countryIdOne);
+            Integer countryTwoNumUnits = board.getNumUnits(countryIdTwo);
+
+            return countryOneNumUnits.compareTo(countryTwoNumUnits);
+        };
+        originCountryOptions.sort(descendingUnitCount);
+        if (originCountryOptions.size() == 0) {
+            return "skip";
+        }
+
+        int originCountry = originCountryOptions.get(0);
+
+        int availableUnits = board.getNumUnits(originCountry) - 1;
+        int destinationUnitsCount = board.getNumUnits(destinationCountry);
+        boolean unitsWouldGoOverEight = availableUnits + destinationUnitsCount > 8;
+        int unitsToMove = unitsWouldGoOverEight ?
+                8 - destinationUnitsCount :
+                availableUnits;
+
+        return String.format("%s %s %d", originCountry, destinationCountry, unitsToMove);
     }
+
 }
