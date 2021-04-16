@@ -1,24 +1,23 @@
 package src;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 public class Team7 implements Bot {
 
     private final BoardAPI board;
     private final PlayerAPI player;
     private final Team7HelperFunctions helperFunctions;
+    private final int otherPlayerId;
 
     Team7(BoardAPI inBoard, PlayerAPI inPlayer) {
         board = inBoard;
         player = inPlayer;
 
-        int otherPlayerId = player.getId() == 0 ? 1 : 0;
+        otherPlayerId = player.getId() == 0 ? 1 : 0;
         helperFunctions = new Team7HelperFunctions(board, player, otherPlayerId);
     }
 
@@ -112,93 +111,19 @@ public class Team7 implements Bot {
 
     public String getFortify() {
 
-        List<Integer> originCountryOptions = new ArrayList<>();
-        for (int countryId = 0; countryId < GameData.NUM_COUNTRIES; countryId++) {
-            boolean team7Occupies = board.getOccupier(countryId) == player.getId();
-            boolean enoughUnits = board.getNumUnits(countryId) >= 2;
-            boolean isConnectedToAnotherOwnedCountry = false;
-
-            for (int connectedCountryId = 0; connectedCountryId < GameData.NUM_COUNTRIES; connectedCountryId++) {
-                if (connectedCountryId == countryId) continue;
-
-                boolean team7OccupiesConnected = board.getOccupier(connectedCountryId) == player.getId();
-                boolean isConnected = board.isConnected(connectedCountryId, countryId);
-
-                if (team7OccupiesConnected && isConnected) {
-                    isConnectedToAnotherOwnedCountry = true;
-                    break;
-                }
-            }
-
-            if (team7Occupies && enoughUnits && isConnectedToAnotherOwnedCountry)
-                originCountryOptions.add(countryId);
-        }
-
-        Predicate<Integer> surroundedByFriendlyCountries = countryId -> {
-            for (int adjacentCountryId = 0; adjacentCountryId < GameData.NUM_COUNTRIES; adjacentCountryId++) {
-                boolean isAdjacent = board.isAdjacent(countryId, adjacentCountryId);
-                boolean isSameCountry = adjacentCountryId == countryId;
-                if (!isAdjacent || isSameCountry) continue;
-
-                boolean team7OccupiesAdjacent = board.getOccupier(adjacentCountryId) == player.getId();
-                boolean neutralOccupiesAdjacent = board.getOccupier(adjacentCountryId) > 1;
-
-                if (!team7OccupiesAdjacent && !neutralOccupiesAdjacent) {
-                    return false;
-                }
-            }
-            return true;
-        };
-
-        originCountryOptions = originCountryOptions
-                .stream()
-                .filter(surroundedByFriendlyCountries)
-                .collect(Collectors.toList());
-
-        Function<Integer, Integer> countAdjacentEnemyCountries = countryId -> {
-            int count = 0;
-            for (int adjacentCountryId = 0; adjacentCountryId < GameData.NUM_COUNTRIES; adjacentCountryId++) {
-                boolean isAdjacent = board.isAdjacent(countryId, adjacentCountryId);
-                boolean isEnemy = board.getOccupier(countryId) != player.getId();
-
-                if (isAdjacent && isEnemy) count++;
-            }
-
-            return count;
-        };
-
-        List<Integer> destinationCountryOptions = new ArrayList<>();
-        for (int countryId = 0; countryId < GameData.NUM_COUNTRIES; countryId++) {
-            boolean team7Occupies = board.getOccupier(countryId) == player.getId();
-            boolean tooManyUnits = board.getNumUnits(countryId) > 8;
-            boolean isConnectedToOriginCountry = false;
-
-            for (int originCountryOption : originCountryOptions) {
-                boolean isConnected = board.isConnected(originCountryOption, countryId);
-                boolean isSameCountry = originCountryOption == countryId;
-
-                if (isConnected && !isSameCountry) {
-                    isConnectedToOriginCountry = true;
-                    break;
-                }
-            }
-
-            if (team7Occupies && !tooManyUnits && isConnectedToOriginCountry)
-                destinationCountryOptions.add(countryId);
-        }
+        List<Integer> originCountryOptions = helperFunctions.getInitialOriginCountryOptions();
+        List<Integer> destinationCountryOptions = helperFunctions.getDestinationCountryOptions(originCountryOptions);
 
         Comparator<Integer> descendingAdjacentEnemyCount = (countryIdOne, countryIdTwo) -> {
-            Integer countryOneAdjacentEnemyCount = countAdjacentEnemyCountries.apply(countryIdOne);
-            Integer countryTwoAdjacentEnemyCount = countAdjacentEnemyCountries.apply(countryIdTwo);
+            Integer countryOneAdjacentEnemyCount = helperFunctions.numSurroundingCountriesByPlayer(countryIdOne, otherPlayerId);
+            Integer countryTwoAdjacentEnemyCount = helperFunctions.numSurroundingCountriesByPlayer(countryIdTwo, otherPlayerId);
 
             return countryOneAdjacentEnemyCount.compareTo(countryTwoAdjacentEnemyCount);
         };
         destinationCountryOptions.sort(descendingAdjacentEnemyCount);
-
         if (destinationCountryOptions.size() == 0) {
             return "skip";
         }
-
         int destinationCountry = destinationCountryOptions.get(0);
 
         Predicate<Integer> connectedToDestination = countryId -> board.isConnected(destinationCountry, countryId);
@@ -214,7 +139,6 @@ public class Team7 implements Bot {
             return countryOneNumUnits.compareTo(countryTwoNumUnits);
         };
         originCountryOptions.sort(descendingUnitCount);
-
         if (originCountryOptions.size() == 0) {
             return "skip";
         }

@@ -435,6 +435,75 @@ public class Team7HelperFunctions {
         return country1Rating.compareTo(country2Rating);
     }
 
+    public List<Integer> getDestinationCountryOptions(List<Integer> originCountryOptions) {
+        List<Integer> destinationCountryOptions = new ArrayList<>();
+        for (int countryId = 0; countryId < GameData.NUM_COUNTRIES; countryId++) {
+            boolean team7Occupies = board.getOccupier(countryId) == player.getId();
+            boolean tooManyUnits = board.getNumUnits(countryId) > 8;
+            boolean isConnectedToOriginCountry = false;
+
+            for (int originCountryOption : originCountryOptions) {
+                boolean isConnected = board.isConnected(originCountryOption, countryId);
+                boolean isSameCountry = originCountryOption == countryId;
+
+                if (isConnected && !isSameCountry) {
+                    isConnectedToOriginCountry = true;
+                    break;
+                }
+            }
+
+            if (team7Occupies && !tooManyUnits && isConnectedToOriginCountry)
+                destinationCountryOptions.add(countryId);
+        }
+
+        return destinationCountryOptions;
+    }
+
+    private boolean isSurroundedByFriendlyCountries(int countryId) {
+        for (int adjacentCountryId = 0; adjacentCountryId < GameData.NUM_COUNTRIES; adjacentCountryId++) {
+            boolean isAdjacent = board.isAdjacent(countryId, adjacentCountryId);
+            boolean isSameCountry = adjacentCountryId == countryId;
+            if (!isAdjacent || isSameCountry) continue;
+
+            boolean team7OccupiesAdjacent = board.getOccupier(adjacentCountryId) == player.getId();
+            boolean neutralOccupiesAdjacent = board.getOccupier(adjacentCountryId) > 1;
+
+            if (!team7OccupiesAdjacent && !neutralOccupiesAdjacent) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<Integer> getInitialOriginCountryOptions() {
+        List<Integer> originCountryOptions = new ArrayList<>();
+
+        for (int countryId = 0; countryId < GameData.NUM_COUNTRIES; countryId++) {
+            boolean team7Occupies = board.getOccupier(countryId) == player.getId();
+            boolean enoughUnits = board.getNumUnits(countryId) >= 2;
+            boolean isConnectedToAnotherOwnedCountry = false;
+            boolean isSurroundedByFriendlyCountries = isSurroundedByFriendlyCountries(countryId);
+
+            for (int connectedCountryId = 0; connectedCountryId < GameData.NUM_COUNTRIES; connectedCountryId++) {
+                if (connectedCountryId == countryId) continue;
+
+                boolean team7OccupiesConnected = board.getOccupier(connectedCountryId) == player.getId();
+                boolean isConnected = board.isConnected(connectedCountryId, countryId);
+
+                if (team7OccupiesConnected && isConnected) {
+                    isConnectedToAnotherOwnedCountry = true;
+                    break;
+                }
+            }
+
+            if (team7Occupies && enoughUnits && isConnectedToAnotherOwnedCountry && isSurroundedByFriendlyCountries)
+                originCountryOptions.add(countryId);
+        }
+
+        return originCountryOptions;
+    }
+
     public enum ContinentRanking {
         AUSTRALIA(3),
         ASIA(2),
