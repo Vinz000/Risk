@@ -1,22 +1,28 @@
 package src;
 
-import javax.sound.sampled.*;
-import java.io.IOException;
-import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class Team7 implements Bot {
 
     private final BoardAPI board;
     private final PlayerAPI player;
+    private final int otherPlayerId;
+    private final Team7HelperFunctions helperFunctions;
 
     Team7(BoardAPI inBoard, PlayerAPI inPlayer) {
         board = inBoard;
         player = inPlayer;
+
+        otherPlayerId = player.getId() == 0 ? 1 : 0;
+
+        helperFunctions = new Team7HelperFunctions(board, player, otherPlayerId);
     }
 
     public String getName() {
         try {
-            playBattleCry();
+            helperFunctions.playBattleCry();
         } catch (Exception e) {
             // Catch all exceptions here, if our bot failed
             // because of this it would be *tragic*.
@@ -26,50 +32,59 @@ public class Team7 implements Bot {
         return "Team7";
     }
 
-    private void playBattleCry() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
-        AudioInputStream audioInputStream = getAudioInputStream();
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        setVolumeToMaximum(clip);
-    }
-
-    private AudioInputStream getAudioInputStream() throws IOException, UnsupportedAudioFileException {
-        // Manually created direct-download link, hosted on Google Drive.
-        String path = "https://drive.google.com/uc?export=download&id=1ct7MUbOHmYv-N_GlNFfIvwsNtUxwj6ac";
-        URL url = new URL(path);
-
-        return AudioSystem.getAudioInputStream(url);
-    }
-
-    private void setVolumeToMaximum(Clip clip) {
-        float maxVolumeDecibels = 6.0f;
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        gainControl.setValue(maxVolumeDecibels);
-    }
-
     public String getReinforcement() {
-        String command = "";
-        // put your code here
-        command = GameData.COUNTRY_NAMES[(int) (Math.random() * GameData.NUM_COUNTRIES)];
-        command = command.replaceAll("\\s", "");
-        command += " 1";
-        return (command);
+        List<Integer> almostConqueredContinentIds = helperFunctions.getAlmostConqueredContinentIds(player.getId());
+
+        List<Integer> orderedCountries = helperFunctions.countriesInOrderOfImportance(almostConqueredContinentIds.isEmpty() ?
+                almostConqueredContinentIds :
+                Team7HelperFunctions.ContinentRanking.getValues());
+
+        Predicate<Integer> currentUnitsLessThan8 = country -> board.getNumUnits(country) < 8;
+
+        Optional<Integer> countryToReinforce = orderedCountries
+                .stream()
+                .filter(currentUnitsLessThan8)
+                .findFirst();
+
+        return countryToReinforce
+                .map(integer -> helperFunctions.formatCommandForReinforcing(integer, 8 - board.getNumUnits(integer)))
+                .orElseGet(() -> helperFunctions.formatCommandForReinforcing(orderedCountries.get(0), player.getNumUnits()));
+
     }
 
     public String getPlacement(int forPlayer) {
-        String command = "";
-        // put your code here
-        command = GameData.COUNTRY_NAMES[(int) (Math.random() * GameData.NUM_COUNTRIES)];
-        command = command.replaceAll("\\s", "");
-        return (command);
+        List<Integer> ownedCountries = helperFunctions.getOwnedCountryIds(forPlayer);
+        List<Integer> otherPlayerAlmostCompletedContinents = helperFunctions.getAlmostConqueredContinentIds(otherPlayerId);
+
+        int countryRating = Integer.MIN_VALUE;
+        int countryIdThatNeedsToBeReinforcedASAP = ownedCountries.get(0);
+
+        for (Integer country : ownedCountries) {
+            int rating = 0;
+
+            rating -= 75 * helperFunctions.numSurroundingCountriesByPlayer(country, player.getId());
+
+            Predicate<Integer> continentContainsCountry = continent -> helperFunctions.continentContainsCountry(continent, country);
+
+            int opponentRating = otherPlayerAlmostCompletedContinents
+                    .stream()
+                    .anyMatch(continentContainsCountry) ? 1000 : 50;
+
+            rating += opponentRating * helperFunctions.numSurroundingCountriesByPlayer(country, otherPlayerId);
+
+            if (rating > countryRating) {
+                countryRating = rating;
+                countryIdThatNeedsToBeReinforcedASAP = country;
+            }
+        }
+
+        return helperFunctions.formatCommandForReinforcing(countryIdThatNeedsToBeReinforcedASAP, 1);
     }
 
     public String getCardExchange() {
-        String command = "";
-        // put your code here
-        command = "skip";
-        return (command);
+        return player.isForcedExchange() || helperFunctions.isGoldenCavalryAtleast10() ?
+                helperFunctions.getValidCardCombination() :
+                "skip";
     }
 
     public String getBattle() {
@@ -79,32 +94,32 @@ public class Team7 implements Bot {
             return command;
         }
 
-        List<Integer> ownedCountriesIds = Team7HelperFunctions.getOwnedCountryIds();
-        List<Integer> inputCommandList = Team7HelperFunctions.checkForSingleArmyCountry(ownedCountriesIds);
+        List<Integer> ownedCountriesIds = helperFunctions.getOwnedCountryIds();
+        List<Integer> inputCommandList = helperFunctions.checkForSingleArmyCountry(ownedCountriesIds);
 
         boolean noSingleArmyExists = inputCommandList.contains(-1);
         if (noSingleArmyExists) {
             inputCommandList.clear();
-            inputCommandList = Team7HelperFunctions.continentSpecificAttack(ownedCountriesIds);
+            inputCommandList = helperFunctions.continentSpecificAttack(ownedCountriesIds);
             boolean attackNotAllowed = inputCommandList.contains(-1);
             if (attackNotAllowed) {
                 command = "skip";
                 return command;
             }
         }
-        command = Team7HelperFunctions.convertToCommand(inputCommandList);
+        command = helperFunctions.convertToCommand(inputCommandList);
         return command;
     }
 
     public String getDefence(int countryId) {
         String command;
-        command = String.valueOf(Team7HelperFunctions.chooseDefendingArmySize(countryId));
+        command = String.valueOf(helperFunctions.chooseDefendingArmySize(countryId));
         return command;
     }
 
     public String getMoveIn(int attackCountryId) {
         String command;
-        int numChosen = Team7HelperFunctions.anyEnemyNeighbours(attackCountryId) ?
+        int numChosen = helperFunctions.anyEnemyNeighbours(attackCountryId) ?
                 3 :
                 1;
         command = String.valueOf(board.getNumUnits(attackCountryId) - numChosen);
@@ -117,5 +132,4 @@ public class Team7 implements Bot {
         command = "skip";
         return (command);
     }
-
 }
