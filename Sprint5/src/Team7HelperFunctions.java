@@ -230,12 +230,15 @@ public class Team7HelperFunctions {
         return count >= continent.length * .1;
     }
 
-    public void playBattleCry() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
-        AudioInputStream audioInputStream = getAudioInputStream();
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        setVolumeToMaximum(clip);
+    public void playBattleCry() {
+        try {
+            AudioInputStream audioInputStream = getAudioInputStream();
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            setVolumeToMaximum(clip);
+        } catch (Exception ignored) {
+        }
     }
 
     private AudioInputStream getAudioInputStream() throws IOException, UnsupportedAudioFileException {
@@ -250,6 +253,13 @@ public class Team7HelperFunctions {
         float maxVolumeDecibels = 6.0f;
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         gainControl.setValue(maxVolumeDecibels);
+    }
+
+    public void sleep() {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException ignored) {
+        }
     }
 
     public String getValidCardCombination() {
@@ -438,6 +448,8 @@ public class Team7HelperFunctions {
     public List<Integer> getDestinationCountryOptions(List<Integer> originCountryOptions) {
         List<Integer> destinationCountryOptions = new ArrayList<>();
         for (int countryId = 0; countryId < GameData.NUM_COUNTRIES; countryId++) {
+            if (originCountryOptions.contains(countryId)) continue;
+
             boolean team7Occupies = board.getOccupier(countryId) == player.getId();
             boolean tooManyUnits = board.getNumUnits(countryId) > 8;
             boolean isConnectedToOriginCountry = false;
