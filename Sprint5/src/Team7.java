@@ -22,18 +22,14 @@ public class Team7 implements Bot {
     }
 
     public String getName() {
-        try {
-            helperFunctions.playBattleCry();
-        } catch (Exception e) {
-            // Catch all exceptions here, if our bot failed
-            // because of this it would be *tragic*.
-            e.printStackTrace();
-        }
+        Thread battleCryThread = new Thread(helperFunctions::playBattleCry);
+        battleCryThread.start();
 
         return "Team7";
     }
 
     public String getReinforcement() {
+        helperFunctions.sleep();
         List<Integer> almostConqueredContinentIds = helperFunctions.getAlmostConqueredContinentIds(player.getId());
 
         List<Integer> orderedCountries = helperFunctions.countriesInOrderOfImportance(almostConqueredContinentIds.isEmpty() ?
@@ -54,6 +50,7 @@ public class Team7 implements Bot {
     }
 
     public String getPlacement(int forPlayer) {
+        helperFunctions.sleep();
         List<Integer> ownedCountries = helperFunctions.getOwnedCountryIds(forPlayer);
         ownedCountries.sort(helperFunctions::compareRatings);
 
@@ -61,7 +58,7 @@ public class Team7 implements Bot {
     }
 
     public String getCardExchange() {
-
+        helperFunctions.sleep();
         boolean isCavalrySizeAtLeast10 = helperFunctions.isGoldenCavalryAtleast10();
         if (!isCavalrySizeAtLeast10) helperFunctions.updateEstimatedGoldenCavalrySize();
 
@@ -71,6 +68,7 @@ public class Team7 implements Bot {
     }
 
     public String getBattle() {
+        helperFunctions.sleep();
         String command;
         if (player.getBattleLoss() == 3) {
             command = "skip";
@@ -95,12 +93,14 @@ public class Team7 implements Bot {
     }
 
     public String getDefence(int countryId) {
+        helperFunctions.sleep();
         String command;
         command = String.valueOf(helperFunctions.chooseDefendingArmySize(countryId));
         return command;
     }
 
     public String getMoveIn(int attackCountryId) {
+        helperFunctions.sleep();
         String command;
         int numChosen = helperFunctions.anyEnemyNeighbours(attackCountryId) ?
                 3 :
@@ -110,7 +110,7 @@ public class Team7 implements Bot {
     }
 
     public String getFortify() {
-
+        helperFunctions.sleep();
         List<Integer> originCountryOptions = helperFunctions.getInitialOriginCountryOptions();
         List<Integer> destinationCountryOptions = helperFunctions.getDestinationCountryOptions(originCountryOptions);
 
