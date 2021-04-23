@@ -3,7 +3,10 @@ package src;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -23,10 +26,6 @@ public class Team7HelperFunctions {
     private final PlayerAPI player;
     private final int otherPlayerId;
 
-    private final List<Integer> currentOccupiers = new ArrayList<>();
-    private int estimatedGoldenCavalrySize = 2;
-    private int numCardsOtherPlayerHas = 0;
-
     Team7HelperFunctions(BoardAPI inBoard, PlayerAPI inPlayer, int otherPlayerId) {
         this.board = inBoard;
         this.player = inPlayer;
@@ -36,7 +35,7 @@ public class Team7HelperFunctions {
     public String convertToCommand(List<Integer> inputList) {
         StringBuilder command = new StringBuilder();
         for (int i = 0; i < 2; i++) {
-            command.append(GameData.COUNTRY_NAMES[inputList.get(i)]);
+            command.append(GameData.COUNTRY_NAMES[inputList.get(i)].replaceAll("\\s+", ""));
             command.append(" ");
         }
         command.append(inputList.get(2));
@@ -65,34 +64,6 @@ public class Team7HelperFunctions {
         return ownedCountryIds;
     }
 
-    public List<Integer> checkForSingleArmyCountry(List<Integer> ownedCountriesIds) {
-        List<Integer> attackingAndDefending = new ArrayList<>();
-
-        for (Integer ownedCountriesId : ownedCountriesIds) {
-            int[] adjacentCountryIds = GameData.ADJACENT[ownedCountriesId];
-            int countryId = singleArmyCount(adjacentCountryIds);
-            if (countryId != -1) {
-                attackingAndDefending.add(ownedCountriesId);
-                attackingAndDefending.add(countryId);
-                return attackingAndDefending;
-            }
-        }
-        attackingAndDefending.add(-1);
-        return attackingAndDefending;
-    }
-
-    public int singleArmyCount(int[] adjacentCountryIds) {
-        for (int adjacentCountryId : adjacentCountryIds) {
-            boolean hasOneUnit = board.getNumUnits(adjacentCountryId) == 1;
-            boolean notPlayer = board.getOccupier(adjacentCountryId) != player.getId();
-            boolean isEnemyPlayer = board.getOccupier(adjacentCountryId) == otherPlayerId;
-            if (hasOneUnit && notPlayer && isEnemyPlayer) {
-                return adjacentCountryId;
-            }
-        }
-        return -1;
-    }
-
     public int chooseAttackingArmySize(int attackingCountryId) {
         int availableUnits = board.getNumUnits(attackingCountryId) - 1;
         return Math.min(availableUnits, 3);
@@ -101,133 +72,6 @@ public class Team7HelperFunctions {
     public int chooseDefendingArmySize(int defendingCountryId) {
         int availableUnits = board.getNumUnits(defendingCountryId);
         return Math.min(availableUnits, 2);
-    }
-
-    public int lowestArmyCount(int[] countryIds) {
-        int lowestCountryId = 0;
-        for (int countryId : countryIds) {
-            int numUnits = board.getNumUnits(countryId);
-            int lowestNumUnits = board.getNumUnits(lowestCountryId);
-            if (lowestNumUnits > numUnits) {
-                lowestCountryId = countryId;
-            }
-        }
-        return lowestCountryId;
-    }
-
-    public int leastEnemyAndNeutralAdjacentCountries(List<Integer> ownedCountriesIds) {
-        int countryId = -1;
-        int leastEnemyAdjacentCount = Integer.MAX_VALUE;
-
-        for (Integer ownedCountriesId : ownedCountriesIds) {
-            int enemyCount = totalEnemyCountryCount(GameData.ADJACENT[ownedCountriesId]);
-            if (enemyCount < leastEnemyAdjacentCount) {
-                countryId = ownedCountriesId;
-                leastEnemyAdjacentCount = enemyCount;
-            }
-        }
-        return countryId;
-    }
-
-    public int leastEnemyAdjacentCountries(List<Integer> ownedCountriesIds) {
-        int countryId = 0;
-        int leastEnemyAdjacentCount = Integer.MAX_VALUE;
-
-        for (Integer ownedCountriesId : ownedCountriesIds) {
-            if (enemyCountryPresent(GameData.ADJACENT[ownedCountriesId])) {
-                int enemyCount = enemyPlayerCount(GameData.ADJACENT[ownedCountriesId]);
-                if (enemyCount < leastEnemyAdjacentCount) {
-                    countryId = ownedCountriesId;
-                    leastEnemyAdjacentCount = enemyCount;
-                }
-            }
-        }
-        return countryId;
-    }
-
-    public boolean enemyCountryPresent(int[] ownedCountriesIds) {
-        int enemyCount = 0;
-        for (Integer ownedCountriesId : ownedCountriesIds) {
-            if (board.getOccupier(ownedCountriesId) == otherPlayerId) {
-                enemyCount = enemyPlayerCount(GameData.ADJACENT[ownedCountriesId]);
-            }
-        }
-        return enemyCount > 0;
-    }
-
-    public int leastEnemyAdjacentCountries(int[] continent) {
-        List<Integer> ownedCountriesIds = Arrays.stream(continent).boxed().collect(Collectors.toList());
-        return leastEnemyAdjacentCountries(ownedCountriesIds);
-    }
-
-    public int leastEnemyAndNeutralAdjacentCountries(int[] continent) {
-        List<Integer> ownedCountriesId = Arrays.stream(continent).boxed().collect(Collectors.toList());
-        return leastEnemyAndNeutralAdjacentCountries(ownedCountriesId);
-    }
-
-    public int totalEnemyCountryCount(int[] countryIds) {
-        IntPredicate isEnemyCountryId = countryId -> board.getOccupier(countryId) != player.getId();
-        return (int) Arrays.stream(countryIds).filter(isEnemyCountryId).count();
-    }
-
-    public int enemyPlayerCount(int[] countryIds) {
-        IntPredicate isEnemyCountryId = countryId -> board.getOccupier(countryId) != player.getId() &&
-                board.getOccupier(countryId) == otherPlayerId;
-        return (int) Arrays.stream(countryIds).filter(isEnemyCountryId).count();
-    }
-
-    public List<Integer> continentSpecificAttack(List<Integer> ownedCountriesIds) {
-        int chosenContinent = chooseContinentToAttack();
-        int chosenAttackingCountry;
-        int chosenDefendingCountry;
-        List<Integer> combatInput = new ArrayList<>();
-
-        if (chosenContinent == -1) {
-            chosenAttackingCountry = leastEnemyAdjacentCountries(ownedCountriesIds);
-        } else {
-            int[] continent = CONTINENT_COUNTRIES[chosenContinent];
-            chosenAttackingCountry = leastEnemyAdjacentCountries(continent);
-            if (chosenAttackingCountry == -1) {
-                chosenAttackingCountry = leastEnemyAndNeutralAdjacentCountries(continent);
-            }
-        }
-        chosenDefendingCountry = invasionDecision(chosenAttackingCountry);
-        combatInput.add(chosenAttackingCountry);
-        combatInput.add(chosenDefendingCountry);
-        if (outOfOurLeagueCheck(chosenAttackingCountry, chosenDefendingCountry)) {
-            combatInput.add(-1);
-            return combatInput;
-        }
-        combatInput.add(chooseAttackingArmySize(chosenAttackingCountry));
-        return combatInput;
-    }
-
-    public boolean outOfOurLeagueCheck(int chosenAttackingCountryId, int chosenDefendingCountryId) {
-        return board.getNumUnits(chosenDefendingCountryId) > board.getNumUnits(chosenAttackingCountryId) ||
-                board.getNumUnits(chosenAttackingCountryId) < 3;
-    }
-
-    public int invasionDecision(int chosenAttackingCountry) {
-        return lowestArmyCount(GameData.ADJACENT[chosenAttackingCountry]);
-    }
-
-    public int chooseContinentToAttack() {
-        for (ContinentRanking continent : ContinentRanking.values()) {
-            if (ownsEnoughOfContinent(CONTINENT_COUNTRIES[continent.value])) {
-                return continent.value;
-            }
-        }
-        return -1;
-    }
-
-    public boolean ownsEnoughOfContinent(int[] continent) {
-        int count = 0;
-        for (int i = 0; i < continent.length; i++) {
-            if (board.getOccupier(i) == player.getId()) {
-                count++;
-            }
-        }
-        return count >= continent.length * .1;
     }
 
     public void playBattleCry() {
@@ -243,7 +87,7 @@ public class Team7HelperFunctions {
 
     private AudioInputStream getAudioInputStream() throws IOException, UnsupportedAudioFileException {
         // Manually created direct-download link, hosted on Google Drive.
-        String path = "https://drive.google.com/uc?export=download&id=1ct7MUbOHmYv-N_GlNFfIvwsNtUxwj6ac";
+        String path = "https://drive.google.com/uc?export=download&id=1Gt4QWtHpf_PLvENPeP6s-gze6RFxMVMt";
         URL url = new URL(path);
 
         return AudioSystem.getAudioInputStream(url);
@@ -257,7 +101,7 @@ public class Team7HelperFunctions {
 
     public void sleep() {
         try {
-            Thread.sleep(300);
+            Thread.sleep(100);
         } catch (InterruptedException ignored) {
         }
     }
@@ -265,12 +109,17 @@ public class Team7HelperFunctions {
     public String getValidCardCombination() {
         List<Integer> insigniaIds = getInsigniaIds();
 
-        return IntStream.range(0, insigniaIds.size() - 3)
-                .mapToObj(i -> new int[]{insigniaIds.get(i), insigniaIds.get(i + 1), insigniaIds.get(i + 3)})
-                .filter(Deck::isASet)
-                .findFirst()
-                .map(this::insigniaIdsToStringCommand)
-                .orElse("skip");
+        for (int i = 0; i < insigniaIds.size() - 2; i++) {
+            for (int j = i + 1; j < insigniaIds.size() - 1; j++) {
+                for (int k = j + 1; k < insigniaIds.size(); k++) {
+                    int[] cards = {insigniaIds.get(i), insigniaIds.get(j), insigniaIds.get(k)};
+                    if (Deck.isASet(cards)) {
+                        return insigniaIdsToStringCommand(cards);
+                    }
+                }
+            }
+        }
+        return "skip";
     }
 
     private List<Integer> getInsigniaIds() {
@@ -308,7 +157,7 @@ public class Team7HelperFunctions {
         List<Integer> almostConqueredContinents = new ArrayList<>();
 
         for (ContinentRanking continent : ContinentRanking.values()) {
-            int continentId = continent.value;
+            int continentId = continent.continentId;
             int[] countriesInContinent = CONTINENT_COUNTRIES[continentId];
 
             IntPredicate botOccupiesCountry = country -> board.getOccupier(country) == playerId;
@@ -318,7 +167,8 @@ public class Team7HelperFunctions {
                     .filter(botOccupiesCountry)
                     .count();
 
-            if (ownedCountriesInContinent > countriesInContinent.length * 0.3) {
+
+            if (ownedCountriesInContinent > countriesInContinent.length * 0.25) {
                 almostConqueredContinents.add(continentId);
             }
         }
@@ -331,36 +181,6 @@ public class Team7HelperFunctions {
                 .stream(ADJACENT[countryId])
                 .filter(country -> board.getOccupier(country) == playerId)
                 .count();
-    }
-
-    private List<Integer> orderMostImportantCountriesInContinent(int continent) {
-
-        List<Integer> countriesInContinent = Arrays
-                .stream(CONTINENT_COUNTRIES[continent])
-                .boxed()
-                .collect(Collectors.toList());
-        Comparator<Integer> howManySurroundingEnemies = this::compareSurroundingEnemies;
-        countriesInContinent.sort(howManySurroundingEnemies);
-
-        return countriesInContinent;
-    }
-
-    private int compareSurroundingEnemies(Integer country1, Integer country2) {
-        Integer country1SurroundingEnemies = numSurroundingCountriesByPlayer(country1, otherPlayerId);
-        Integer country2SurroundingEnemies = numSurroundingCountriesByPlayer(country2, otherPlayerId);
-
-        return country1SurroundingEnemies.compareTo(country2SurroundingEnemies);
-    }
-
-    public List<Integer> countriesInOrderOfImportance(List<Integer> continents) {
-        List<Integer> orderedCountries = new ArrayList<>();
-
-        continents
-                .stream()
-                .map(this::orderMostImportantCountriesInContinent)
-                .forEachOrdered(orderedCountries::addAll);
-
-        return orderedCountries;
     }
 
     public boolean continentContainsCountry(int continentId, int countryId) {
@@ -378,53 +198,220 @@ public class Team7HelperFunctions {
         return String.format("%s %d", commandValidCountryName, numTroops);
     }
 
-    /**
-     * With this function we can also see what continent/country the other bot is prioritising
-     * We can maybe work with this
-     */
-    public void updateCurrentOccupiers() {
-        currentOccupiers.clear();
-        for (int i = 0; i < NUM_COUNTRIES; i++) {
-            int occupier = board.getOccupier(i);
-            currentOccupiers.add(occupier);
-        }
+    private boolean isCountryInContinent(int countryId, int continentId) {
+        return Arrays
+                .stream(CONTINENT_COUNTRIES[continentId])
+                .anyMatch(country -> country == countryId);
     }
 
-    private int getNumOfCountriesEnemyHasTakenOver() {
-        IntPredicate hasOccupierChanged = country -> board.getOccupier(country) != currentOccupiers.get(country);
+    public int rateOwnCountryForReinforcement(int countryId) {
+        int rating = commonRatings(countryId);
 
-        return (int) IntStream
-                .range(0, NUM_COUNTRIES)
-                .filter(hasOccupierChanged)
-                .count();
-    }
+        // We rate by how many surrounding enemy countries there are
+        rating += numSurroundingCountriesByPlayer(countryId, otherPlayerId) * 50;
 
-    private void increaseGoldenCavalrySize() {
-        if (estimatedGoldenCavalrySize < 60) {
-            int cavalryIncrease = estimatedGoldenCavalrySize >= 10 ? 5 : 2;
-
-            estimatedGoldenCavalrySize += cavalryIncrease;
-        }
-    }
-
-    public boolean isGoldenCavalryAtleast10() {
-        return estimatedGoldenCavalrySize >= 10;
-    }
-
-    public void updateEstimatedGoldenCavalrySize() {
-        if (numCardsOtherPlayerHas > 5) {
-            increaseGoldenCavalrySize();
-            numCardsOtherPlayerHas -= 3;
+        // We also prioritise if they have less than 8 units
+        if (board.getNumUnits(countryId) < 8) {
+            rating += 1000;
         }
 
-        numCardsOtherPlayerHas += getNumOfCountriesEnemyHasTakenOver();
+        // If it is only surround by friendly countries then we try ignore it
+        if (isSurroundedByFriendlyCountries(countryId)) {
+            rating -= 2500;
+        }
+
+        // We also prioritise if they have less than 8 units
+        if (board.getNumUnits(countryId) == 1) rating += 2500;
+
+        return -rating;
     }
 
-    public int rateCountry(int countryId) {
+    public int rateOwnCountryForAttacking(int countryId) {
+        int rating = commonRatings(countryId);
+        int[] ownedCountries = ADJACENT[countryId];
+        List<Integer> adjacentCountries = new ArrayList<>();
+
+        for (int ownedCountry : ownedCountries) {
+            if (board.getOccupier(ownedCountry) != player.getId()) {
+                adjacentCountries.add(ownedCountry);
+            }
+        }
+
+        rating += singleArmyEnemyPresent(adjacentCountries).isEmpty() ? 10 : 500;
+        rating += hasLessThanThreeAdjacentEnemyCountries(adjacentCountries).isEmpty() ? 10 : 400;
+        rating += enemyCountryPresent(adjacentCountries).isEmpty() ? 0 : 200;
+
+        if (checkUnits(countryId) > 3 && checkUnits(countryId) < 5) {
+            rating += 50;
+        } else if (checkUnits(countryId) >= 5 && checkUnits(countryId) < 10) {
+            rating += 100;
+        } else if (checkUnits(countryId) >= 10) {
+            rating += 1000;
+        }
+
+        // We also prioritise if they have less than 8 units
+        if (board.getNumUnits(countryId) == 1) rating += 2500;
+
+        return -rating;
+    }
+
+    public int rateEnemyDefendingCountry(int countryId) {
+        int rating = commonRatings(countryId);
+
+        if (hasSingleArmy(countryId) && !spreadingTooThin(countryId)) {
+            rating += 100000;
+        }
+        if (checkUnits(countryId) < 3) {
+            rating += 250;
+        }
+        if (checkUnits(countryId) < 5) {
+            rating += 25;
+        }
+        if (lessThanThreeAdjacent(countryId)) {
+            rating += 250;
+        }
+        if (lessThanFourAdjacent(countryId)) {
+            rating += 25;
+        }
+        return -rating;
+    }
+
+    public int checkUnits(int countryId) {
+        return board.getNumUnits(countryId);
+    }
+
+    public List<Integer> enemyCountryPresent(List<Integer> adjacentCountries) {
+        return adjacentCountries
+                .stream()
+                .filter(this::isEnemyCountry)
+                .collect(Collectors.toList());
+    }
+
+    public List<Integer> hasLessThanThreeAdjacentEnemyCountries(List<Integer> adjacentCountries) {
+        return adjacentCountries
+                .stream()
+                .filter(this::lessThanFourAdjacent)
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasSingleArmy(int countryId) {
+        return checkUnits(countryId) == 1;
+    }
+
+    public boolean isEnemyCountry(int countryId) {
+        return board.getOccupier(countryId) == otherPlayerId;
+    }
+
+    public List<Integer> singleArmyEnemyPresent(List<Integer> adjacentCountries) {
+        return adjacentCountries
+                .stream()
+                .filter(countryId -> hasSingleArmy(countryId) && !spreadingTooThin(countryId))
+                .collect(Collectors.toList());
+    }
+
+    public boolean spreadingTooThin(int countryId) {
+        return enemyCountryCount(countryId) > 2;
+    }
+
+    public boolean lessThanThreeAdjacent(int countryId) {
+        return enemyCountryCount(countryId) < 3;
+    }
+
+    public boolean lessThanFourAdjacent(int countryId) {
+        return enemyCountryCount(countryId) < 4;
+    }
+
+    public int enemyCountryCount(int countryId) {
+        int enemyCountryCount = 0;
+
+        int[] adjacentCountries = ADJACENT[countryId];
+        for (int adjacentCountry : adjacentCountries) {
+            if (board.getOccupier(adjacentCountry) == otherPlayerId) {
+                enemyCountryCount++;
+            }
+        }
+
+        return enemyCountryCount;
+    }
+
+    public List<Integer> countriesThatCanAttack() {
+        List<Integer> ownedCountryIds = getOwnedCountryIds();
+
+        return ownedCountryIds
+                .stream()
+                .filter(countryId -> {
+                    boolean hasMoreThanOneUnit = board.getNumUnits(countryId) > 1;
+                    boolean hasEnemyNeighbours = Arrays.stream(ADJACENT[countryId]).anyMatch(country ->
+                            board.getOccupier(country) != player.getId());
+                    return hasEnemyNeighbours && hasMoreThanOneUnit;
+                }).collect(Collectors.toList());
+    }
+
+    public List<Integer> countriesToInvade(int attackingCountry) {
+        int[] countryIds = ADJACENT[attackingCountry];
+        List<Integer> countriesToInvade = new ArrayList<>();
+
+        for (int countryId : countryIds) {
+            if (board.getOccupier(countryId) != player.getId()) {
+                countriesToInvade.add(countryId);
+            }
+        }
+        return countriesToInvade;
+    }
+
+    public int compareAttackingCountries(int countryId1, int countryId2) {
+        Integer countryId1Rating = rateOwnCountryForAttacking(countryId1);
+        Integer countryId2Rating = rateOwnCountryForAttacking(countryId2);
+
+        return countryId1Rating.compareTo(countryId2Rating);
+    }
+
+    public int compareDefendingCountries(int countryId1, int countryId2) {
+        Integer countryId1Rating = rateEnemyDefendingCountry(countryId1);
+        Integer countryId2Rating = rateEnemyDefendingCountry(countryId2);
+
+        return countryId1Rating.compareTo(countryId2Rating);
+    }
+
+    public int commonRatings(int countryId) {
+        List<Integer> almostConqueredContinents = getAlmostConqueredContinentIds(player.getId());
+
+        // We set countries in almost conquered continents as our number one priority
+        int rating = almostConqueredContinents
+                .stream()
+                .filter(continent -> isCountryInContinent(countryId, continent))
+                .mapToInt(countryRating -> 1000)
+                .sum();
+
+        // We rate them by our most preferred Continents to take over
+        List<Integer> continentRankings = ContinentRanking.getContinentIds();
+        Collections.reverse(continentRankings);
+        rating += IntStream
+                .range(0, continentRankings.size())
+                .filter(i -> isCountryInContinent(countryId, continentRankings.get(i)))
+                .map(i -> (i + 1) * 100)
+                .sum();
+
+        // We rate by how many surrounding enemy countries there are
+        rating += numSurroundingCountriesByPlayer(countryId, otherPlayerId) * 200;
+
+        return rating;
+    }
+
+    public int compareRatingsForOwnReinforcement(int countryId1, int countryId2) {
+        Integer country1Rating = rateOwnCountryForReinforcement(countryId1);
+        Integer country2Rating = rateOwnCountryForReinforcement(countryId2);
+
+        return country1Rating.compareTo(country2Rating);
+    }
+
+
+    public int rateNeutralCountry(int countryId) {
         int rating = 0;
 
-        rating -= 75 * numSurroundingCountriesByPlayer(countryId, player.getId());
+        if (board.getNumUnits(countryId) == 1) rating += 100;
 
+        rating -= 75 * numSurroundingCountriesByPlayer(countryId, player.getId());
         Predicate<Integer> continentContainsCountry = continent -> continentContainsCountry(continent, countryId);
 
         List<Integer> opponentCountries = getAlmostConqueredContinentIds(otherPlayerId);
@@ -434,13 +421,12 @@ public class Team7HelperFunctions {
 
         rating += opponentRating * numSurroundingCountriesByPlayer(countryId, otherPlayerId);
 
-        return rating;
+        return -rating;
     }
 
-    public int compareRatings(int countryId1, int countryId2) {
-
-        Integer country1Rating = rateCountry(countryId1);
-        Integer country2Rating = rateCountry(countryId2);
+    public int compareRatingsForNeutrals(int countryId1, int countryId2) {
+        Integer country1Rating = rateNeutralCountry(countryId1);
+        Integer country2Rating = rateNeutralCountry(countryId2);
 
         return country1Rating.compareTo(country2Rating);
     }
@@ -451,7 +437,7 @@ public class Team7HelperFunctions {
             if (originCountryOptions.contains(countryId)) continue;
 
             boolean team7Occupies = board.getOccupier(countryId) == player.getId();
-            boolean tooManyUnits = board.getNumUnits(countryId) > 8;
+            boolean tooManyUnits = board.getNumUnits(countryId) >= 8;
             boolean isConnectedToOriginCountry = false;
 
             for (int originCountryOption : originCountryOptions) {
@@ -524,16 +510,16 @@ public class Team7HelperFunctions {
         NORTH_AMERICA(0),
         EUROPE(1);
 
-        public int value;
+        public int continentId;
 
-        ContinentRanking(int value) {
-            this.value = value;
+        ContinentRanking(int continentId) {
+            this.continentId = continentId;
         }
 
-        public static List<Integer> getValues() {
+        public static List<Integer> getContinentIds() {
             return Arrays
                     .stream(ContinentRanking.values())
-                    .map(continent -> continent.value)
+                    .map(continent -> continent.continentId)
                     .collect(Collectors.toList());
         }
     }
