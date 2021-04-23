@@ -3,7 +3,6 @@ package src;
 import java.util.ArrayList;
 
 public class Sprint5 {
-
     public static void main(String[] args) {
         Board board = new Board();
         UI ui = new UI(board);
@@ -20,7 +19,7 @@ public class Sprint5 {
         ui.displayMap();
         for (playerId = 0; playerId < GameData.NUM_PLAYERS_PLUS_NEUTRALS; playerId++) {
             players[playerId] = new Player(playerId);
-            if (playerId == 1) {
+            if (playerId == 1 || playerId == 0) {
                 players[playerId].setBot(new Team7(board, players[playerId]));
             }
             if (playerId < GameData.NUM_PLAYERS) {
@@ -202,6 +201,7 @@ public class Sprint5 {
                     ui.displayMap();
                 }
             }
+
 
             // 4. Territory Card
             if (countriesInvaded > 0) {
