@@ -28,7 +28,7 @@ public class Team7 implements Bot {
             helperFunctions.sleep();
         }
 
-        return "Team7";
+        return "Rick";
     }
 
     public String getReinforcement() {
