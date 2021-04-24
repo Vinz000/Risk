@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Team7Test {
 
@@ -149,5 +150,25 @@ public class Team7Test {
         List<Integer> originCountryOptions = helperFunctions.getInitialOriginCountryOptions();
         assertEquals(1, originCountryOptions.size());
         assertEquals(18, originCountryOptions.get(0));
+    }
+
+    @Test
+    void testRateOwnCountryForReinforcement() {
+        assertTrue(helperFunctions.rateOwnCountryForReinforcement(1) < 0);
+    }
+
+    @Test
+    void testRateNeutralCountry() {
+        assertTrue(helperFunctions.rateNeutralCountry(1) < 0);
+    }
+
+    @Test
+    void testCompareRatingsForOwnReinforcement() {
+        assertEquals(helperFunctions.compareRatingsForOwnReinforcement(1, 2), -1);
+    }
+
+    @Test
+    void testCompareRatingsForNeutralCountries() {
+        assertEquals(helperFunctions.compareRatingsForOwnReinforcement(4, 6), 0);
     }
 }
