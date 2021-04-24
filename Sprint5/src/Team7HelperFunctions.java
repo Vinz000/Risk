@@ -457,7 +457,7 @@ public class Team7HelperFunctions {
         return destinationCountryOptions;
     }
 
-    private boolean isSurroundedByFriendlyCountries(int countryId) {
+    public boolean isSurroundedByFriendlyCountries(int countryId) {
         for (int adjacentCountryId = 0; adjacentCountryId < GameData.NUM_COUNTRIES; adjacentCountryId++) {
             boolean isAdjacent = board.isAdjacent(countryId, adjacentCountryId);
             boolean isSameCountry = adjacentCountryId == countryId;
