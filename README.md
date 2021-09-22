@@ -31,6 +31,9 @@ First, we manually tested by running the bot against itself. This helped us find
 Following our manual testing, we created unit tests for our helper methods. If the bot behaviour changes
 in any way, this should result in a failure of (at least) one of the unit tests.
 
+### Screenshot  
+<img width="1250" alt="Screenshot 2021-09-22 at 17 15 45" src="https://user-images.githubusercontent.com/77804716/134382217-2613dea8-99e7-4c65-95a4-f5d005858e1f.png">
+
 <hr />   
 
 > **Note**: Programmed bot to be fun.
